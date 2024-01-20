@@ -19,7 +19,7 @@ class MyGame extends FlameGame {
   void render(Canvas canvas) {
     // Clear the canvas
     canvas.drawRect(
-        Rect.fromLTWH(0, 0, size.x, size.y), Paint()..color = Colors.white);
+        const Rect.fromLTWH(0, 0, double.infinity, double.infinity), Paint()..color = Colors.white);
 
     // Render the background image
     backgroundImage.renderRect(canvas, Rect.fromLTWH(0, 0, size.x, size.y));
