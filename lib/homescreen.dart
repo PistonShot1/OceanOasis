@@ -6,6 +6,7 @@ import 'package:flame/input.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/services/keyboard_key.g.dart';
+import 'package:oceanoasis/components/boxCollider.dart';
 
 class MyGame extends FlameGame
     with HasKeyboardHandlerComponents, HasCollisionDetection {
@@ -15,6 +16,7 @@ class MyGame extends FlameGame
   late BirdPlayer birdPlayer;
   @override
   Future<void> onLoad() async {
+    final worldCollider = WorldCollider()..size = Vector2.all(1000);
     //load images and spritesheet
     await Flame.images.load('main-menu-background.jpg');
     await Flame.images.load('temp1-player.jpeg');
@@ -47,7 +49,8 @@ class MyGame extends FlameGame
   }
 }
 
-class BirdPlayer extends SpriteAnimationComponent with KeyboardHandler , HasGameReference<MyGame> {
+class BirdPlayer extends SpriteAnimationComponent
+    with KeyboardHandler, HasGameReference<MyGame> {
   int horizontalDirection = 0;
   int verticalDirection = 0;
   final Vector2 velocity = Vector2.zero();
@@ -59,7 +62,7 @@ class BirdPlayer extends SpriteAnimationComponent with KeyboardHandler , HasGame
                 amount: 6, // Number of frames in your animation
                 stepTime: 0.1, // Duration of each frame
                 textureSize: Vector2(32, 32)));
-   
+
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     horizontalDirection = 0;
