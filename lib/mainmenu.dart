@@ -48,8 +48,26 @@ class _MainWidgetState extends State<MainWidget> {
         onTap: () {
           Navigator.of(context)
               .pushReplacement(MaterialPageRoute(builder: (context) {
-                return GameWidget(game: MyGame());
-              }));
+            return GameWidget(
+              game: MyGame(),
+              loadingBuilder: (p0) {
+                return Stack(
+                  children: [
+                    Positioned.fill(
+                        child: Image.asset(
+                            'assets/images/main-menu-background.jpg')),
+                    const Align(
+                      alignment: Alignment.center,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: Text('Loading . . .'),
+                      ),
+                    )
+                  ],
+                );
+              },
+            );
+          }));
         },
         child: Stack(
           children: [
