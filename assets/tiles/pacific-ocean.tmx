@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="15" height="8" tilewidth="128" tileheight="128" infinite="0" nextlayerid="3" nextobjectid="2">
+ <tileset firstgid="1" name="water-wave-sprite-sheet" tilewidth="128" tileheight="128" tilecount="5" columns="1">
+  <image source="../images/water/water-wave-sprite-sheet.png" width="128" height="640"/>
+  <tile id="0">
+   <animation>
+    <frame tileid="0" duration="150"/>
+    <frame tileid="1" duration="100"/>
+    <frame tileid="2" duration="100"/>
+    <frame tileid="4" duration="100"/>
+   </animation>
+  </tile>
+ </tileset>
+ <tileset firstgid="6" name="water-base" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="../images/water/water-base.png" width="128" height="128"/>
+ </tileset>
+ <tileset firstgid="7" name="water-base (1)" tilewidth="128" tileheight="128" tilecount="1" columns="1">
+  <image source="../images/water/water-base (1).png" width="128" height="128"/>
+ </tileset>
+ <layer id="1" name="Tile Layer 1" width="15" height="8">
+  <data encoding="csv">
+7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+6,6,6,6,6,6,6,6,6,6,6,6,6,6,6
+</data>
+ </layer>
+ <objectgroup id="2" name="Spawn Point">
+  <object id="1" name="spawnlocation" x="41.3333" y="670.667">
+   <point/>
+  </object>
+ </objectgroup>
+</map>

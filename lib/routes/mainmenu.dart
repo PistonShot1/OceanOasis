@@ -1,17 +1,21 @@
 import 'dart:async';
-
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:oceanoasis/homescreen.dart';
+import 'package:oceanoasis/routes/achievementdashboard.dart';
+import 'package:oceanoasis/routes/settings.dart';
+import 'package:oceanoasis/routes/userprofile.dart';
 
-class MainWidget extends StatefulWidget {
-  const MainWidget({Key? key}) : super(key: key);
+class MainMenu extends StatefulWidget {
+  static const id = 'MainMenu';
+
+  const MainMenu({Key? key}) : super(key: key);
 
   @override
-  _MainWidgetState createState() => _MainWidgetState();
+  _MainMenuState createState() => _MainMenuState();
 }
 
-class _MainWidgetState extends State<MainWidget> {
+class _MainMenuState extends State<MainMenu> {
   late Timer _timer;
   double _opacity = 0.0;
   double iconButtonSize = 35;
@@ -43,31 +47,10 @@ class _MainWidgetState extends State<MainWidget> {
   Widget build(BuildContext context) {
     _rescaleFont([iconButtonSize, text1, text2]);
     return Scaffold(
-      backgroundColor: const Color(0XFF88B2D2),
+      backgroundColor: Colors.black,
       body: InkWell(
         onTap: () {
-          Navigator.of(context)
-              .pushReplacement(MaterialPageRoute(builder: (context) {
-            return GameWidget(
-              game: MyGame(),
-              loadingBuilder: (p0) {
-                return Stack(
-                  children: [
-                    Positioned.fill(
-                        child: Image.asset(
-                            'assets/images/main-menu-background.jpg')),
-                    const Align(
-                      alignment: Alignment.center,
-                      child: Material(
-                        color: Colors.transparent,
-                        child: Text('Loading . . .'),
-                      ),
-                    )
-                  ],
-                );
-              },
-            );
-          }));
+          oldWidget(context);
         },
         child: Stack(
           children: [
@@ -105,7 +88,7 @@ class _MainWidgetState extends State<MainWidget> {
                             child: IconButton(
                               iconSize: iconButtonSize,
                               onPressed: () {
-                                print('Icon button was pressed');
+                                _showOverlay(UserProfile.id);
                               },
                               icon: const Icon(Icons.person),
                               style: ButtonStyle(
@@ -118,9 +101,8 @@ class _MainWidgetState extends State<MainWidget> {
                           Expanded(
                             child: IconButton(
                               iconSize: iconButtonSize,
-                              onPressed: () {
-                                print('Icon button was pressed');
-                              },
+                              onPressed: () =>
+                                  _showOverlay(AchievementDashboard.id),
                               icon: const Icon(Icons.emoji_events),
                               color: Colors.amber,
                               style: ButtonStyle(
@@ -133,9 +115,7 @@ class _MainWidgetState extends State<MainWidget> {
                           Expanded(
                             child: IconButton(
                               iconSize: iconButtonSize,
-                              onPressed: () {
-                                print('Icon button was pressed');
-                              },
+                              onPressed: () => _showOverlay(Settings.id),
                               icon: const Icon(Icons.settings),
                               color: Colors.grey,
                               style: ButtonStyle(
@@ -152,10 +132,71 @@ class _MainWidgetState extends State<MainWidget> {
                 ),
               ),
             ),
+            Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: IconButton(
+                  icon: Icon(Icons.shopping_cart),
+                  onPressed: () {},
+                ),
+              ),
+            )
           ],
         ),
       ),
     );
+  }
+
+  void oldWidget(BuildContext context) {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+      return GameWidget(
+        game: MyGame(MediaQuery.of(context)),
+        loadingBuilder: (p0) {
+          return Stack(
+            children: [
+              Image.asset('assets/images/main-menu-background.jpg'),
+              const Align(
+                alignment: Alignment.center,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Text('Loading . . .'),
+                ),
+              )
+            ],
+          );
+        },
+        overlayBuilderMap: {
+          "TopMenu": (context, MyGame game) {
+            return Material(
+              color: Colors.transparent,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Column(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        game.pauseEngine();
+                        game.world.removeAll(game.gameComponents);
+                        game.world.addAll(game.mainComponents);
+                        game.resumeEngine();
+                      },
+                      child: Image.asset(
+                        'assets/images/earth-pixel-icon.png',
+                        width: 50,
+                        height: 50,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+        },
+        initialActiveOverlays: [],
+        // to add game overlay
+      );
+    }));
   }
 
   void _rescaleFont(List<double> fontSizes) {
@@ -173,5 +214,50 @@ class _MainWidgetState extends State<MainWidget> {
         text2 = 30;
       });
     }
+  }
+
+  void newWidget(BuildContext context) {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
+      return Container();
+    }));
+  }
+
+  void _showOverlay(String routeName) {
+    final musicValueNotifier = ValueNotifier(true);
+    final sfxValueNotifier = ValueNotifier(true);
+
+    switch (routeName) {
+      case AchievementDashboard.id:
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return AchievementDashboard(
+            musicValueListenable: musicValueNotifier,
+            sfxValueListenable: sfxValueNotifier,
+            onBackPressed: _popRoute,
+          );
+        }));
+        break;
+      case Settings.id:
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return Settings(
+            musicValueListenable: musicValueNotifier,
+            sfxValueListenable: sfxValueNotifier,
+            onBackPressed: _popRoute,
+          );
+        }));
+        break;
+      case UserProfile.id:
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return UserProfile(
+            musicValueListenable: musicValueNotifier,
+            sfxValueListenable: sfxValueNotifier,
+            onBackPressed: _popRoute,
+          );
+        }));
+        break;
+    }
+  }
+
+  void _popRoute() {
+    Navigator.of(context).pop();
   }
 }

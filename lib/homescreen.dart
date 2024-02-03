@@ -1,60 +1,84 @@
+import 'dart:async';
+import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
-import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Route;
 import 'package:flutter/src/services/keyboard_key.g.dart';
-import 'package:oceanoasis/components/boxCollider.dart';
+import 'package:oceanoasis/maps/pacific.dart';
+import 'package:oceanoasis/routes/maplevelselection.dart';
 
 class MyGame extends FlameGame
     with HasKeyboardHandlerComponents, HasCollisionDetection {
   late SpriteComponent backgroundImage;
-  late TiledComponent mapComponent;
-  late Sprite player;
+  List<Component> mainComponents = [];
+  List<Component> gameComponents = [];
+  late MapLevelSelection mapLevelSelection;
   late BirdPlayer birdPlayer;
+  final MediaQueryData screeninfo;
+  late final RouterComponent router;
+  MyGame(this.screeninfo);
   @override
   Future<void> onLoad() async {
-    final worldCollider = WorldCollider()..size = Vector2.all(1000);
-    //load images and spritesheet
-    await Flame.images.load('main-menu-background.jpg');
-    await Flame.images.load('temp1-player.jpeg');
-    await Flame.images.load('bird-flying-2.png');
-
-    backgroundImage = SpriteComponent.fromImage(
-        Flame.images.fromCache('main-menu-background.jpg'));
-    camera = CameraComponent.withFixedResolution(width: 1100, height: 1100);
+    await loadAssets();
+    print(screeninfo.size.width);
+    print(screeninfo.size.height);
+    //SET camera bound
+    camera = CameraComponent.withFixedResolution(
+      width: 1920,
+      height: 1080,
+    );
     camera.viewfinder
       ..zoom = 1
       ..anchor = Anchor.topLeft;
 
-    mapComponent =
-        await TiledComponent.load('earth-map-tileset.tmx', Vector2.all(8));
-    birdPlayer = BirdPlayer();
+    router = RouterComponent(initialRoute: 'MapLevelSelection', routes: {
+      MapLevelSelection.id: Route(
+        () => MapLevelSelection(key: ComponentKey.named('MapLevelSelection')),
+      ),
+      PacificOcean.id: Route(PacificOcean.new),
+    });
 
-    world.add(mapComponent);
-    world.add(birdPlayer);
-    // Calculate the initial position to center the birdPlayer in the camera
-    birdPlayer.position = Vector2(
-      camera.viewport.size.x / 2 - birdPlayer.size.x / 2,
-      camera.viewport.size.y / 2 - birdPlayer.size.y / 2,
-    );
-    // camera.follow(birdPlayer);
+    world.add(router);
+    // world.addAll(mainComponents);
+  }
+
+
+  Future<void> loadAssets() async {
+    await Flame.images.load('bird-flying-2.png');
+    await Flame.images.load('newspaper.png');
+    await Flame.images.load('earth-map-final.jpeg');
+    await Flame.images.load('character2-swim1.png');
+    await Flame.images.load('map-location-icon.png');
+
+    //NEXT Scene assets
+    await Flame.images.load('scene-1.png');
   }
 
   @override
   void update(double dt) {
     super.update(dt);
   }
+
+  @override
+  void removeFromParent() {
+    // TODO: implement removeFromParent
+    super.removeFromParent();
+  }
 }
 
 class BirdPlayer extends SpriteAnimationComponent
-    with KeyboardHandler, HasGameReference<MyGame> {
+    with KeyboardHandler, HasGameReference<MyGame>, CollisionCallbacks {
   int horizontalDirection = 0;
   int verticalDirection = 0;
   final Vector2 velocity = Vector2.zero();
   final double moveSpeed = 100;
+
+  final _collisionStartColor = Colors.amber;
+  final _defaultColor = Colors.cyan;
+  late ShapeHitbox hitbox;
+
   BirdPlayer()
       : super.fromFrameData(
             Flame.images.fromCache('bird-flying-2.png'),
@@ -87,6 +111,20 @@ class BirdPlayer extends SpriteAnimationComponent
   }
 
   @override
+  FutureOr<void> onLoad() {
+    // TODO: implement onLoad
+    final defaultPaint = Paint()
+      ..color = _defaultColor
+      ..style = PaintingStyle.stroke;
+    hitbox = RectangleHitbox()
+      ..paint = defaultPaint
+      ..renderShape = true;
+    add(hitbox);
+
+    return super.onLoad();
+  }
+
+  @override
   void update(double dt) {
     velocity.x = horizontalDirection * moveSpeed;
     velocity.y = verticalDirection * moveSpeed;
@@ -99,4 +137,85 @@ class BirdPlayer extends SpriteAnimationComponent
     }
     super.update(dt);
   }
+
+  @override
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
+    // TODO: implement onCollisionStart
+    super.onCollisionStart(intersectionPoints, other);
+  }
 }
+
+class NewspaperSprite extends SpriteComponent
+    with HasGameReference<MyGame>, CollisionCallbacks {
+  final _defaultColor = Colors.cyan;
+  late ShapeHitbox hitbox;
+  NewspaperSprite()
+      : super.fromImage(Flame.images.fromCache('newspaper.png'),
+            position: Vector2.all(100));
+  @override
+  FutureOr<void> onLoad() {
+    // TODO: implement onLoad
+    final defaultPaint = Paint()
+      ..color = _defaultColor
+      ..style = PaintingStyle.stroke;
+    hitbox = RectangleHitbox()
+      ..paint = defaultPaint
+      ..renderShape = true;
+    add(hitbox);
+    return super.onLoad();
+  }
+
+  @override
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
+    // TODO: implement onCollisionStart
+    super.onCollisionStart(intersectionPoints, other);
+
+    if (other is BirdPlayer) {
+      print("Newspaper was hit by Bird");
+      game.camera.stop();
+    }
+  }
+}
+
+class PlayerSprite extends SpriteComponent
+    with HasGameReference<MyGame>, CollisionCallbacks {
+  final _defaultColor = Colors.cyan;
+  late ShapeHitbox hitbox;
+  PlayerSprite()
+      : super.fromImage(Flame.images.fromCache('newspaper.png'),
+            position: Vector2.all(100));
+  @override
+  FutureOr<void> onLoad() {
+    // TODO: implement onLoad
+    final defaultPaint = Paint()
+      ..color = _defaultColor
+      ..style = PaintingStyle.stroke;
+    hitbox = RectangleHitbox()
+      ..paint = defaultPaint
+      ..renderShape = true;
+    add(hitbox);
+    return super.onLoad();
+  }
+
+  @override
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
+    // TODO: implement onCollisionStart
+    super.onCollisionStart(intersectionPoints, other);
+
+    if (other is BirdPlayer) {
+      print("Newspaper was hit by Bird");
+      game.camera.stop();
+    }
+  }
+}
+
+    // Calculate the initial position to center the birdPlayer in the camera
+    // birdPlayer.position = Vector2(
+      // camera.viewport.size.x / 2 - birdPlayer.size.x / 2,
+      // camera.viewport.size.y / 2 - birdPlayer.size.y / 2,
+    // );
+    // camera.follow(birdPlayer);
+    // world.add(ScreenHitbox());a
