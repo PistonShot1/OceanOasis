@@ -23,11 +23,13 @@ class MapMarker extends SpriteComponent
   MapMarker(
       {required this.locationOnMap,
       required this.isMapAvailable,
+      required ComponentKey key,
       this.mapId,
       this.sceneLoadCallback,
       this.mapName})
-      : super.fromImage(Flame.images.fromCache('map-location-icon.png'),
-            position: locationOnMap);
+      : super.fromImage(
+             Flame.images.fromCache('map-location-icon.png'),
+            position: locationOnMap, key: key);
   @override
   FutureOr<void> onLoad() {
     // TODO: implement onLoad
@@ -54,12 +56,11 @@ class MapMarker extends SpriteComponent
     // game.world.removeAll(game.mainComponents);
     // final tiledMap = await TiledComponent.load('test-map2.tmx', Vector2.all(8));
     // game.gameComponents.add(tiledMap);
- 
+
     // final objectGroup2 =
     //     tiledMap.tileMap.getLayer<ObjectGroup>('Object Layer 2');
     // final objectGroup3 =
     //     tiledMap.tileMap.getLayer<ObjectGroup>('Object Layer 3');
-
 
     // final knobPaint = BasicPalette.blue.withAlpha(200).paint();
     // final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();

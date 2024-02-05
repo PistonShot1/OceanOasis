@@ -18,7 +18,7 @@ class JoystickPlayer extends SpriteAnimationComponent
   int horizontalDirection = 0;
   int verticalDirection = 0;
   final Vector2 velocity = Vector2.zero();
-  final double moveSpeed = 100;
+  final double moveSpeed = 300;
   final double pushAwaySpeed = 200.0; // Adjust based on your preference
 
   JoystickPlayer(this.joystick, Vector2 position)
@@ -72,7 +72,7 @@ class JoystickPlayer extends SpriteAnimationComponent
     // TODO: implement onCollisionStart
     super.onCollisionStart(intersectionPoints, other);
     hitbox.paint.color = _collisionStartColor;
-    // print(intersectionPoints);d
+    print(intersectionPoints);
     // // Calculate the collision normal (direction away from the collision)
     // final collisionNormal = (position - other.position).normalized();
 

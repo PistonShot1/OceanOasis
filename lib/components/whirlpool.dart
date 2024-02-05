@@ -43,7 +43,9 @@ class Whirlpool extends PositionComponent
 
     if (other is JoystickPlayer) {
       print('player trying to enter whirlpool');
-      
+      (game.findByKeyName('JoystickHUD') != null)
+          ? game.camera.viewport.remove(game.findByKeyName('JoystickHUD')!)
+          : '';
       game.router.pushReplacement(
           Route(() => PacificOceanUnderwater(
               key: ComponentKey.named(PacificOceanUnderwater.id))),

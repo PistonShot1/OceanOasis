@@ -30,8 +30,10 @@ class MapLevelSelection extends Component with HasGameReference<MyGame> {
 
     await add(worldMap);
     await addAll(markers);
-
+    
     game.mapLevelSelection = this;
+    print('The key : ${game.findByKeyName('MapLevelSelection')}');
+    print('The key RouterComponent : ${game.findByKeyName('RouterComponent')}');
     return super.onLoad();
   }
 
@@ -40,6 +42,7 @@ class MapLevelSelection extends Component with HasGameReference<MyGame> {
     // TODO : convert the map to tiled tmx and add these markers
     return [
       MapMarker(
+          key: ComponentKey.named('MapMarker Pacific'),
           locationOnMap: Vector2(100, 200),
           isMapAvailable: true,
           sceneLoadCallback: () => _generateScene('pacific'),

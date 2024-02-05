@@ -1,9 +1,6 @@
-import 'package:flame/game.dart';
+
 import 'package:flutter/material.dart';
-import 'package:oceanoasis/game.dart';
-import 'package:oceanoasis/homescreen.dart';
 import 'package:oceanoasis/routes/mainmenu.dart';
-import 'package:window_manager/window_manager.dart';
 
 void main() async {
   // final game = MyGame();

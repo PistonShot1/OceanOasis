@@ -32,7 +32,7 @@ class WorldCollider extends PositionComponent
     // TODO: implement onCollisionStart
     print('This box was hit');
     if (onHitCallback) {
-      game.camera.follow(game.birdPlayer);
+      // game.camera.follow(game.birdPlayer);
     }
     super.onCollisionStart(intersectionPoints, other);
   }
