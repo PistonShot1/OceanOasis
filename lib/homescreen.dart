@@ -6,6 +6,7 @@ import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:flutter/src/services/keyboard_key.g.dart';
+import 'package:oceanoasis/components/myScreenhitbox.dart';
 import 'package:oceanoasis/maps/pacific.dart';
 import 'package:oceanoasis/routes/maplevelselection.dart';
 
@@ -28,10 +29,11 @@ class MyGame extends FlameGame
       width: 1920,
       height: 1080,
     );
+    camera.viewport.size = Vector2(1920, 1080);
     camera.viewfinder
       ..zoom = 1
-      ..anchor = Anchor.topLeft;
-   
+      ..anchor = Anchor.center;
+    // add(MyScreenHitbox());
     router = RouterComponent(
         key: ComponentKey.named('RouterComponent'),
         initialRoute: 'MapLevelSelection',

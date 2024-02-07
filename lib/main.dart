@@ -1,11 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:oceanoasis/routes/mainmenu.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() async {
   // final game = MyGame();
   WidgetsFlutterBinding.ensureInitialized();
-  // await windowManager.ensureInitialized();
+  await windowManager.ensureInitialized();
   // await windowsConfig();
   runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -20,5 +21,5 @@ Future windowsConfig() async {
   // await DesktopWindow.setMaxWindowSize(Size(800, 800));
   // await DesktopWindow.setFullScreen(true);
   // await DesktopWindow.setFullScreen(false);
-  // await WindowManager.instance.setFullScreen(true);
+  await WindowManager.instance.setFullScreen(true);
 }

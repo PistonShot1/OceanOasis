@@ -18,8 +18,9 @@ class PacificOceanUnderwater extends Component with HasGameReference<MyGame> {
   @override
   Future<void> onLoad() async {
     // TODO: implement onLoad
+
     tiledMap = await TiledComponent.load('pacific-ocean.tmx', Vector2.all(128));
-    add(tiledMap);
+  add(tiledMap);
     print('Key: ${game.findByKeyName('MapMarker Pacific')}');
     print('The key RouterComponent : ${game.findByKeyName('RouterComponent')}');
     //JoyStick addition and player for mobile
@@ -29,11 +30,12 @@ class PacificOceanUnderwater extends Component with HasGameReference<MyGame> {
   }
 
   void cameraSettings() {
-    game.camera.setBounds(RoundedRectangle.fromLTRBR(10, 10, 10, 10, 10),
-        considerViewport: true);
+    // game.camera.setBounds(RoundedRectangle.fromLTRBR(10, 10, 10, 10, 10),
+    //     considerViewport: true);
     // game.camera.viewfinder.zoom = 1.2;
 
     game.camera.viewport.add(RectangleCollidable(Vector2(1700, 0), true));
+    game.camera.moveBy(Vector2(1920 * 0.5, 1080 * 0.5));
   }
 
   void loadPlayerJoystick() {

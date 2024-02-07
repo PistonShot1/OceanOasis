@@ -30,8 +30,9 @@ class MapLevelSelection extends Component with HasGameReference<MyGame> {
 
     await add(worldMap);
     await addAll(markers);
-    
+
     game.mapLevelSelection = this;
+    game.camera.moveBy(Vector2(1920 * 0.5, 1080 * 0.5));
     print('The key : ${game.findByKeyName('MapLevelSelection')}');
     print('The key RouterComponent : ${game.findByKeyName('RouterComponent')}');
     return super.onLoad();
