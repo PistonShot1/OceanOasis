@@ -8,20 +8,31 @@ import 'package:oceanoasis/homescreen.dart';
 
 class JoystickPlayer extends SpriteAnimationComponent
     with HasGameReference<MyGame>, CollisionCallbacks, KeyboardHandler {
-  double maxSpeed = 200.0;
   late final Vector2 _lastSize = size.clone();
   late final Transform2D _lastTransform = transform.clone();
+  final int playerScene;
+  //Debug variables
   final _collisionStartColor = Colors.amber;
   final _defaultColor = Colors.cyan;
   final JoystickComponent joystick;
+
+  //Hitbox for player
   late ShapeHitbox hitbox;
+
+  //movement variables
   int horizontalDirection = 0;
   int verticalDirection = 0;
   final Vector2 velocity = Vector2.zero();
-  final double moveSpeed = 300;
-  final double pushAwaySpeed = 200.0; // Adjust based on your preference
+  final double moveSpeed = 300; //this the speed
+  double maxSpeed = 200.0; //ignore this , this for joystick
+  final double pushAwaySpeed = 200.0;
 
-  JoystickPlayer(this.joystick, Vector2 position)
+  double? playerhealth;
+  JoystickPlayer(
+      {required this.joystick,
+      required Vector2 position,
+      required this.playerScene,
+      this.playerhealth = 0})
       : super.fromFrameData(
             Flame.images.fromCache('character2-swim1.png'),
             SpriteAnimationData.sequenced(
@@ -66,25 +77,37 @@ class JoystickPlayer extends SpriteAnimationComponent
     super.update(dt);
   }
 
+  //JUN RONG HERE FOR COLLISION ON PLAYER!!
   @override
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
-    // TODO: implement onCollisionStart
     super.onCollisionStart(intersectionPoints, other);
+
+    //DEBUG
     hitbox.paint.color = _collisionStartColor;
-    print(intersectionPoints);
-    // // Calculate the collision normal (direction away from the collision)
-    // final collisionNormal = (position - other.position).normalized();
 
-    // // Set the new velocity away from the collision
-    // velocity.setFrom(collisionNormal * pushAwaySpeed);
 
-    // // Optionally, you can adjust the position slightly to avoid immediate re-collision
-    // position += collisionNormal * 10;
+  }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    // TODO: implement onCollisionEnd
+
+    //DEBUG
+    hitbox.paint.color = _defaultColor;
+
+
+
+    super.onCollisionEnd(other);
   }
 
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    movementKey(keysPressed);
+    return true;
+  }
+
+  void movementKey(Set<LogicalKeyboardKey> keysPressed) {
     horizontalDirection = 0;
     verticalDirection = 0;
     horizontalDirection += (keysPressed.contains(LogicalKeyboardKey.keyA) ||
@@ -103,6 +126,9 @@ class JoystickPlayer extends SpriteAnimationComponent
             keysPressed.contains(LogicalKeyboardKey.arrowDown))
         ? 1
         : 0;
-    return true;
+  }
+
+  set setHealth(double value) {
+    playerhealth = value;
   }
 }
