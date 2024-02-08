@@ -7,6 +7,7 @@ import 'package:flame/input.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:oceanoasis/components/myScreenhitbox.dart';
+import 'package:oceanoasis/maps/bossfight.dart';
 import 'package:oceanoasis/maps/pacific.dart';
 import 'package:oceanoasis/routes/maplevelselection.dart';
 
@@ -36,13 +37,14 @@ class MyGame extends FlameGame
     // add(MyScreenHitbox());
     router = RouterComponent(
         key: ComponentKey.named('RouterComponent'),
-        initialRoute: 'MapLevelSelection',
+        initialRoute: PacificOceanBossFight.id,
         routes: {
           MapLevelSelection.id: Route(
             () =>
                 MapLevelSelection(key: ComponentKey.named('MapLevelSelection')),
           ),
           PacificOcean.id: Route(PacificOcean.new),
+          PacificOceanBossFight.id: Route(() => PacificOceanBossFight())
         });
 
     world.add(router);

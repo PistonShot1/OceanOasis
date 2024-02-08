@@ -20,7 +20,7 @@ class PacificOceanUnderwater extends Component with HasGameReference<MyGame> {
     // TODO: implement onLoad
 
     tiledMap = await TiledComponent.load('pacific-ocean.tmx', Vector2.all(128));
-  add(tiledMap);
+    add(tiledMap);
     print('Key: ${game.findByKeyName('MapMarker Pacific')}');
     print('The key RouterComponent : ${game.findByKeyName('RouterComponent')}');
     //JoyStick addition and player for mobile
@@ -48,8 +48,11 @@ class PacificOceanUnderwater extends Component with HasGameReference<MyGame> {
       margin: const EdgeInsets.only(left: 40, bottom: 40),
     );
     final spawnPoint = tiledMap.tileMap.getLayer<ObjectGroup>('Spawn Point');
-    final player = JoystickPlayer(joystick,
-        Vector2(spawnPoint!.objects.first.x, spawnPoint!.objects.first.y));
+    final player = JoystickPlayer(
+        joystick: joystick,
+        position:
+            Vector2(spawnPoint!.objects.first.x, spawnPoint!.objects.first.y),
+        playerScene: 0);
     add(player);
     (Platform.isAndroid || Platform.isIOS)
         ? game.camera.viewport.add(joystick)

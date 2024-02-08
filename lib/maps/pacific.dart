@@ -69,8 +69,12 @@ class PacificOcean extends Component
       margin: const EdgeInsets.only(left: 40, bottom: 40),
     );
     final spawnPoint = tiledMap.tileMap.getLayer<ObjectGroup>('Spawn Point');
-    player = JoystickPlayer(joystick,
-        Vector2(spawnPoint!.objects.first.x, spawnPoint!.objects.first.y));
+    player = JoystickPlayer(
+      joystick: joystick,
+      position:
+          Vector2(spawnPoint!.objects.first.x, spawnPoint!.objects.first.y),
+      playerScene: 1,
+    );
     // final player = JoystickPlayer(joystick, Vector2(1920 * 0.5, 1080 * 0.5));
     myWorld.add(player);
     myWorld.add(PositionComponent()
