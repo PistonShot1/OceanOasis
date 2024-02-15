@@ -1,12 +1,12 @@
 
 import 'package:flutter/material.dart';
-import 'package:oceanoasis/routes/mainmenu.dart';
+import 'package:oceanoasis/mainmenu.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
   // final game = MyGame();
   WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
+  // await windowManager.ensureInitialized();
   // await windowsConfig();
   runApp(MaterialApp(
       debugShowCheckedModeBanner: false,

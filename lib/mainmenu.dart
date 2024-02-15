@@ -191,6 +191,18 @@ class _MainMenuState extends State<MainMenu> {
                 ),
               ),
             );
+          },
+          "Score": (context, MyGame game) {
+            return Align(
+              alignment: Alignment.topCenter,
+              child: ValueListenableBuilder<double>(
+                valueListenable: game.player.currentLoad,
+                builder:
+                    (BuildContext context, double value, Widget? child) {
+                  return Material(color: Colors.transparent,child: Text('$value'));
+                },
+              ),
+            );
           }
         },
         initialActiveOverlays: [],

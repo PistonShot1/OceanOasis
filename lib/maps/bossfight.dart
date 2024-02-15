@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/painting.dart';
@@ -17,7 +18,7 @@ class PacificOceanBossFight extends Component
   late final JoystickPlayer player;
 
   //DEFINE YOUR CONSTRUCTOR HERE
-  PacificOceanBossFight() {}
+  
 
   @override
   FutureOr<void> onLoad() async {
@@ -70,7 +71,10 @@ class PacificOceanBossFight extends Component
         joystick: joystick,
         position:
             Vector2(spawnPoint!.objects.first.x, spawnPoint!.objects.first.y),
-        playerScene: 0);
+        playerScene: 0, image: Flame.images.fromCache('character2-swim1.png'), animationData: SpriteAnimationData.sequenced(
+                amount: 6, // Number of frames in your animation
+                stepTime: 0.15, // Duration of each frame
+                textureSize: Vector2(48, 48)) );
     bossWorld.add(player);
     (Platform.isAndroid || Platform.isIOS)
         ? game.camera.viewport.add(joystick)

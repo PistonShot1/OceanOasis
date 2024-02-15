@@ -6,7 +6,6 @@ import 'package:flame/extensions.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
-import 'package:oceanoasis/components/myScreenhitbox.dart';
 import 'package:oceanoasis/components/whirlpool.dart';
 import 'package:oceanoasis/components/joystickplayer.dart';
 import 'package:oceanoasis/components/whirlpool.dart';
@@ -26,30 +25,21 @@ class PacificOcean extends Component
   FutureOr<void> onLoad() async {
     // TODO: implement onLoad
     game.camera.moveTo(Vector2.all(0));
-    // game.camera.viewport.anchor = Anchor.topLeft;
-    // game.camera.setBounds(
-    //     Rectangle.fromRect(Rect.fromLTRB(0, 0, 1920 * 0.5, 1080 * 0.5)));
-    // // game.camera.moveTo(Vector2.all(0));
-    // game.camera.viewfinder.zoom = 1.5;
-    // game.camera.moveBy(Vector2.all(0));
-    // game.camera.viewfinder.visibleGameSize = Vector2(1920 * 0.5, 1080 * 0.5);
     game.camera.stop();
+
     myWorld = World();
     tiledMap = await TiledComponent.load('test-map4.tmx', Vector2.all(8));
     await myWorld.add(tiledMap);
+
     cameraComponent = CameraComponent(world: myWorld)
       ..viewport.anchor = Anchor.center;
+
     loadCollision();
-    //JoyStick addition and player for mobile
+
     loadPlayerJoystick();
 
-    cameraComponent
-      ..setBounds(
-          Rectangle.fromRect(const Rect.fromLTRB(
-              1920 * 0.4, 1080 * 0.3, 1920 * 0.65, 1080 * 0.6)),
-          considerViewport: true)
-      ..follow(player);
-    cameraComponent.viewfinder.zoom = 1.5;
+    cameraSettings();
+
     await add(myWorld);
     await add(cameraComponent);
 
@@ -57,6 +47,16 @@ class PacificOcean extends Component
 
     // add(MyScreenHitbox());
     return super.onLoad();
+  }
+
+  void cameraSettings() {
+    cameraComponent
+      ..setBounds(
+          Rectangle.fromRect(const Rect.fromLTRB(
+              1920 * 0.4, 1080 * 0.3, 1920 * 0.65, 1080 * 0.6)),
+          considerViewport: true)
+      ..follow(player);
+    cameraComponent.viewfinder.zoom = 1.5;
   }
 
   void loadPlayerJoystick() {
@@ -69,24 +69,13 @@ class PacificOcean extends Component
       margin: const EdgeInsets.only(left: 40, bottom: 40),
     );
     final spawnPoint = tiledMap.tileMap.getLayer<ObjectGroup>('Spawn Point');
-    player = JoystickPlayer(
-      joystick: joystick,
-      position:
-          Vector2(spawnPoint!.objects.first.x, spawnPoint!.objects.first.y),
-      playerScene: 1,
-    );
-    // final player = JoystickPlayer(joystick, Vector2(1920 * 0.5, 1080 * 0.5));
+    player = game.player;
+
     myWorld.add(player);
     myWorld.add(PositionComponent()
       ..size = Vector2(1920, 1080)
       ..debugMode = true
       ..position = Vector2.all(0));
-    // game.camera.moveBy(Vector2(1920 * 0.5, 1080 * 0.5));
-    // game.camera.viewfinder.visibleGameSize = Vector2(1920*0.5, 1080*0.5);
-    // game.camera.setBounds(
-    //     Rectangle.fromRect(Rect.fromLTRB(0, 0, 1920 * 0.5, 1080 * 0.5)));
-    // // game.camera.viewfinder.zoom = 1.5;
-    // cameraComponent.follow(player);
     (Platform.isAndroid || Platform.isIOS)
         ? game.camera.viewport.add(joystick)
         : '';
@@ -96,10 +85,10 @@ class PacificOcean extends Component
     final collisionGroup =
         tiledMap.tileMap.getLayer<ObjectGroup>('Collision Objects');
     for (final object in collisionGroup!.objects) {
-      if (object.name.compareTo('Whirlpool') == 0) {
-        myWorld.add(Whirlpool(
-            Vector2(object.x, object.y), Vector2(object.width, object.height)));
-      }
+      // if (object.name.compareTo('Whirlpool') == 0) {
+      //   myWorld.add(Whirlpool(
+      //       Vector2(object.x, object.y), Vector2(object.width, object.height)));
+      // }
     }
 
     //SOME LEGIT CODE I COOK : MIGHT NEED IT LATER
