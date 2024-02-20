@@ -41,6 +41,8 @@ dependencies:
   flame_tiled: ^1.18.3
   desktop_window: ^0.4.0
   window_manager: ^0.3.8
+  flame_noise: ^0.2.0
+  flame_bloc: ^1.10.10
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +71,12 @@ flutter:
     - assets/images/
     - assets/images/water/
     - assets/tiles/
+    - assets/images/waste/
+    - assets/images/creatures/turtle/
+    - assets/images/ui/
+    - assets/images/tools/
+    - assets/images/main-character-1/
+    - assets/images/depositeland/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

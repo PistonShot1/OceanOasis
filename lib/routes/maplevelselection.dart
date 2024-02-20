@@ -5,7 +5,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:oceanoasis/components/mapmarker.dart';
-import 'package:oceanoasis/homescreen.dart';
+import 'package:oceanoasis/routes/homescreen.dart';
 import 'package:oceanoasis/maps/pacific.dart';
 
 class MapLevelSelection extends Component with HasGameReference<MyGame> {
@@ -24,13 +24,17 @@ class MapLevelSelection extends Component with HasGameReference<MyGame> {
     // TODO: implement onLoad
     worldMap.size = Vector2(1920, 1080);
     final List<MapMarker> markers = _getMarkers();
+    game.overlays.add('TopMenu2');
 
     maplevelcomponents.add(worldMap);
     maplevelcomponents.addAll(markers);
 
     await add(worldMap);
     await addAll(markers);
-
+    await add(PositionComponent(children: [game.player, ScreenHitbox()
+    ])
+      ..debugMode = true
+      ..size = Vector2.all(500));
     game.mapLevelSelection = this;
     game.camera.moveBy(Vector2(1920 * 0.5, 1080 * 0.5));
     print('The key : ${game.findByKeyName('MapLevelSelection')}');
@@ -60,5 +64,12 @@ class MapLevelSelection extends Component with HasGameReference<MyGame> {
       default:
         return Component();
     }
+  }
+
+  @override
+  void onRemove() {
+    // TODO: implement onRemove
+    game.overlays.remove('TopMenu2');
+    super.onRemove();
   }
 }

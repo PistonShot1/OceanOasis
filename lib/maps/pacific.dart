@@ -1,62 +1,57 @@
 import 'dart:async';
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/experimental.dart';
-import 'package:flame/extensions.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flutter/material.dart';
-import 'package:oceanoasis/components/myScreenhitbox.dart';
-import 'package:oceanoasis/components/whirlpool.dart';
-import 'package:oceanoasis/components/joystickplayer.dart';
-import 'package:oceanoasis/components/whirlpool.dart';
-import 'package:oceanoasis/homescreen.dart';
+import 'package:flutter/material.dart' hide Image;
+import 'package:oceanoasis/components/overworldplayer.dart';
+import 'package:oceanoasis/routes/homescreen.dart';
 import 'dart:io' show Platform;
 
-class PacificOcean extends Component
-    with HasCollisionDetection, HasGameReference<MyGame> {
+class PacificOcean extends PositionComponent
+    with
+        HasCollisionDetection,
+        DragCallbacks,
+        HasGameReference<MyGame>,
+        TapCallbacks {
   late final TiledComponent tiledMap;
   static const id = 'PacificOcean';
   late final CameraComponent cameraComponent;
   late final World myWorld;
-  late final JoystickPlayer player;
+  late final OverworldPlayer player;
 
-  PacificOcean({super.key});
+  bool _isDragged = false;
+
+  PacificOcean({super.key}) : super(size: Vector2(1920, 1080));
   @override
   FutureOr<void> onLoad() async {
     // TODO: implement onLoad
-    game.camera.moveTo(Vector2.all(0));
-    // game.camera.viewport.anchor = Anchor.topLeft;
-    // game.camera.setBounds(
-    //     Rectangle.fromRect(Rect.fromLTRB(0, 0, 1920 * 0.5, 1080 * 0.5)));
-    // // game.camera.moveTo(Vector2.all(0));
-    // game.camera.viewfinder.zoom = 1.5;
-    // game.camera.moveBy(Vector2.all(0));
-    // game.camera.viewfinder.visibleGameSize = Vector2(1920 * 0.5, 1080 * 0.5);
     game.camera.stop();
+    game.overlays.add('TopMenu');
+
     myWorld = World();
-    tiledMap = await TiledComponent.load('test-map4.tmx', Vector2.all(8));
+    tiledMap = await TiledComponent.load('depositeland.tmx', Vector2.all(16));
     await myWorld.add(tiledMap);
+
+    // loadCollision();
     cameraComponent = CameraComponent(world: myWorld)
       ..viewport.anchor = Anchor.center;
-    loadCollision();
-    //JoyStick addition and player for mobile
-    loadPlayerJoystick();
 
-    cameraComponent
-      ..setBounds(
-          Rectangle.fromRect(const Rect.fromLTRB(
-              1920 * 0.4, 1080 * 0.3, 1920 * 0.65, 1080 * 0.6)),
-          considerViewport: true)
-      ..follow(player);
-    cameraComponent.viewfinder.zoom = 1.5;
+    loadPlayerJoystick();
+    cameraSettings();
     await add(myWorld);
     await add(cameraComponent);
 
-    print('The key RouterComponent : ${game.findByKeyName('RouterComponent')}');
-
     // add(MyScreenHitbox());
     return super.onLoad();
+  }
+
+  void cameraSettings() {
+    
+    cameraComponent.viewfinder.zoom = 1;
+    cameraComponent.follow(player);
   }
 
   void loadPlayerJoystick() {
@@ -69,24 +64,17 @@ class PacificOcean extends Component
       margin: const EdgeInsets.only(left: 40, bottom: 40),
     );
     final spawnPoint = tiledMap.tileMap.getLayer<ObjectGroup>('Spawn Point');
-    player = JoystickPlayer(
-      joystick: joystick,
-      position:
-          Vector2(spawnPoint!.objects.first.x, spawnPoint!.objects.first.y),
-      playerScene: 1,
-    );
-    // final player = JoystickPlayer(joystick, Vector2(1920 * 0.5, 1080 * 0.5));
+    player = OverworldPlayer(
+        joystick: joystick,
+        position:
+            Vector2(spawnPoint!.objects.first.x, spawnPoint.objects.first.y),
+        playerScene: 0,
+        image: Flame.images.fromCache('character-walk1.png'),
+        animationData: SpriteAnimationData.sequenced(
+            amount: 7, stepTime: 0.1, textureSize: Vector2.all(128)),
+        size: Vector2.all(64));
+
     myWorld.add(player);
-    myWorld.add(PositionComponent()
-      ..size = Vector2(1920, 1080)
-      ..debugMode = true
-      ..position = Vector2.all(0));
-    // game.camera.moveBy(Vector2(1920 * 0.5, 1080 * 0.5));
-    // game.camera.viewfinder.visibleGameSize = Vector2(1920*0.5, 1080*0.5);
-    // game.camera.setBounds(
-    //     Rectangle.fromRect(Rect.fromLTRB(0, 0, 1920 * 0.5, 1080 * 0.5)));
-    // // game.camera.viewfinder.zoom = 1.5;
-    // cameraComponent.follow(player);
     (Platform.isAndroid || Platform.isIOS)
         ? game.camera.viewport.add(joystick)
         : '';
@@ -96,36 +84,67 @@ class PacificOcean extends Component
     final collisionGroup =
         tiledMap.tileMap.getLayer<ObjectGroup>('Collision Objects');
     for (final object in collisionGroup!.objects) {
-      if (object.name.compareTo('Whirlpool') == 0) {
-        myWorld.add(Whirlpool(
-            Vector2(object.x, object.y), Vector2(object.width, object.height)));
-      }
+      // if (object.name.compareTo('Whirlpool') == 0) {
+      //   myWorld.add(Whirlpool(
+      //       Vector2(object.x, object.y), Vector2(object.width, object.height)));
+      // }
     }
-
-    //SOME LEGIT CODE I COOK : MIGHT NEED IT LATER
-    // for (final object in objectGroup!.objects) {
-    //   if (object.isPolygon) {
-    //     List<Vector2> polygonPoints = [];
-    //     for (var element in object.polygon) {
-    //       polygonPoints.add(Vector2(
-    //           element.x / 2 + object.x / 2, element.y / 2 + object.y / 2));
-    //     }
-    //     game.gameComponents.add(
-    //       PolygonComponent(
-    //         polygonPoints,
-    //       ),
-    //     );
-    //   } else if (object.isRectangle) {
-    //     game.gameComponents.add(RectangleComponent(
-    //         size: Vector2(object.width, object.height),
-    //         position: Vector2(object.x, object.y),
-    //         children: [RectangleHitbox()]));
-    //   } else if (object.isEllipse) {
-    //     game.gameComponents.add(CircleComponent(
-    //         radius: 80,
-    //         position: Vector2(object.x, object.y),
-    //         paint: BasicPalette.green.paint()));
-    //   }
-    // }
   }
+
+  @override
+  void onDragStart(DragStartEvent event) {
+    super.onDragStart(event);
+    _isDragged = true;
+    print('hello');
+  }
+
+  @override
+  void onDragUpdate(DragUpdateEvent event) {
+    print('object');
+    position += event.localDelta;
+  }
+
+  @override
+  void onDragEnd(DragEndEvent event) {
+    super.onDragEnd(event);
+    _isDragged = false;
+  }
+
+  @override
+  void onRemove() {
+    game.overlays.remove("TopMenu");
+    super.onRemove();
+  }
+
+  @override
+  void onTapUp(TapUpEvent event) {
+    // TODO: implement onTapUp
+    print('tapping');
+    super.onTapUp(event);
+  }
+  //SOME LEGIT CODE I COOK : MIGHT NEED IT LATER
+  // for (final object in objectGroup!.objects) {
+  //   if (object.isPolygon) {
+  //     List<Vector2> polygonPoints = [];
+  //     for (var element in object.polygon) {
+  //       polygonPoints.add(Vector2(
+  //           element.x / 2 + object.x / 2, element.y / 2 + object.y / 2));
+  //     }
+  //     game.gameComponents.add(
+  //       PolygonComponent(
+  //         polygonPoints,
+  //       ),
+  //     );
+  //   } else if (object.isRectangle) {
+  //     game.gameComponents.add(RectangleComponent(
+  //         size: Vector2(object.width, object.height),
+  //         position: Vector2(object.x, object.y),
+  //         children: [RectangleHitbox()]));
+  //   } else if (object.isEllipse) {
+  //     game.gameComponents.add(CircleComponent(
+  //         radius: 80,
+  //         position: Vector2(object.x, object.y),
+  //         paint: BasicPalette.green.paint()));
+  //   }
+  // }
 }

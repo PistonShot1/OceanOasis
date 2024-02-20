@@ -1,7 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
-import 'package:oceanoasis/homescreen.dart';
+import 'package:oceanoasis/routes/homescreen.dart';
 
 class RectangleCollidable extends PositionComponent
     with CollisionCallbacks, HasGameReference<MyGame> {
@@ -12,11 +12,12 @@ class RectangleCollidable extends PositionComponent
 
   RectangleCollidable(
     Vector2 position,
+    Vector2 size,
     this._camerafollow,
   ) : super(
           position: position,
-          size: Vector2(50, 1080),
-          anchor: Anchor.topCenter,
+          size: size,
+          anchor: Anchor.topLeft,
         );
 
   @override
@@ -38,11 +39,13 @@ class RectangleCollidable extends PositionComponent
     super.onCollisionStart(intersectionPoints, other);
     hitbox.paint.color = _collisionStartColor;
   }
-   @override
+
+  @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
     // TODO: implement onCollision
     super.onCollision(intersectionPoints, other);
   }
+
   @override
   void onCollisionEnd(PositionComponent other) {
     super.onCollisionEnd(other);
