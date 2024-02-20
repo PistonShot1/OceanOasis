@@ -6,7 +6,7 @@ import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
-import 'package:oceanoasis/homescreen.dart';
+import 'package:oceanoasis/routes/homescreen.dart';
 import 'package:oceanoasis/maps/pacific.dart';
 
 class MapMarker extends SpriteComponent

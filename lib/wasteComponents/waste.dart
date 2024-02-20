@@ -4,25 +4,37 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
-import 'package:flutter/material.dart';
+import 'package:flame/image_composition.dart';
+import 'package:flutter/material.dart' hide Image;
 import 'package:oceanoasis/components/joystickplayer.dart';
-import 'package:oceanoasis/homescreen.dart';
+import 'package:oceanoasis/routes/homescreen.dart';
 import 'package:oceanoasis/tools/slashEffect.dart';
 
 class Waste extends SpriteComponent
-    with CollisionCallbacks, TapCallbacks, HasGameReference<MyGame> {
+    with CollisionCallbacks, HasGameReference<MyGame> {
   late ShapeHitbox hitbox;
   final _collisionStartColor = Colors.amber;
   final _defaultColor = Colors.green;
-
+  int decayTime;
   final String id;
   double points;
+  bool lastWaste =
+      false; // default is false (this is a helper variable to detect last spawn in the tree)
   Waste({
-    required Vector2 position,
+    required Sprite sprite,
     required this.id,
     required this.points,
-  }) : super.fromImage(Flame.images.fromCache('waste/newspaper.png'),
-            position: position, size: Vector2.all(64));
+    required this.decayTime,
+    ComponentKey? key,
+  }) : super(sprite: sprite, size: Vector2.all(64), key: key);
+
+  Waste.clone(Waste waste, ComponentKey? key)
+      : this(
+            sprite: waste.sprite!,
+            id: waste.id,
+            points: waste.points,
+            decayTime: waste.decayTime,
+            key: key);
 
   bool startDecay = true;
   @override
@@ -47,15 +59,15 @@ class Waste extends SpriteComponent
   @override
   void update(double dt) {
     // TODO: implement update
-    if (isLoaded) {
-      if (startDecay) {
-        Future.delayed(const Duration(seconds: 5), () async {
-          decay();
-        });
-      }
-      startDecay = false;
-    }
+
     super.update(dt);
+  }
+
+  @override
+  void onMount() {
+    // TODO: implement onMount
+    decay();
+    super.onMount();
   }
 
   @override
@@ -105,19 +117,28 @@ class Waste extends SpriteComponent
     ]);
   }
 
-  @override
-  void onTapUp(TapUpEvent event) {
-    // TODO: implement onTapUp
-    collect(game.player);
-    removeFromParent();
-    super.onTapUp(event);
-  }
-
   void decay() {
-    if (isMounted) {
-      removeFromParent();
+    if (isLoaded) {
+      if (startDecay) {
+        Future.delayed(Duration(seconds: decayTime), () async {
+          if (isMounted) {
+            removeFromParent();
+          }
+        });
+      }
+      startDecay = false;
     }
   }
 
   void loadPuzzle() {}
+  @override
+  void onRemove() {
+    // TODO: implement onRemove
+    super.onRemove();
+  }
+  // Waste clone() {
+  //   Waste newComponent =
+  //       Waste(sprite: this.sprite!, id: this.id, points: this.points);
+  //   return newComponent;
+  // }
 }

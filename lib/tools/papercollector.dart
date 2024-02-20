@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/image_composition.dart';
+import 'package:flame_noise/flame_noise.dart';
 import 'package:flutter/material.dart';
 import 'package:oceanoasis/tools/slashEffect.dart';
 
@@ -26,6 +27,7 @@ class PaperCollector extends SpriteComponent with CollisionCallbacks {
     // TODO: implement onLoad
 
     //Debug
+    
 
     return super.onLoad();
   }

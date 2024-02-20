@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="120" height="74" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="8">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="120" height="74" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="14">
  <tileset firstgid="1" name="water-wave-sprite-sheet" tilewidth="16" tileheight="16" tilecount="320" columns="8">
   <image source="water/water-wave-sprite-sheet.png" width="128" height="640"/>
   <tile id="8">
@@ -297,15 +297,23 @@
 41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41
 </data>
  </layer>
- <objectgroup id="5" name="UI layer">
+ <objectgroup id="5" name="UI layer" visible="0">
   <object id="5" name="Item toolbar" x="1844.67" y="343.333">
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="3" name="Spawn Layer">
+ <objectgroup id="7" name="Movement Layer">
+  <object id="13" x="28.7865" y="24.2425" width="1860.61" height="1130.3"/>
+ </objectgroup>
+ <objectgroup id="6" name="Breathing Layer" visible="0">
+  <object id="9" x="969.333" y="277.333">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="3" name="Spawn Layer" visible="0">
   <object id="2" x="218" y="346" width="1488" height="736"/>
  </objectgroup>
- <objectgroup id="2" name="Player Spawn">
+ <objectgroup id="2" name="Player Spawn" visible="0">
   <object id="4" x="960" y="656">
    <point/>
   </object>

@@ -1,7 +1,7 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
-import 'package:oceanoasis/homescreen.dart';
+import 'package:oceanoasis/routes/homescreen.dart';
 
 class RectangleCollidable extends PositionComponent
     with CollisionCallbacks, HasGameReference<MyGame> {

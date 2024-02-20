@@ -1,14 +1,33 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
-import 'package:oceanoasis/homescreen.dart';
+import 'package:oceanoasis/routes/homescreen.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/maps/pacificunderwater.dart';
 
-class LevelSelection extends StatelessWidget {
+// ignore: must_be_immutable
+class LevelSelection extends StatefulWidget {
   static String id = 'LevelSelection';
-  const LevelSelection({super.key, this.onLevelSelected});
- 
+  LevelSelection(
+      {super.key,
+      this.onLevelSelected,
+      required this.toFacility,
+      required this.toBossWorldSelection});
+
   final ValueChanged<int>? onLevelSelected;
+  VoidCallback toFacility;
+  VoidCallback toBossWorldSelection;
+  @override
+  State<LevelSelection> createState() => _LevelSelectionState();
+}
+
+class _LevelSelectionState extends State<LevelSelection> {
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -19,6 +38,50 @@ class LevelSelection extends StatelessWidget {
           'assets/images/main-menu-background.jpg',
           fit: BoxFit.cover,
         )),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: InkWell(
+                    onTap: () {
+                      widget.toFacility();
+                    },
+                    child: Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.blue,
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black, blurRadius: 2)
+                            ]),
+                        child: Image.asset('assets/images/ui/recycle.png')),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    widget.toBossWorldSelection();
+                  },
+                  child: Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.blue,
+                          boxShadow: const [
+                            BoxShadow(color: Colors.black, blurRadius: 2)
+                          ]),
+                      child: Image.asset('assets/images/earth-pixel-icon.png')),
+                )
+              ],
+            ),
+          ),
+        ),
         Positioned(
           child: Container(
             padding: EdgeInsets.all(50),
@@ -74,7 +137,7 @@ class LevelSelection extends StatelessWidget {
             style: ButtonStyle(
                 padding: MaterialStateProperty.all(const EdgeInsets.all(20))),
             onPressed: () {
-              onLevelSelected!.call(value['levelNumber']);
+              widget.onLevelSelected!.call(value['levelNumber']);
             },
             child: Column(
               children: [Text('Level $key')],

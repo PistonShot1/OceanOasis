@@ -6,7 +6,7 @@ import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:oceanoasis/components/joystickplayer.dart';
-import 'package:oceanoasis/homescreen.dart';
+import 'package:oceanoasis/routes/homescreen.dart';
 import 'package:oceanoasis/tools/slashEffect.dart';
 
 class NewsPaper extends SpriteComponent

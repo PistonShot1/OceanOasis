@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
-import 'package:oceanoasis/homescreen.dart';
+import 'package:oceanoasis/routes/homescreen.dart';
 
 class mutantFish extends SpriteAnimationComponent with HasGameReference<MyGame>, CollisionCallbacks{
   final destroyTime = 10;

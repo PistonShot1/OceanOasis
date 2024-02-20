@@ -9,8 +9,9 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/painting.dart';
 import 'package:oceanoasis/components/Boss/crabBoss.dart';
 import 'package:oceanoasis/components/joystickplayer.dart';
+import 'package:oceanoasis/components/overworldplayer.dart';
 import 'package:oceanoasis/components/projectiles/mutantFish.dart';
-import 'package:oceanoasis/homescreen.dart';
+import 'package:oceanoasis/routes/homescreen.dart';
 
 class PacificOceanBossFight extends Component
     with HasCollisionDetection, HasGameReference<MyGame> {
@@ -18,7 +19,7 @@ class PacificOceanBossFight extends Component
   static const id = 'PacificOceanBoss';
   late final CameraComponent cameraComponent;
   late final World bossWorld;
-  late final JoystickPlayer player;
+  late final OverworldPlayer player;
 
   //DEFINE YOUR CONSTRUCTOR HERE
   PacificOceanBossFight() {
@@ -75,21 +76,22 @@ class PacificOceanBossFight extends Component
       margin: const EdgeInsets.only(left: 40, bottom: 40),
     );
     final spawnPoint = tiledMap.tileMap.getLayer<ObjectGroup>('Spawn Point');
-     player = JoystickPlayer(
+     player = OverworldPlayer(
         joystick: joystick,
         position:
             Vector2(spawnPoint!.objects.first.x, spawnPoint!.objects.first.y),
         playerScene: 0, image: Flame.images.fromCache('character2-swim1.png'), animationData: SpriteAnimationData.sequenced(
                 amount: 6, // Number of frames in your animation
                 stepTime: 0.15, // Duration of each frame
-                textureSize: Vector2(48, 48)) );
+                textureSize: Vector2(48, 48)), size: Vector2.all(48) );
     bossWorld.add(player);
     (Platform.isAndroid || Platform.isIOS)
         ? game.camera.viewport.add(joystick)
         : '';
+
+    
   }
   
-
   void spawnBoss() {
     final boss = crabBoss(bossWorld);
     bossWorld.add(boss);

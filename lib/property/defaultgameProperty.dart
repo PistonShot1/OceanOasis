@@ -4,14 +4,40 @@ import 'package:flame/game.dart';
 import 'package:oceanoasis/maps/pacificunderwater.dart';
 import 'package:oceanoasis/tools/papercollector.dart';
 import 'package:oceanoasis/tools/slashEffect.dart';
+import 'package:oceanoasis/wasteComponents/waste.dart';
 
 class LevelProperty {
   static Map<String, dynamic> levelProperty = {
-    '1': {'levelNumber': 1, 'maxSpawn': 5},
-    '2': {'levelNumber': 2, 'maxSpawn': 10},
-    '3': {'levelNumber': 3, 'maxSpawn': 15},
-    '4': {'levelNumber': 4, 'maxSpawn': 20},
-    '5': {'levelNumber': 5, 'maxSpawn': 25},
+    '1': {
+      'levelNumber': 1,
+      'maxSpawn': 2,
+      'tideEvent': false,
+      'breathingEvent': false
+    },
+    '2': {
+      'levelNumber': 2,
+      'maxSpawn': 15,
+      'tideEvent': false,
+      'breathingEvent': true
+    },
+    '3': {
+      'levelNumber': 3,
+      'maxSpawn': 15,
+      'tideEvent': true,
+      'breathingEvent': true
+    },
+    '4': {
+      'levelNumber': 4,
+      'maxSpawn': 15,
+      'tideEvent': true,
+      'breathingEvent': true
+    },
+    '5': {
+      'levelNumber': 5,
+      'maxSpawn': 15,
+      'tideEvent': true,
+      'breathingEvent': true
+    },
   };
 }
 
@@ -26,7 +52,12 @@ class ToolSlashProperty {
           position: Vector2(-16, 24),
           slashType: 'Paper',
           slashEffect: SlashEffect(
-              Flame.images.fromCache('tools/tool1-effect1.png'), 'Paper'))
+            Flame.images.fromCache('tools/tool1-effect1.png'),
+            'Paper',
+            amount: 1,
+            stepTime: 0.5,
+            textureSize: Vector2.all(256),
+          ))
         ..anchor = Anchor.center,
       'icontool': PaperCollector(
         id: 'PaperCollectorIcon',
@@ -45,7 +76,12 @@ class ToolSlashProperty {
           size: Vector2.all(32),
           slashType: 'Plastic',
           slashEffect: SlashEffect(
-              Flame.images.fromCache('tools/tool2-effect1.png'), 'Plastic'))
+            Flame.images.fromCache('tools/tool2-effect1.png'),
+            'Plastic',
+            amount: 1,
+            stepTime: 0.5,
+            textureSize: Vector2.all(496)
+          ))
         ..anchor = Anchor.center,
       'icontool': PaperCollector(
         id: 'PlasticCollectorIcon',
@@ -64,7 +100,12 @@ class ToolSlashProperty {
           size: Vector2.all(32),
           slashType: 'Metal',
           slashEffect: SlashEffect(
-              Flame.images.fromCache('tools/tool3-effect1.png'), 'Metal'))
+            Flame.images.fromCache('tools/tool3-effect1.png'),
+            'Metal',
+            amount: 1,
+            stepTime: 0.5,
+            textureSize: Vector2.all(496),
+          ))
         ..anchor = Anchor.center,
       'icontool': PaperCollector(
         id: 'MetalCollectorIcon',
@@ -77,7 +118,23 @@ class ToolSlashProperty {
   ];
 }
 
-// class WasteProperty{
-//   //temporary
-//   static List<Wast
-// }
+class WasteProperty {
+  //temporary
+  static List<Waste> wasteProperty = [
+    Waste(
+        sprite: Sprite(Flame.images.fromCache('waste/newspaper.png')),
+        id: 'Paper',
+        points: 5,
+        decayTime: 10),
+    Waste(
+        sprite: Sprite(Flame.images.fromCache('waste/plastic-bag.png')),
+        id: 'Plastic',
+        points: 10,
+        decayTime: 10),
+    Waste(
+        sprite: Sprite(Flame.images.fromCache('waste/can.png')),
+        id: 'Metal',
+        points: 15,
+        decayTime: 10),
+  ];
+}
