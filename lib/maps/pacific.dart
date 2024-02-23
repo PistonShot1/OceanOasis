@@ -6,11 +6,12 @@ import 'package:flame/flame.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide Image;
-import 'package:oceanoasis/components/overworldplayer.dart';
+import 'package:oceanoasis/components/joystickplayer.dart';
+import 'package:oceanoasis/components/Boss/overworldplayer.dart';
 import 'package:oceanoasis/routes/homescreen.dart';
 import 'dart:io' show Platform;
 
-class PacificOcean extends PositionComponent
+class PacificOcean extends Component
     with
         HasCollisionDetection,
         DragCallbacks,
@@ -24,7 +25,7 @@ class PacificOcean extends PositionComponent
 
   bool _isDragged = false;
 
-  PacificOcean({super.key}) : super(size: Vector2(1920, 1080));
+  PacificOcean({super.key});
   @override
   FutureOr<void> onLoad() async {
     // TODO: implement onLoad
@@ -49,8 +50,9 @@ class PacificOcean extends PositionComponent
   }
 
   void cameraSettings() {
-    
-    cameraComponent.viewfinder.zoom = 1;
+    cameraComponent.viewfinder.zoom = 1.5;
+
+    cameraComponent.moveBy(Vector2(1920 / 2, 1080 / 2));
     cameraComponent.follow(player);
   }
 
@@ -65,16 +67,22 @@ class PacificOcean extends PositionComponent
     );
     final spawnPoint = tiledMap.tileMap.getLayer<ObjectGroup>('Spawn Point');
     player = OverworldPlayer(
-        joystick: joystick,
-        position:
-            Vector2(spawnPoint!.objects.first.x, spawnPoint.objects.first.y),
-        playerScene: 0,
-        image: Flame.images.fromCache('character-walk1.png'),
-        animationData: SpriteAnimationData.sequenced(
-            amount: 7, stepTime: 0.1, textureSize: Vector2.all(128)),
-        size: Vector2.all(64));
+      joystick: joystick,
+      position: Vector2.zero(),
+      playerScene: 1,
+      image: Flame.images.fromCache('character-walk1.png'),
+      animationData: SpriteAnimationData.sequenced(
+          amount: 7, stepTime: 0.1, textureSize: Vector2.all(128)),
+    )
+      ..anchor = Anchor.center
+      ..debugMode = true;
 
-    myWorld.add(player);
+    player.setPosition =
+        Vector2(spawnPoint!.objects.first.x, spawnPoint.objects.first.y);
+    player.anchor = Anchor.center;
+    player.size = Vector2.all(64);
+
+    tiledMap.add(player);
     (Platform.isAndroid || Platform.isIOS)
         ? game.camera.viewport.add(joystick)
         : '';
@@ -101,7 +109,6 @@ class PacificOcean extends PositionComponent
   @override
   void onDragUpdate(DragUpdateEvent event) {
     print('object');
-    position += event.localDelta;
   }
 
   @override
@@ -113,6 +120,8 @@ class PacificOcean extends PositionComponent
   @override
   void onRemove() {
     game.overlays.remove("TopMenu");
+    cameraComponent.removeFromParent();
+    myWorld.removeFromParent();
     super.onRemove();
   }
 

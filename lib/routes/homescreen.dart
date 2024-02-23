@@ -7,8 +7,8 @@ import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
 import 'package:oceanoasis/components/joystickplayer.dart';
-import 'package:oceanoasis/components/toolbox.dart';
-import 'package:oceanoasis/maps/bossfight.dart';
+import 'package:oceanoasis/tools/toolbox.dart';
+import 'package:oceanoasis/components/Boss/bossfight.dart';
 import 'package:oceanoasis/maps/pacific.dart';
 import 'package:oceanoasis/maps/pacificunderwater.dart';
 import 'package:oceanoasis/routes/gameOver.dart';
@@ -20,7 +20,6 @@ class MyGame extends FlameGame
   late SpriteComponent backgroundImage;
   List<Component> mainComponents = [];
   List<Component> gameComponents = [];
-  late MapLevelSelection mapLevelSelection;
   final MediaQueryData screeninfo;
 
   late final RouterComponent router;
@@ -36,7 +35,6 @@ class MyGame extends FlameGame
   Future<void> onLoad() async {
     await loadAssets();
     //SET camera bound
-
 
     routes = {
       MapLevelSelection.id: Route(
@@ -69,7 +67,8 @@ class MyGame extends FlameGame
         ),
       )
     };
-    router = RouterComponent(initialRoute: LevelSelection.id, routes: routes);
+    router =
+        RouterComponent(initialRoute: PacificOceanBossFight.id, routes: routes);
 
     final knobPaint = BasicPalette.blue.withAlpha(200).paint();
     final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
@@ -83,14 +82,24 @@ class MyGame extends FlameGame
 
     //GLOBAL Component
     player = JoystickPlayer(
-        joystick: joystick,
-        position: Vector2(0, 0),
-        playerScene: 0,
-        image: Flame.images.fromCache('character2-swim1.png'),
-        animationData: SpriteAnimationData.sequenced(
-            amount: 6, // Number of frames in your animation
-            stepTime: 0.15, // Duration of each frame
-            textureSize: Vector2(48, 48)));
+      joystick: joystick,
+      position: Vector2(0, 0),
+      playerScene: 0,
+      idleimage: Flame.images.fromCache('main-character-1/Swim.png'),
+      idleanimationData: SpriteAnimationData.sequenced(
+          amount: 6, // Number of frames in your animation
+          stepTime: 0.15, // Duration of each frame
+          textureSize: Vector2(48, 48)),
+      hitAnimation: SpriteAnimation.fromFrameData(
+        Flame.images.fromCache('main-character-1/Attack.png'),
+        SpriteAnimationData.sequenced(
+            amount: 7, // Number of frames in your animation
+            stepTime: 0.1, // Duration of each frame
+            textureSize: Vector2(48, 48)),
+      ),
+    );
+    player.idle!.size = Vector2.all(64);
+    player.idle!.scale = Vector2.all(2);
     // List<SpriteAnimationFrame> frames = [];
     // player.animation = SpriteAnimation(frames);
 

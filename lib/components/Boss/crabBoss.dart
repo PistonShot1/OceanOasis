@@ -10,9 +10,6 @@ import 'package:oceanoasis/components/projectiles/toxicSmoke.dart';
 import 'package:oceanoasis/routes/homescreen.dart';
 
 
-
-
-
 class crabBoss extends SpriteAnimationComponent with HasGameReference<MyGame>, CollisionCallbacks{
     final initialPosition = Vector2(1000, 700);
     final initialSize = Vector2(256, 256);
@@ -56,6 +53,7 @@ class crabBoss extends SpriteAnimationComponent with HasGameReference<MyGame>, C
       ));
       add(RectangleHitbox());
       debugMode = true;
+    add(PositionComponent()..size=Vector2.all(50)..debugMode=true);
     return super.onLoad();
   }
 
@@ -149,5 +147,8 @@ class crabBoss extends SpriteAnimationComponent with HasGameReference<MyGame>, C
     super.update(dt);
   }
   
+  void takedDamage(){
+    
+  }
 }
 

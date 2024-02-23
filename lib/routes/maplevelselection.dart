@@ -3,43 +3,50 @@ import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/material.dart';
+import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flutter/material.dart' hide Route;
+import 'package:oceanoasis/components/Boss/bossfight.dart';
 import 'package:oceanoasis/components/mapmarker.dart';
+import 'package:oceanoasis/maps/pacificunderwater.dart';
 import 'package:oceanoasis/routes/homescreen.dart';
 import 'package:oceanoasis/maps/pacific.dart';
 
 class MapLevelSelection extends Component with HasGameReference<MyGame> {
   static const id = 'MapLevelSelection';
-
-  final SpriteComponent worldMap;
+  late final List<MapMarker> markers;
+  TiledComponent? map;
+  World world = World();
   final VoidCallback? onExitPressed;
   List<Component> maplevelcomponents = [];
 
-  MapLevelSelection({this.onExitPressed, super.key})
-      : worldMap = SpriteComponent.fromImage(
-          Flame.images.fromCache('earth-map-final.jpeg'),
-        );
+  MapLevelSelection({this.onExitPressed, super.key});
   @override
   FutureOr<void> onLoad() async {
-    // TODO: implement onLoad
-    worldMap.size = Vector2(1920, 1080);
-    final List<MapMarker> markers = _getMarkers();
-    game.overlays.add('TopMenu2');
+    //Overlays
+    overlaysSetting();
+    game.camera.stop();
+    // game.world = world;
+    map = await TiledComponent.load('earth-map-final.tmx', Vector2.all(16));
+    world.add(map!);
 
-    maplevelcomponents.add(worldMap);
-    maplevelcomponents.addAll(markers);
+    getMarkers();
+    await add(world);
 
-    await add(worldMap);
-    await addAll(markers);
-    await add(PositionComponent(children: [game.player, ScreenHitbox()
-    ])
-      ..debugMode = true
-      ..size = Vector2.all(500));
-    game.mapLevelSelection = this;
-    game.camera.moveBy(Vector2(1920 * 0.5, 1080 * 0.5));
-    print('The key : ${game.findByKeyName('MapLevelSelection')}');
-    print('The key RouterComponent : ${game.findByKeyName('RouterComponent')}');
+    cameraSettings();
+
     return super.onLoad();
+  }
+
+  void getMarkers() {
+    markers = _getMarkers();
+    world.addAll(markers);
+  }
+
+  void overlaysSetting() {
+    if (game.overlays.activeOverlays.isEmpty) {
+      game.overlays.removeAll(game.overlays.activeOverlays);
+    }
+    game.overlays.add('TopMenu2');
   }
 
   List<MapMarker> _getMarkers() {
@@ -47,12 +54,15 @@ class MapLevelSelection extends Component with HasGameReference<MyGame> {
     // TODO : convert the map to tiled tmx and add these markers
     return [
       MapMarker(
-          key: ComponentKey.named('MapMarker Pacific'),
-          locationOnMap: Vector2(100, 200),
-          isMapAvailable: true,
-          sceneLoadCallback: () => _generateScene('pacific'),
-          mapName: PacificOcean.id),
-      // MapMarker(locationOnMap: Vector2(600, 500), isMapAvailable: true)
+        locationOnMap: Vector2(100, 300),
+        bossFightSceneRoute: () {
+          game.router.pushReplacement(Route(() => PacificOceanBossFight()));
+        },
+        levelChallengeRoute: () {
+          game.router.pushReplacement(Route(
+              () => PacificOceanUnderwater(levelNumber: 1, playeritems: 3)));
+        },
+      ),
     ];
   }
 
@@ -71,5 +81,11 @@ class MapLevelSelection extends Component with HasGameReference<MyGame> {
     // TODO: implement onRemove
     game.overlays.remove('TopMenu2');
     super.onRemove();
+  }
+
+  void cameraSettings() {
+    game.camera = CameraComponent.withFixedResolution(
+        world: world, height: 1024, width: 1920);
+    game.camera.moveBy(Vector2(map!.size.x * 0.5, map!.size.y * 0.5));
   }
 }
