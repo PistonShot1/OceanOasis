@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame_tiled/flame_tiled.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/material.dart' hide Route;
 import 'package:oceanoasis/components/Boss/bossfight.dart';
 import 'package:oceanoasis/components/mapmarker.dart';
 import 'package:oceanoasis/maps/pacificunderwater.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/maps/pacific.dart';
 
 class MapLevelSelection extends Component with HasGameReference<MyGame> {
@@ -16,15 +17,14 @@ class MapLevelSelection extends Component with HasGameReference<MyGame> {
   late final List<MapMarker> markers;
   TiledComponent? map;
   World world = World();
-  final VoidCallback? onExitPressed;
+
   List<Component> maplevelcomponents = [];
 
-  MapLevelSelection({this.onExitPressed, super.key});
+  MapLevelSelection({super.key});
   @override
   FutureOr<void> onLoad() async {
     //Overlays
     overlaysSetting();
-    game.camera.stop();
     // game.world = world;
     map = await TiledComponent.load('earth-map-final.tmx', Vector2.all(16));
     world.add(map!);
@@ -43,10 +43,10 @@ class MapLevelSelection extends Component with HasGameReference<MyGame> {
   }
 
   void overlaysSetting() {
-    if (game.overlays.activeOverlays.isEmpty) {
-      game.overlays.removeAll(game.overlays.activeOverlays);
+    if (game.overlays.isActive('ToMapSelection')) {
+      game.overlays.remove('ToMapSelection');
     }
-    game.overlays.add('TopMenu2');
+    game.overlays.add('ToFacility');
   }
 
   List<MapMarker> _getMarkers() {
@@ -79,7 +79,7 @@ class MapLevelSelection extends Component with HasGameReference<MyGame> {
   @override
   void onRemove() {
     // TODO: implement onRemove
-    game.overlays.remove('TopMenu2');
+    
     super.onRemove();
   }
 

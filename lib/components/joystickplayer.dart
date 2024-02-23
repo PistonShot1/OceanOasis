@@ -8,7 +8,7 @@ import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
 import 'package:oceanoasis/components/playerhealth.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/tools/tools.dart';
 import 'package:oceanoasis/wasteComponents/newspaper.dart';
@@ -81,7 +81,7 @@ class JoystickPlayer extends SpriteAnimationComponent
     required this.idleanimationData,
     this.hitAnimation,
     this.swimAnimation,
-  }) : idle = SpriteAnimationComponent.fromFrameData(
+  }) : super.fromFrameData(
             idleimage, idleanimationData,
             anchor: Anchor.center, position: position);
 

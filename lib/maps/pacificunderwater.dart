@@ -11,7 +11,7 @@ import 'package:oceanoasis/components/events/glacierformation.dart';
 import 'package:oceanoasis/components/playerbreathingbar.dart';
 import 'package:oceanoasis/components/playerhealth.dart';
 import 'package:oceanoasis/tools/toolbox.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/routes/gameOver.dart';
 import 'package:oceanoasis/wasteComponents/waste.dart';
@@ -58,9 +58,9 @@ class PacificOceanUnderwater extends Component
   Future<void> onLoad() async {
     // TODO: implement onLoad
     game.camera.stop();
-
     game.resumeEngine();
-
+    game.overlays.remove('ToFacility');
+    
     underwaterWorld = World();
     tiledMap =
         await TiledComponent.load('pacific-ocean-final.tmx', Vector2.all(16));

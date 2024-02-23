@@ -8,7 +8,7 @@ import 'package:flame/flame.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:oceanoasis/components/projectiles/mutantFish.dart';
 import 'package:oceanoasis/components/projectiles/toxicSmoke.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 
 class crabBoss extends SpriteAnimationComponent
     with HasGameReference<MyGame>, CollisionCallbacks {

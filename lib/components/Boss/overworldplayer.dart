@@ -6,7 +6,7 @@ import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/tools/tools.dart';
 
 class OverworldPlayer extends SpriteAnimationComponent

@@ -7,7 +7,7 @@ import 'package:flame/effects.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:oceanoasis/components/Boss/crabBoss.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/wasteComponents/newspaper.dart';
 
 class SlashEffect extends SpriteAnimationComponent

@@ -7,7 +7,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:oceanoasis/components/joystickplayer.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/tools/slashEffect.dart';
 
 class Waste extends SpriteComponent

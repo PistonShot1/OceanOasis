@@ -13,7 +13,7 @@ import 'package:flutter/src/services/raw_keyboard.dart';
 import 'package:oceanoasis/components/Boss/crabBoss.dart';
 import 'package:oceanoasis/components/Boss/overworldplayer.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/tools/slashEffect.dart';
 import 'package:oceanoasis/tools/toolbox.dart';
 

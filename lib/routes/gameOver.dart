@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 
 class GameOver extends StatelessWidget {
   static const String id = 'Game Over';
@@ -57,9 +57,7 @@ class GameOver extends StatelessWidget {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF008cba),
                   shape: RoundedRectangleBorder(
@@ -85,7 +83,8 @@ class GameOver extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 10),
                     child: InkWell(
                       onTap: () {
-                        back();
+                        game.resumeEngine();
+                        game.toMapSelection();
                       },
                       child: Container(
                           height: 50,

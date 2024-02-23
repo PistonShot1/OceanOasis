@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/maps/pacific.dart';
 import 'package:oceanoasis/routes/achievementdashboard.dart';
 import 'package:oceanoasis/routes/levelselection.dart';
@@ -170,104 +170,56 @@ class _MainMenuState extends State<MainMenu> {
           );
         },
         overlayBuilderMap: {
-          "TopMenu": (context, MyGame game) {
-            return Material(
-              color: Colors.transparent,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: InkWell(
-                          onTap: () {
-                            game.router.pushNamed(LevelSelection.id);
-                          },
-                          child: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.blue,
-                                  boxShadow: const [
-                                    BoxShadow(
-                                        color: Colors.black, blurRadius: 2)
-                                  ]),
-                              child:
-                                  Image.asset('assets/images/dive-icon.png')),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          game.toBossWorldSelection();
-                        },
-                        child: Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.blue,
-                                boxShadow: const [
-                                  BoxShadow(color: Colors.black, blurRadius: 2)
-                                ]),
-                            child: Image.asset(
-                                'assets/images/earth-pixel-icon.png')),
-                      )
-                    ],
+          "ToMapSelection": (context, MyGame game) {
+            return Align(
+              alignment: Alignment.topCenter,
+              child: SizedBox(
+                width: 50,
+                height: 50,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      game.router.pushRoute(Route(() => MapLevelSelection()));
+                    },
+                    child: Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.blue,
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black, blurRadius: 2)
+                            ]),
+                        child:
+                            Image.asset('assets/images/earth-pixel-icon.png')),
                   ),
                 ),
               ),
             );
           },
-          "TopMenu2": (context, MyGame game) {
-            return Material(
-              color: Colors.transparent,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: InkWell(
-                          onTap: () {
-                            game.toFacility();
-                          },
-                          child: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.blue,
-                                  boxShadow: const [
-                                    BoxShadow(
-                                        color: Colors.black, blurRadius: 2)
-                                  ]),
-                              child:
-                                  Image.asset('assets/images/ui/recycle.png')),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          game.router.pushReplacementNamed(LevelSelection.id);
-                        },
-                        child: Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.blue,
-                                boxShadow: const [
-                                  BoxShadow(color: Colors.black, blurRadius: 2)
-                                ]),
-                            child: Image.asset('assets/images/dive-icon.png')),
-                      )
-                    ],
+          "ToFacility": (context, MyGame game) {
+            return Align(
+              alignment: Alignment.topCenter,
+              child: SizedBox(
+                width: 50,
+                height: 50,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      game.toFacility();
+                    },
+                    child: Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.blue,
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black, blurRadius: 2)
+                            ]),
+                        child: Image.asset('assets/images/ui/recycle.png')),
                   ),
                 ),
               ),

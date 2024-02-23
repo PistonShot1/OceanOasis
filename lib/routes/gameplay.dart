@@ -7,6 +7,7 @@ import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
 import 'package:oceanoasis/components/joystickplayer.dart';
+import 'package:oceanoasis/routes/challengeBossSelection.dart';
 import 'package:oceanoasis/tools/toolbox.dart';
 import 'package:oceanoasis/components/Boss/bossfight.dart';
 import 'package:oceanoasis/maps/pacific.dart';
@@ -16,7 +17,7 @@ import 'package:oceanoasis/routes/levelselection.dart';
 import 'package:oceanoasis/routes/maplevelselection.dart';
 
 class MyGame extends FlameGame
-    with HasKeyboardHandlerComponents, HasCollisionDetection {
+    with HasCollisionDetection, HasKeyboardHandlerComponents {
   late SpriteComponent backgroundImage;
   List<Component> mainComponents = [];
   List<Component> gameComponents = [];
@@ -60,15 +61,13 @@ class MyGame extends FlameGame
             startLevel(level);
           },
           back: () {
-            router.pop();
-            router.pushReplacementNamed(LevelSelection.id);
           },
           game: game as MyGame,
         ),
-      )
+      ),
     };
     router =
-        RouterComponent(initialRoute: PacificOceanBossFight.id, routes: routes);
+        RouterComponent(initialRoute: MapLevelSelection.id, routes: routes);
 
     final knobPaint = BasicPalette.blue.withAlpha(200).paint();
     final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
@@ -127,6 +126,10 @@ class MyGame extends FlameGame
   }
 
   void toBossWorldSelection() {
+    router.pushReplacement(Route(() => PacificOceanBossFight()));
+  }
+
+  void toMapSelection() {
     router.pushReplacement(Route(() => MapLevelSelection()));
   }
 }

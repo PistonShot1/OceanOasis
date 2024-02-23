@@ -8,7 +8,7 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:oceanoasis/components/joystickplayer.dart';
 import 'package:oceanoasis/components/Boss/overworldplayer.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 import 'dart:io' show Platform;
 
 class PacificOcean extends Component
@@ -29,31 +29,25 @@ class PacificOcean extends Component
   @override
   FutureOr<void> onLoad() async {
     // TODO: implement onLoad
-    game.camera.stop();
-    game.overlays.add('TopMenu');
-
+    // game.camera.stop();
+    overlaysSetting();
     myWorld = World();
     tiledMap = await TiledComponent.load('depositeland.tmx', Vector2.all(16));
     await myWorld.add(tiledMap);
 
     // loadCollision();
-    cameraComponent = CameraComponent(world: myWorld)
-      ..viewport.anchor = Anchor.center;
-
     loadPlayerJoystick();
     cameraSettings();
     await add(myWorld);
-    await add(cameraComponent);
-
     // add(MyScreenHitbox());
     return super.onLoad();
   }
 
   void cameraSettings() {
-    cameraComponent.viewfinder.zoom = 1.5;
-
-    cameraComponent.moveBy(Vector2(1920 / 2, 1080 / 2));
-    cameraComponent.follow(player);
+    game.camera = CameraComponent(world: myWorld);
+    game.camera.viewfinder.zoom = 1.5;
+    game.camera.moveBy(Vector2(1920 / 2, 1080 / 2));
+    game.camera.follow(player);
   }
 
   void loadPlayerJoystick() {
@@ -130,6 +124,13 @@ class PacificOcean extends Component
     // TODO: implement onTapUp
     print('tapping');
     super.onTapUp(event);
+  }
+
+  void overlaysSetting() {
+    if (game.overlays.isActive('ToFacility')) {
+      game.overlays.remove('ToFacility');
+    }
+    game.overlays.add('ToMapSelection');
   }
   //SOME LEGIT CODE I COOK : MIGHT NEED IT LATER
   // for (final object in objectGroup!.objects) {
