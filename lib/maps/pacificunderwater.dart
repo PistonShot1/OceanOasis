@@ -7,8 +7,10 @@ import 'package:flame/palette.dart';
 import 'package:flame/text.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide Image;
+import 'package:oceanoasis/components/events/glacierformation.dart';
+import 'package:oceanoasis/components/playerbreathingbar.dart';
 import 'package:oceanoasis/components/playerhealth.dart';
-import 'package:oceanoasis/components/toolbox.dart';
+import 'package:oceanoasis/tools/toolbox.dart';
 import 'package:oceanoasis/routes/homescreen.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/routes/gameOver.dart';
@@ -28,8 +30,6 @@ class PacificOceanUnderwater extends Component
   int playeritems;
   String gameState = 'Loading';
 
-  List<ItemToolBox>? toolboxItems = [];
-
   //tide event variables
   Map<int, String> tideDirection = {0: 'Left', 1: 'Right', 2: 'Up', 3: 'Down'};
   Random random = Random();
@@ -43,8 +43,15 @@ class PacificOceanUnderwater extends Component
   bool breathingEffect = true;
   bool playerisDrowning = false;
 
+  // ice event
+  bool iceEvent = true;
   //Player health
-  PlayerHealth playerHealth = PlayerHealth(health: 3.5);
+  PlayerHealth playerHealth =
+      PlayerHealth(health: 3); //default, will be initialized again later
+  //Player breathing bar
+  PlayerBreathingBar breathingBar = PlayerBreathingBar(
+      breathingSeconds: 10); //default , will be initialized again later
+
   PacificOceanUnderwater(
       {required this.levelNumber, required this.playeritems});
   @override
@@ -66,6 +73,7 @@ class PacificOceanUnderwater extends Component
 
     await add(underwaterWorld);
 
+    //Initialization of variables for event (these are dependent on the level value that was passed when this component was added to the game)
     if (tideEvent) {
       eventNum = random.nextInt(2);
     }
@@ -83,11 +91,6 @@ class PacificOceanUnderwater extends Component
     if (gameState.compareTo('Loading') == 0) {
       startGame();
     }
-    //Events
-    //Tide
-    if (tideEvent) {
-      highTideEvent(5);
-    }
 
     super.onMount();
   }
@@ -101,12 +104,7 @@ class PacificOceanUnderwater extends Component
       wasteSpawn();
 
       //check for gameOver
-      if (wasteList >=
-              LevelProperty.levelProperty['$levelNumber']['maxSpawn'] &&
-          startSpawn) {
-        gameOver();
-      }
-
+      gameOver();
       //---Event----
       //Tide
       if (isMounted && tideEvent && eventTidemovePlayer) {
@@ -131,9 +129,11 @@ class PacificOceanUnderwater extends Component
         ..position = spawnLogic();
 
       Future.delayed(const Duration(seconds: 3), () async {
-        await underwaterWorld.add(oceanWaste);
-        startSpawn = true;
-        wasteList++;
+        if (gameState.compareTo('Start') == 0) {
+          await underwaterWorld.add(oceanWaste);
+          startSpawn = true;
+          wasteList++;
+        }
       });
     }
   }
@@ -159,7 +159,12 @@ class PacificOceanUnderwater extends Component
 
     underwaterWorld.add(game.player);
 
+    playerHealth = PlayerHealth(health: game.player.playerHealth);
     underwaterWorld.add(playerHealth);
+
+    breathingBar =
+        PlayerBreathingBar(breathingSeconds: game.player.breathingSeconds);
+    underwaterWorld.add(breathingBar..position = Vector2(0, 50));
 
     (Platform.isAndroid || Platform.isIOS)
         ? game.camera.viewport.add(game.joystick)
@@ -202,19 +207,18 @@ class PacificOceanUnderwater extends Component
     // toolbox
     for (TiledObject object in objects) {
       for (int i = 0; i < itemNum; i++) {
-        final toolbox = ItemToolBox(
-          () {},
-          position: Vector2(object.x - 16 * 3, object.y + 16 * 2 * 3 * i),
-          iconItem: ToolSlashProperty.toolIcon[i]['icontool']!,
-          item: ToolSlashProperty.toolIcon[i]['tool'],
-          detectTap: true,
-        )..scale = Vector2.all(3);
+        final toolbox = ItemToolBox(() {},
+            position: Vector2(object.x - 16 * 3, object.y + 16 * 2 * 3 * i),
+            iconItem: ToolSlashProperty.toolIcon[i]['icontool']!,
+            item: ToolSlashProperty.toolIcon[i]['tool'],
+            detectTap: true,
+            player: game.player)
+          ..scale = Vector2.all(3);
         await underwaterWorld.add(toolbox);
 
         // 16*2(the size of the tile image)* 3 (the set scale) * i (y positioning)
       }
     }
-    toolboxItems = underwaterWorld.children.query<ItemToolBox>();
   }
 
   Vector2 spawnLogic() {
@@ -239,7 +243,10 @@ class PacificOceanUnderwater extends Component
   void spawnEvent(bool spawnEvent) {}
 
   void gameOver() {
-    if (underwaterWorld.children.query<Waste>().isEmpty) {
+    if ((wasteList >= LevelProperty.levelProperty['$levelNumber']['maxSpawn'] &&
+            underwaterWorld.children.query<Waste>().isEmpty) ||
+        game.player.playerHealth == 0) {
+      gameState = 'Game Over';
       game.pauseEngine();
       game.router.pushNamed(GameOver.id);
     }
@@ -301,7 +308,6 @@ class PacificOceanUnderwater extends Component
         print(
             'Player have ${game.player.breathingSeconds} breathing seconds left');
         breathingEffect = true;
-        playerisDrowning = false;
       });
     } else if (game.player.position.y <= landwaterlevel.y &&
         breathingEffect &&
@@ -309,29 +315,37 @@ class PacificOceanUnderwater extends Component
       breathingEffect = false;
       Future.delayed(const Duration(seconds: 2), () {
         game.player.breathingSeconds += 1;
-        print(
-            'Player have ${game.player.breathingSeconds} breathing seconds left');
         breathingEffect = true;
-        playerisDrowning = false;
       });
-    } else if (game.player.breathingSeconds == 0 && !playerisDrowning) {
-      playerisDrowning = true;
-      if (playerisDrowning) {
-        print('Player is drowning');
+    } else if (game.player.breathingSeconds == 0) {
+      if (!playerisDrowning) {
+        playerisDrowning = true;
         damageOnPlayer(1);
+        Future.delayed(const Duration(seconds: 2), () {
+          playerisDrowning = false;
+        });
       }
     }
+  }
+
+  void iceformationEvent() {
+    final glacierLevel =
+        tiledMap.tileMap.getLayer<ObjectGroup>('Glacier Layer');
+    final objects = glacierLevel!.objects;
+    underwaterWorld.add(GlacierFormation()
+      ..position = Vector2(objects.first.x, objects.first.y));
   }
 
   @override
   void onRemove() {
     // TODO: implement onRemove
-    if (game.player.currentTool.isMounted) {
-      game.player.currentTool.removeFromParent();
-      game.player.highTideSlower[0] = 1;
-      game.player.highTideSlower[1] = 1;
-      game.player.movementBoundary = List.empty();
-    }
+
+    game.player.playerHealth = 3;
+    game.player.breathingSeconds = 10;
+    game.player.currentTool.removeFromParent();
+    game.player.highTideSlower[0] = 1;
+    game.player.highTideSlower[1] = 1;
+    game.player.movementBoundary = List.empty();
     print('exited');
     super.onRemove();
   }
@@ -361,16 +375,30 @@ class PacificOceanUnderwater extends Component
 
     initspawnWaste();
     initChallenges();
+    //Events
+    //Tide
+    if (tideEvent) {
+      highTideEvent(5);
+    }
+    //Ice layer formation
+    if (iceEvent) {
+      iceformationEvent();
+    }
   }
 
   void damageOnPlayer(double value) {
-    underwaterWorld.remove(playerHealth);
-    playerHealth = PlayerHealth(health: playerHealth.health - value);
-    final effect = ColorEffect(
-      Colors.red,
-      EffectController(duration: 0.1, alternate: true, repeatCount: 1),
-    );
-    game.player.body!.add(effect);
-    underwaterWorld.add(playerHealth);
+    //Condition to check game over and avoid null error
+    if (game.player.playerHealth > 0) {
+      underwaterWorld.remove(playerHealth);
+      game.player.setPlayerHealth = game.player.playerHealth - value;
+      playerHealth = PlayerHealth(health: game.player.playerHealth);
+      final effect = ColorEffect(
+        Colors.red,
+        EffectController(duration: 0.1, alternate: true, repeatCount: 1),
+      );
+      game.player.idle!.add(effect);
+      underwaterWorld.add(playerHealth);
+      print('Player health: ${game.player.playerHealth}');
+    }
   }
 }

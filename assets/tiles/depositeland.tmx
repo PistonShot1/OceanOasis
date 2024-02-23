@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="120" height="70" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="4">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="120" height="70" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="5">
  <tileset firstgid="1" name="depositeland" tilewidth="16" tileheight="16" tilecount="8040" columns="120">
   <image source="depositeland/depositeland.png" width="1920" height="1080"/>
  </tileset>
@@ -78,8 +78,6 @@
 </data>
  </layer>
  <objectgroup id="2" name="Spawn Point">
-  <object id="3" x="663.5" y="465">
-   <point/>
-  </object>
+  <object id="4" x="656.5" y="433.25" width="10" height="11"/>
  </objectgroup>
 </map>

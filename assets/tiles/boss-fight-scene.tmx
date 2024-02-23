@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="120" height="68" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="5">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="120" height="68" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="6">
  <tileset firstgid="1" name="boss-fight-scene-2" tilewidth="16" tileheight="16" tilecount="8040" columns="120">
-  <image source="../images/boss-fight-scene-2.png" width="1920" height="1080"/>
+  <image source="boss-fight-scene-2.png" width="1920" height="1080"/>
  </tileset>
  <layer id="1" name="Tile Layer 1" width="120" height="68">
   <data encoding="csv">
@@ -76,7 +76,12 @@
 </data>
  </layer>
  <objectgroup id="2" name="Spawn Point">
-  <object id="1" name="player spawn" x="133.333" y="887.879">
+  <object id="1" name="player spawn" x="961.333" y="159.879">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="3" name="UI Layer">
+  <object id="5" x="1760" y="318.667">
    <point/>
   </object>
  </objectgroup>

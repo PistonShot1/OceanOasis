@@ -13,22 +13,19 @@ class MapMarker extends SpriteComponent
     with TapCallbacks, HasGameReference<MyGame> {
   late ShapeHitbox hitbox;
   final _defaultColor = Colors.cyan;
+  
   final Vector2 locationOnMap;
-  final bool isMapAvailable;
-
-  Component Function()? sceneLoadCallback; //not in user rn
-  String? mapName;
+  VoidCallback? bossFightSceneRoute;
+  VoidCallback? levelChallengeRoute; //not in user rn
 
   String? mapId;
   MapMarker(
       {required this.locationOnMap,
-      required this.isMapAvailable,
-      required ComponentKey key,
       this.mapId,
-      this.sceneLoadCallback,
-      this.mapName})
+      this.bossFightSceneRoute,
+      this.levelChallengeRoute,})
       : super.fromImage(Flame.images.fromCache('map-location-icon.png'),
-            position: locationOnMap, key: key);
+            position: locationOnMap);
   @override
   FutureOr<void> onLoad() {
     // TODO: implement onLoad
@@ -51,11 +48,6 @@ class MapMarker extends SpriteComponent
 
   @override
   void onTapUp(TapUpEvent event) async {
-    if (mapName != null) {
-      game.router.pushReplacement(
-          Route(() => PacificOcean(key: ComponentKey.named(PacificOcean.id))),
-          name: PacificOcean.id);
-    }
     print('something was tapped');
     super.onTapUp(event);
   }

@@ -10,7 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:oceanoasis/components/playerhealth.dart';
 import 'package:oceanoasis/routes/homescreen.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
-import 'package:oceanoasis/tools/papercollector.dart';
+import 'package:oceanoasis/tools/tools.dart';
 import 'package:oceanoasis/wasteComponents/newspaper.dart';
 import 'dart:math';
 
@@ -19,23 +19,29 @@ class JoystickPlayer extends SpriteAnimationComponent
   late final Vector2 _lastSize = size.clone();
   late final Transform2D _lastTransform = transform.clone();
   final int playerScene;
-
-  Image image;
-  SpriteAnimationData animationData;
-  SpriteAnimationComponent? body;
+  
+  SpriteComponent currentToolIndicator = SpriteComponent.fromImage(
+      Flame.images.fromCache('ui/selected-item-ui.png'));
+ 
+  Image idleimage;
+  SpriteAnimationData idleanimationData;
+  SpriteAnimationComponent?
+      idle; //Note : acts as the 'body' (the main character spriteanimationcomponent)
   SpriteAnimation? hitAnimation;
+  SpriteAnimation? swimAnimation;
   //Debug variables
   final _collisionStartColor = Colors.amber;
   final _defaultColor = Colors.cyan;
   final JoystickComponent joystick;
 
   //Hitbox for player
-  late ShapeHitbox hitbox;
+  late ShapeHitbox
+      hitbox; //Note : hitbox is added to SpriteAnimationComponent (idle) instead of to the Joystickplayer, for better accuracy (so collision functions should be handled on the other object)
 
   //movement variables
   double horizontalDirection = 0;
   double verticalDirection = 0;
-  final Vector2 velocity = Vector2.zero();
+  Vector2 velocity = Vector2.zero();
   double moveSpeed = 300; //this the speed
   final double pushAwaySpeed = 200.0;
   bool isHitAnimationPlaying = false;
@@ -51,15 +57,13 @@ class JoystickPlayer extends SpriteAnimationComponent
   //player properties
   ValueNotifier<double> currentLoad = ValueNotifier<double>(0);
   double? maxLoad;
-  int breathingSeconds = 2;
-  int maxbreathingDuration = 2;
-
+  int breathingSeconds = 10;
+  int maxbreathingDuration = 10;
+  double playerHealth = 3;
   //Inventory & tools
 
-  PaperCollector currentTool = ToolSlashProperty.toolIcon[0]
+  Tools currentTool = ToolSlashProperty.toolIcon[0]
       ['tool']!; //default tool , need to see user data/state
-  SpriteComponent currentToolIndicator = SpriteComponent.fromImage(
-      Flame.images.fromCache('ui/selected-item-ui.png'));
 
   //High tide event variable
   List<double> highTideSlower = [
@@ -69,35 +73,34 @@ class JoystickPlayer extends SpriteAnimationComponent
     1
   ]; //effect for each : left,right,up,down
 
-  JoystickPlayer(
-      {required this.joystick,
-      required Vector2 position,
-      required this.playerScene,
-      required this.image,
-      required this.animationData})
-      : body = SpriteAnimationComponent.fromFrameData(image, animationData,
-            size: Vector2.all(128), anchor: Anchor.center, position: position);
+  JoystickPlayer({
+    required this.joystick,
+    required Vector2 position,
+    required this.playerScene,
+    required this.idleimage,
+    required this.idleanimationData,
+    this.hitAnimation,
+    this.swimAnimation,
+  }) : idle = SpriteAnimationComponent.fromFrameData(
+            idleimage, idleanimationData,
+            anchor: Anchor.center, position: position);
 
   @override
   Future<void> onLoad() async {
     //FOR DEBUG
-    hitAnimation = SpriteAnimation.fromFrameData(
-        Flame.images.fromCache('main-character-1/Attack.png'),
-        SpriteAnimationData.sequenced(
-            amount: 6, // Number of frames in your animation
-            stepTime: 0.1, // Duration of each frame
-            textureSize: Vector2(48, 48)));
     final defaultPaint = Paint()
       ..color = _defaultColor
       ..style = PaintingStyle.stroke;
     hitbox = RectangleHitbox()
       ..paint = defaultPaint //FOR DEBUG
       ..renderShape = true;
-    add(body!);
-    body!.add(hitbox);
+    add(idle!);
+    idle!.add(hitbox);
 
     //Current Tool held
-    add(currentTool);
+    if (playerScene == 0) {
+      add(currentTool);
+    }
   }
 
   @override
@@ -119,7 +122,6 @@ class JoystickPlayer extends SpriteAnimationComponent
     if (!joystick.delta.isZero() && activeCollisions.isEmpty) {
       // print(joystick.delta);
       // print(joystick.delta.screenAngle());
-
       print('Angle ${joystick.delta.screenAngle() * 180 / pi}');
       _lastSize.setFrom(size);
       _lastTransform.setFrom(transform);
@@ -161,25 +163,32 @@ class JoystickPlayer extends SpriteAnimationComponent
 
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    movementKey(keysPressed);
-    // trackFacingDirection(keysPressed);
     hitAction(keysPressed);
+    if (!isHitAnimationPlaying) {
+      movementKey(keysPressed);
+      // trackFacingDirection(keysPressed);
+    }
     return true;
   }
 
   void hitAction(Set<LogicalKeyboardKey> keysPressed) {
     if (keysPressed.contains(LogicalKeyboardKey.space) &&
         !isHitAnimationPlaying) {
+      //on hit animation , reset velocity, horizontal and vertical direction (to avoid movement while on hit animation)
       isHitAnimationPlaying = true;
-      body?.animation = hitAnimation;
+      velocity = Vector2.zero();
+      horizontalDirection = 0;
+      verticalDirection = 0;
+      idle?.animation = hitAnimation;
       add(currentTool.slashEffect!
         ..anchor = Anchor.center
         ..size = Vector2.all(64)
         ..position = Vector2(100, 0));
 
-      Future.delayed(const Duration(milliseconds: 600), () {
+      Future.delayed(const Duration(milliseconds: 700), () {
         //reset back to original position after attack animation finish
-        body?.animation = SpriteAnimation.fromFrameData(image, animationData);
+        idle?.animation =
+            SpriteAnimation.fromFrameData(idleimage, idleanimationData);
         isHitAnimationPlaying = false;
       });
     }
@@ -205,7 +214,7 @@ class JoystickPlayer extends SpriteAnimationComponent
         ? (1 * highTideSlower[3])
         : 0;
   }
-  
+
   void addLoad(double value) {
     currentLoad.value += value;
   }
@@ -227,11 +236,15 @@ class JoystickPlayer extends SpriteAnimationComponent
   }
 
   set setBody(SpriteAnimationComponent data) {
-    body = data;
+    idle = data;
   }
 
   set setbreathingSeconds(int value) {
     breathingSeconds = value;
+  }
+
+  set setPlayerHealth(double value) {
+    playerHealth = value;
   }
 
   void setMovementBoundary(
@@ -239,14 +252,11 @@ class JoystickPlayer extends SpriteAnimationComponent
       required double minX,
       required double maxY,
       required double minY}) {
-    movementBoundary.add(minX);
-    movementBoundary.add(maxX);
-    movementBoundary.add(minY);
-    movementBoundary.add(maxY);
+    movementBoundary = [minX, maxX, minY, maxY];
   }
 
   //TODO : This logic works atm but check later
-  void setCurrentTool(PaperCollector component) {
+  void updateCurrentTool(Tools component) {
     if (currentTool.isMounted) {
       remove(currentTool);
     }

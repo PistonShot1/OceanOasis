@@ -6,22 +6,26 @@ import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:oceanoasis/routes/homescreen.dart';
-import 'package:oceanoasis/tools/papercollector.dart';
+import 'package:oceanoasis/tools/tools.dart';
 
 class ItemToolBox extends SpriteComponent
     with TapCallbacks, KeyboardHandler, HasGameReference<MyGame> {
+
   VoidCallback? callback;
   LogicalKeyboardKey? keybind;
-  PaperCollector iconItem;
-  PaperCollector? item;
+  Tools iconItem;
+  Tools? item;
   bool detectTap = false;
   bool? focus = false;
+  dynamic
+      player; //player is either OverWorldPlayer or JoyStickPlayer (refactoring required by defining Player class)
   ItemToolBox(this.callback,
       {required this.iconItem,
       this.keybind,
       required Vector2 position,
       this.item,
-      required this.detectTap})
+      required this.detectTap,
+      required this.player})
       : super.fromImage(
           Flame.images.fromCache('ui/item-ui.png'),
           srcPosition: Vector2(16 * 2, 16 * 2),
@@ -32,7 +36,7 @@ class ItemToolBox extends SpriteComponent
   FutureOr<void> onLoad() async {
     // TODO: implement onLoad
     iconItem.position = Vector2(size.x / (scale.x), size.y / (scale.y));
-    add(iconItem..priority=1);
+    add(iconItem..priority = 1);
     return super.onLoad();
   }
 
@@ -63,8 +67,8 @@ class ItemToolBox extends SpriteComponent
       {Set<LogicalKeyboardKey>? keysPressed, required bool detectTap}) {
     if (keysPressed?.contains(keybind) ?? false || detectTap) {
       if (item != null) {
-        game.player.setCurrentTool(item!);
-        add(game.player.currentToolIndicator..size=size); //set the indicator to it
+        player.updateCurrentTool(item!);
+        add(player.currentToolIndicator..size = size); //set the indicator to it
       }
     }
   }

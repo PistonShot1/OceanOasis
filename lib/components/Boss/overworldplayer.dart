@@ -5,16 +5,18 @@ import 'package:flame/game.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
+import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/tools/tools.dart';
 
 class OverworldPlayer extends SpriteAnimationComponent
     with HasGameReference<MyGame>, CollisionCallbacks, KeyboardHandler {
   final int playerScene;
   Image image;
   SpriteAnimationData animationData;
-  SpriteAnimationComponent? body;
+  SpriteComponent currentToolIndicator = SpriteComponent.fromImage(
+      Flame.images.fromCache('ui/selected-item-ui.png'));
 
-  double maxSpeed = 200.0;
   late final Vector2 _lastSize = size.clone();
   late final Transform2D _lastTransform = transform.clone();
   final _collisionStartColor = Colors.amber;
@@ -24,8 +26,9 @@ class OverworldPlayer extends SpriteAnimationComponent
   int horizontalDirection = 0;
   int verticalDirection = 0;
   final Vector2 velocity = Vector2.zero();
-  final double moveSpeed = 100;
-  final double pushAwaySpeed = 200.0; // Adjust based on your preference
+  double moveSpeed = 300;
+
+  Tools currentTool = WeaponProperty.weapons[0]['weapon']!;
 
   OverworldPlayer({
     required this.joystick,
@@ -33,18 +36,11 @@ class OverworldPlayer extends SpriteAnimationComponent
     required this.playerScene,
     required this.image,
     required this.animationData,
-    required Vector2 size,
-  }) : body = SpriteAnimationComponent.fromFrameData(
-             image,
-            animationData,
-            size: size,
-            anchor: Anchor.center,
-            position: position);
+  }) : super.fromFrameData(image, animationData,
+            anchor: Anchor.center, position: position);
 
   @override
   Future<void> onLoad() async {
-    
-    add(body!);
     //--- FOR DEBUG---
     final defaultPaint = Paint()
       ..color = _defaultColor
@@ -62,7 +58,7 @@ class OverworldPlayer extends SpriteAnimationComponent
     if (!joystick.delta.isZero() && activeCollisions.isEmpty) {
       _lastSize.setFrom(size);
       _lastTransform.setFrom(transform);
-      position.add(joystick.relativeDelta * maxSpeed * dt);
+      position.add(joystick.relativeDelta * moveSpeed * dt);
       angle = joystick.delta.screenAngle();
     }
 
@@ -70,10 +66,10 @@ class OverworldPlayer extends SpriteAnimationComponent
     velocity.y = verticalDirection * moveSpeed;
     position += velocity * dt;
 
-    if (horizontalDirection < 0 && body!.scale.x > 0) {
-      body!.flipHorizontally();
-    } else if (horizontalDirection > 0 && body!.scale.x < 0) {
-      body!.flipHorizontally();
+    if (horizontalDirection < 0 && scale.x > 0) {
+      flipHorizontally();
+    } else if (horizontalDirection > 0 && scale.x < 0) {
+      flipHorizontally();
     }
     super.update(dt);
   }
@@ -88,6 +84,11 @@ class OverworldPlayer extends SpriteAnimationComponent
 
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    movementKey(keysPressed);
+    return true;
+  }
+
+  void movementKey(Set<LogicalKeyboardKey> keysPressed) {
     horizontalDirection = 0;
     verticalDirection = 0;
     horizontalDirection += (keysPressed.contains(LogicalKeyboardKey.keyA) ||
@@ -106,6 +107,19 @@ class OverworldPlayer extends SpriteAnimationComponent
             keysPressed.contains(LogicalKeyboardKey.arrowDown))
         ? 1
         : 0;
-    return true;
   }
+
+  set setPosition(Vector2 value) {
+    position = value;
+  }
+
+  void updateCurrentTool(Tools component) {
+    if (currentTool.isMounted) {
+      currentTool.removeFromParent();
+    }
+    currentTool = component;
+    add(currentTool..scale=Vector2.all(0.5)..position=Vector2.all(20));
+  }
+
+  void hitAction() {}
 }

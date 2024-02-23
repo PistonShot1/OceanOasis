@@ -6,23 +6,38 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
+import 'package:oceanoasis/components/Boss/crabBoss.dart';
 import 'package:oceanoasis/routes/homescreen.dart';
 import 'package:oceanoasis/wasteComponents/newspaper.dart';
 
 class SlashEffect extends SpriteAnimationComponent
     with CollisionCallbacks, HasGameReference<MyGame> {
   final String id;
-  SlashEffect(Image image, this.id,
-      {required int amount,
-      required double stepTime,
-      required Vector2 textureSize})
+
+  final int? damage; //(used for boss fight scenario)
+
+  final Image spriteSheetImage;
+  final double stepTime;
+  final Vector2 frameSize;
+  final int frameAmount;
+  SlashEffect(this.spriteSheetImage, this.id,
+      {required this.frameAmount,
+      required this.stepTime,
+      required this.frameSize,
+      this.damage})
       : super.fromFrameData(
-            image,
+            spriteSheetImage,
             SpriteAnimationData.sequenced(
-              amount: amount,
+              amount: frameAmount,
               stepTime: stepTime,
-              textureSize: textureSize,
+              textureSize: frameSize,
             ));
+  SlashEffect.clone(SlashEffect slashEffect)
+      : this(slashEffect.spriteSheetImage, slashEffect.id,
+            damage: slashEffect.damage,
+            frameAmount: slashEffect.frameAmount,
+            frameSize: slashEffect.frameSize,
+            stepTime: slashEffect.stepTime);
   @override
   FutureOr<void> onLoad() {
     // TODO: implement onLoad
@@ -40,16 +55,35 @@ class SlashEffect extends SpriteAnimationComponent
   @override
   void onMount() {
     // TODO: implement onMount
-    Future.delayed(const Duration(milliseconds: 300), () {
+
+    Future.delayed(Duration(milliseconds: animation!.frames.length * 100), () {
       removeFromParent();
     });
     super.onMount();
   }
 
   @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    // TODO: implement onCollision
+  void onCollisionEnd(PositionComponent other) {
+    // TODO: implement onCollisionEnd
 
-    super.onCollision(intersectionPoints, other);
+    super.onCollisionEnd(other);
+  }
+
+  @override
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
+    // TODO: implement onCollisionStart
+    if (other is crabBoss) {
+      print('Crabboss was hit');
+    } else if (other is ScreenHitbox) {
+      print('Screenhitbox was hit');
+    }
+    super.onCollisionStart(intersectionPoints, other);
+  }
+
+  @override
+  void onRemove() {
+    // TODO: implement onRemove
+    super.onRemove();
   }
 }
