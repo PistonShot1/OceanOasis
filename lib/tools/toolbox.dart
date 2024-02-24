@@ -10,7 +10,6 @@ import 'package:oceanoasis/tools/tools.dart';
 
 class ItemToolBox extends SpriteComponent
     with TapCallbacks, KeyboardHandler, HasGameReference<MyGame> {
-
   VoidCallback? callback;
   LogicalKeyboardKey? keybind;
   Tools iconItem;
@@ -55,7 +54,7 @@ class ItemToolBox extends SpriteComponent
   }
 
   @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     // TODO: implement onKeyEvent
     if (keybind != null) {
       itemSelection(keysPressed: keysPressed, detectTap: detectTap);

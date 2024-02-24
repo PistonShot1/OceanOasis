@@ -15,10 +15,10 @@ class JoystickPlayer extends SpriteAnimationComponent
   late final Vector2 _lastSize = size.clone();
   late final Transform2D _lastTransform = transform.clone();
   final int playerScene;
-  
+
   SpriteComponent currentToolIndicator = SpriteComponent.fromImage(
       Flame.images.fromCache('ui/selected-item-ui.png'));
- 
+
   Image idleimage;
   SpriteAnimationData idleanimationData;
   // SpriteAnimationComponent?
@@ -77,8 +77,7 @@ class JoystickPlayer extends SpriteAnimationComponent
     required this.idleanimationData,
     this.hitAnimation,
     this.swimAnimation,
-  }) : super.fromFrameData(
-            idleimage, idleanimationData,
+  }) : super.fromFrameData(idleimage, idleanimationData,
             anchor: Anchor.center, position: position);
 
   @override
@@ -157,13 +156,14 @@ class JoystickPlayer extends SpriteAnimationComponent
   }
 
   @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    // TODO: implement onKeyEvent
     hitAction(keysPressed);
     if (!isHitAnimationPlaying) {
       movementKey(keysPressed);
       // trackFacingDirection(keysPressed);
     }
-    return true;
+    return super.onKeyEvent(event, keysPressed);
   }
 
   void hitAction(Set<LogicalKeyboardKey> keysPressed) {
@@ -182,8 +182,7 @@ class JoystickPlayer extends SpriteAnimationComponent
 
       Future.delayed(const Duration(milliseconds: 700), () {
         //reset back to original position after attack animation finish
-        animation =
-            SpriteAnimation.fromFrameData(idleimage, idleanimationData);
+        animation = SpriteAnimation.fromFrameData(idleimage, idleanimationData);
         isHitAnimationPlaying = false;
       });
     }

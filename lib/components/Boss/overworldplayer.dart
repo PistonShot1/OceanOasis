@@ -83,9 +83,10 @@ class OverworldPlayer extends SpriteAnimationComponent
   }
 
   @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    // TODO: implement onKeyEvent
     movementKey(keysPressed);
-    return true;
+    return super.onKeyEvent(event, keysPressed);
   }
 
   void movementKey(Set<LogicalKeyboardKey> keysPressed) {
@@ -118,7 +119,9 @@ class OverworldPlayer extends SpriteAnimationComponent
       currentTool.removeFromParent();
     }
     currentTool = component;
-    add(currentTool..scale=Vector2.all(0.5)..position=Vector2.all(20));
+    add(currentTool
+      ..scale = Vector2.all(0.5)
+      ..position = Vector2.all(20));
   }
 
   void hitAction() {}

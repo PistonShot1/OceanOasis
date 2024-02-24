@@ -8,6 +8,7 @@ import 'package:flame/palette.dart';
 
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/src/services/hardware_keyboard.dart';
 import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:flutter/src/services/raw_keyboard.dart';
 import 'package:oceanoasis/components/Boss/crabBoss.dart';
@@ -127,7 +128,7 @@ class PacificOceanBossFight extends Component
   }
 
   @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     // TODO: implement onKeyEvent
     playerAttack(keysPressed);
     return super.onKeyEvent(event, keysPressed);
