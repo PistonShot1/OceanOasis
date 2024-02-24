@@ -42,6 +42,7 @@ class LevelProperty {
 }
 
 class ToolSlashProperty {
+  static const String _toolType = 'WasteCollector';
   static List<Map<String, Tools>> toolIcon = [
     {
       'tool': Tools(
@@ -52,12 +53,11 @@ class ToolSlashProperty {
           position: Vector2(-16, 24),
           slashType: 'Paper',
           slashEffect: SlashEffect(
-            Flame.images.fromCache('tools/tool1-effect1.png'),
-            'Paper',
-            frameAmount: 1,
-            stepTime: 0.5,
-            frameSize: Vector2.all(256),
-          ))
+              Flame.images.fromCache('tools/tool1-effect1.png'), 'Paper',
+              frameAmount: 1,
+              stepTime: 0.5,
+              frameSize: Vector2.all(256),
+              toolType: _toolType))
         ..anchor = Anchor.center,
       'icontool': Tools(
         id: 'PaperCollectorIcon',
@@ -77,7 +77,10 @@ class ToolSlashProperty {
           slashType: 'Plastic',
           slashEffect: SlashEffect(
               Flame.images.fromCache('tools/tool2-effect1.png'), 'Plastic',
-              frameAmount: 1, stepTime: 0.5, frameSize: Vector2.all(496)))
+              frameAmount: 1,
+              stepTime: 0.5,
+              frameSize: Vector2.all(496),
+              toolType: _toolType))
         ..anchor = Anchor.center,
       'icontool': Tools(
         id: 'PlasticCollectorIcon',
@@ -96,12 +99,11 @@ class ToolSlashProperty {
           size: Vector2.all(32),
           slashType: 'Metal',
           slashEffect: SlashEffect(
-            Flame.images.fromCache('tools/tool3-effect1.png'),
-            'Metal',
-            frameAmount: 1,
-            stepTime: 0.5,
-            frameSize: Vector2.all(496),
-          ))
+              Flame.images.fromCache('tools/tool3-effect1.png'), 'Metal',
+              frameAmount: 1,
+              stepTime: 0.5,
+              frameSize: Vector2.all(496),
+              toolType: _toolType))
         ..anchor = Anchor.center,
       'icontool': Tools(
         id: 'MetalCollectorIcon',
@@ -119,23 +121,24 @@ class WasteProperty {
   static List<Waste> wasteProperty = [
     Waste(
         sprite: Sprite(Flame.images.fromCache('waste/newspaper.png')),
-        id: 'Paper',
+        wasteType: 'Paper',
         points: 5,
         decayTime: 10),
     Waste(
         sprite: Sprite(Flame.images.fromCache('waste/plastic-bag.png')),
-        id: 'Plastic',
+        wasteType: 'Plastic',
         points: 10,
         decayTime: 10),
     Waste(
         sprite: Sprite(Flame.images.fromCache('waste/can.png')),
-        id: 'Metal',
+        wasteType: 'Metal',
         points: 15,
         decayTime: 10),
   ];
 }
 
 class WeaponProperty {
+  static const String _toolType = 'Weapon';
   static List<Map<String, Tools>> weapons = [
     {
       'weapon': Tools(
@@ -145,12 +148,12 @@ class WeaponProperty {
           position: Vector2(-16, 24),
           slashType: '',
           slashEffect: SlashEffect(
-            Flame.images.fromCache('weapons/Lightning-effect.png'),
-            '',
-            frameAmount: 7,
-            stepTime: 0.1,
-            frameSize: Vector2(32, 193),
-          )..scale = Vector2.all(0.5))
+              Flame.images.fromCache('weapons/Lightning-effect.png'), '',
+              frameAmount: 7,
+              stepTime: 0.1,
+              frameSize: Vector2(32, 193),
+              toolType: _toolType)
+            ..scale = Vector2.all(0.5))
         ..anchor = Anchor.center,
       'iconweapon': Tools(
         id: '',
@@ -168,7 +171,10 @@ class WeaponProperty {
           slashType: '',
           slashEffect: SlashEffect(
               Flame.images.fromCache('weapons/explosion-blue.png'), '',
-              frameAmount: 10, stepTime: 0.1, frameSize: Vector2.all(128))
+              frameAmount: 10,
+              stepTime: 0.1,
+              frameSize: Vector2.all(128),
+              toolType: _toolType)
             ..size = Vector2.all(64))
         ..anchor = Anchor.center,
       'iconweapon': Tools(
@@ -186,12 +192,12 @@ class WeaponProperty {
           size: Vector2.all(32),
           slashType: '',
           slashEffect: SlashEffect(
-            Flame.images.fromCache('weapons/nuclear-effect.png'),
-            '',
-            frameAmount: 10,
-            stepTime: 0.1,
-            frameSize: Vector2.all(256),
-          )..size = Vector2.all(64))
+              Flame.images.fromCache('weapons/nuclear-effect.png'), '',
+              frameAmount: 10,
+              stepTime: 0.1,
+              frameSize: Vector2.all(256),
+              toolType: _toolType)
+            ..size = Vector2.all(64))
         ..anchor = Anchor.center,
       'iconweapon': Tools(
         id: '',

@@ -6,7 +6,7 @@ import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
-import 'package:oceanoasis/components/joystickplayer.dart';
+import 'package:oceanoasis/components/players/joystickplayer.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/tools/slashEffect.dart';
 
@@ -16,13 +16,13 @@ class Waste extends SpriteComponent
   final _collisionStartColor = Colors.amber;
   final _defaultColor = Colors.green;
   int decayTime;
-  final String id;
+  final String wasteType;
   double points;
   bool lastWaste =
       false; // default is false (this is a helper variable to detect last spawn in the tree)
   Waste({
     required Sprite sprite,
-    required this.id,
+    required this.wasteType,
     required this.points,
     required this.decayTime,
     ComponentKey? key,
@@ -31,7 +31,7 @@ class Waste extends SpriteComponent
   Waste.clone(Waste waste, ComponentKey? key)
       : this(
             sprite: waste.sprite!,
-            id: waste.id,
+            wasteType: waste.wasteType,
             points: waste.points,
             decayTime: waste.decayTime,
             key: key);
@@ -83,7 +83,7 @@ class Waste extends SpriteComponent
   }
 
   void detectSlash(PositionComponent other) {
-    if (other is SlashEffect && other.id.compareTo(id) == 0) {
+    if (other is SlashEffect && other.slashType.compareTo(wasteType) == 0) {
       collect(game.player);
     }
   }

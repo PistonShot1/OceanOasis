@@ -8,22 +8,22 @@ import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:oceanoasis/components/Boss/crabBoss.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
-import 'package:oceanoasis/wasteComponents/newspaper.dart';
 
 class SlashEffect extends SpriteAnimationComponent
     with CollisionCallbacks, HasGameReference<MyGame> {
-  final String id;
-
   final int? damage; //(used for boss fight scenario)
 
   final Image spriteSheetImage;
   final double stepTime;
   final Vector2 frameSize;
   final int frameAmount;
-  SlashEffect(this.spriteSheetImage, this.id,
+  final String slashType;
+  final String toolType;
+  SlashEffect(this.spriteSheetImage, this.slashType,
       {required this.frameAmount,
       required this.stepTime,
       required this.frameSize,
+      required this.toolType,
       this.damage})
       : super.fromFrameData(
             spriteSheetImage,
@@ -33,11 +33,12 @@ class SlashEffect extends SpriteAnimationComponent
               textureSize: frameSize,
             ));
   SlashEffect.clone(SlashEffect slashEffect)
-      : this(slashEffect.spriteSheetImage, slashEffect.id,
+      : this(slashEffect.spriteSheetImage, slashEffect.slashType,
             damage: slashEffect.damage,
             frameAmount: slashEffect.frameAmount,
             frameSize: slashEffect.frameSize,
-            stepTime: slashEffect.stepTime);
+            stepTime: slashEffect.stepTime,
+            toolType: slashEffect.toolType);
   @override
   FutureOr<void> onLoad() {
     // TODO: implement onLoad

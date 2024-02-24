@@ -6,7 +6,7 @@ import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
-import 'package:oceanoasis/components/joystickplayer.dart';
+import 'package:oceanoasis/components/players/joystickplayer.dart';
 import 'package:oceanoasis/routes/challengeBossSelection.dart';
 import 'package:oceanoasis/tools/toolbox.dart';
 import 'package:oceanoasis/components/Boss/bossfight.dart';
@@ -97,8 +97,8 @@ class MyGame extends FlameGame
             textureSize: Vector2(48, 48)),
       ),
     );
-    player.idle!.size = Vector2.all(64);
-    player.idle!.scale = Vector2.all(2);
+    player.size = Vector2.all(64);
+    player.scale = Vector2.all(2);
     // List<SpriteAnimationFrame> frames = [];
     // player.animation = SpriteAnimation(frames);
 

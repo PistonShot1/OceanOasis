@@ -6,7 +6,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide Image;
-import 'package:oceanoasis/components/joystickplayer.dart';
+import 'package:oceanoasis/components/players/joystickplayer.dart';
 import 'package:oceanoasis/components/Boss/overworldplayer.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'dart:io' show Platform;

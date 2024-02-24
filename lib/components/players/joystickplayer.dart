@@ -1,17 +1,13 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
-import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
-import 'package:oceanoasis/components/playerhealth.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/tools/tools.dart';
-import 'package:oceanoasis/wasteComponents/newspaper.dart';
 import 'dart:math';
 
 class JoystickPlayer extends SpriteAnimationComponent
@@ -25,8 +21,8 @@ class JoystickPlayer extends SpriteAnimationComponent
  
   Image idleimage;
   SpriteAnimationData idleanimationData;
-  SpriteAnimationComponent?
-      idle; //Note : acts as the 'body' (the main character spriteanimationcomponent)
+  // SpriteAnimationComponent?
+  //     idle; //Note : acts as the 'body' (the main character spriteanimationcomponent)
   SpriteAnimation? hitAnimation;
   SpriteAnimation? swimAnimation;
   //Debug variables
@@ -94,8 +90,7 @@ class JoystickPlayer extends SpriteAnimationComponent
     hitbox = RectangleHitbox()
       ..paint = defaultPaint //FOR DEBUG
       ..renderShape = true;
-    add(idle!);
-    idle!.add(hitbox);
+    add(hitbox);
 
     //Current Tool held
     if (playerScene == 0) {
@@ -179,7 +174,7 @@ class JoystickPlayer extends SpriteAnimationComponent
       velocity = Vector2.zero();
       horizontalDirection = 0;
       verticalDirection = 0;
-      idle?.animation = hitAnimation;
+      animation = hitAnimation;
       add(currentTool.slashEffect!
         ..anchor = Anchor.center
         ..size = Vector2.all(64)
@@ -187,7 +182,7 @@ class JoystickPlayer extends SpriteAnimationComponent
 
       Future.delayed(const Duration(milliseconds: 700), () {
         //reset back to original position after attack animation finish
-        idle?.animation =
+        animation =
             SpriteAnimation.fromFrameData(idleimage, idleanimationData);
         isHitAnimationPlaying = false;
       });
@@ -233,10 +228,6 @@ class JoystickPlayer extends SpriteAnimationComponent
 
   set setanimationData(SpriteAnimationData animationData) {
     animationData = animationData;
-  }
-
-  set setBody(SpriteAnimationComponent data) {
-    idle = data;
   }
 
   set setbreathingSeconds(int value) {

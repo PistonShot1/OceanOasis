@@ -60,7 +60,7 @@ class MapLevelSelection extends Component with HasGameReference<MyGame> {
         },
         levelChallengeRoute: () {
           game.router.pushReplacement(Route(
-              () => PacificOceanUnderwater(levelNumber: 1, playeritems: 3)));
+              () => PacificOceanUnderwater(levelNumber: 4, playeritems: 3)));
         },
       ),
     ];

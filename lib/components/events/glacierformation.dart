@@ -5,7 +5,7 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/image_composition.dart';
-import 'package:oceanoasis/components/joystickplayer.dart';
+import 'package:oceanoasis/components/players/joystickplayer.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 
 class GlacierFormation extends SpriteAnimationComponent

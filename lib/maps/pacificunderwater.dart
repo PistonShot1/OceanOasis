@@ -8,8 +8,8 @@ import 'package:flame/text.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:oceanoasis/components/events/glacierformation.dart';
-import 'package:oceanoasis/components/playerbreathingbar.dart';
-import 'package:oceanoasis/components/playerhealth.dart';
+import 'package:oceanoasis/components/players/playerbreathingbar.dart';
+import 'package:oceanoasis/components/players/playerhealth.dart';
 import 'package:oceanoasis/tools/toolbox.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
@@ -60,7 +60,7 @@ class PacificOceanUnderwater extends Component
     game.camera.stop();
     game.resumeEngine();
     game.overlays.remove('ToFacility');
-    
+
     underwaterWorld = World();
     tiledMap =
         await TiledComponent.load('pacific-ocean-final.tmx', Vector2.all(16));
@@ -396,7 +396,7 @@ class PacificOceanUnderwater extends Component
         Colors.red,
         EffectController(duration: 0.1, alternate: true, repeatCount: 1),
       );
-      game.player.idle!.add(effect);
+      game.player.add(effect);
       underwaterWorld.add(playerHealth);
       print('Player health: ${game.player.playerHealth}');
     }
