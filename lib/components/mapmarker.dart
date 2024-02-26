@@ -12,31 +12,22 @@ import 'package:oceanoasis/maps/pacific.dart';
 
 class MapMarker extends SpriteComponent
     with TapCallbacks, HasGameReference<MyGame> {
-  late ShapeHitbox hitbox;
-  final _defaultColor = Colors.cyan;
-
   final Vector2 locationOnMap;
-  VoidCallback bossFightSceneRoute;
-  VoidCallback levelChallengeRoute; //not in user rn
-
-  String? mapId;
-  MapMarker({
-    required this.locationOnMap,
-    this.mapId,
-    required this.bossFightSceneRoute,
-    required this.levelChallengeRoute,
-  }) : super.fromImage(Flame.images.fromCache('map-location-icon.png'),
+  String locationName;
+  Route bossFightSceneRoute;
+  Route levelChallengeRoute;
+  int levelNumber;
+  MapMarker(
+      {required this.locationOnMap,
+      required this.locationName,
+      required this.bossFightSceneRoute,
+      required this.levelChallengeRoute,
+      required this.levelNumber})
+      : super.fromImage(Flame.images.fromCache('map-location-icon.png'),
             position: locationOnMap);
   @override
   FutureOr<void> onLoad() {
-    // TODO: implement onLoad
-    final defaultPaint = Paint()
-      ..color = _defaultColor
-      ..style = PaintingStyle.stroke;
-    hitbox = RectangleHitbox()
-      ..paint = defaultPaint
-      ..renderShape = true;
-    add(hitbox);
+    addTextComponent();
     return super.onLoad();
   }
 
@@ -51,17 +42,23 @@ class MapMarker extends SpriteComponent
   void onTapUp(TapUpEvent event) async {
     game.router.pushRoute(
         OverlayRoute((context, game) => ChallengeBossSelection(
-              toChallengeLevel: levelChallengeRoute,
-              toBossWorldSelection: bossFightSceneRoute,
-              locationName: '',
+              levelNumber: levelNumber,
+              toChallengeLevel: () {
+                (game as MyGame).router.pushReplacement(levelChallengeRoute);
+              },
+              toBossWorldSelection: () {
+                (game as MyGame).router.pushReplacement(bossFightSceneRoute);
+              },
+              locationName: locationName,
+              game: game as MyGame,
             )),
         name: ChallengeBossSelection.id);
     super.onTapUp(event);
   }
 
-  @override
-  void onLongTapDown(TapDownEvent event) {
-    // TODO: implement onLongTapDown (for viewing picture and area)
-    super.onLongTapDown(event);
+  void addTextComponent() {
+    add(TextComponent(text: 'Level $levelNumber')
+      ..anchor = Anchor.topCenter
+      ..position = Vector2(size.x / 2, size.y));
   }
 }

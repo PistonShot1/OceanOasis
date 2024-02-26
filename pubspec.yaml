@@ -43,6 +43,7 @@ dependencies:
   window_manager: ^0.3.8
   flame_noise: ^0.2.0
   flame_bloc: ^1.10.10
+  flame_audio: ^1.3.3
 
 dev_dependencies:
   flutter_test:
@@ -82,6 +83,8 @@ flutter:
     - assets/images/character-bar/
     - assets/images/weapons/
     - assets/images/bossfight/
+    - assets/images/sample-data/
+    - assets/audio/underwater/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

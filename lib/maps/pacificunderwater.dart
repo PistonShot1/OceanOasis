@@ -44,7 +44,7 @@ class PacificOceanUnderwater extends Component
   bool playerisDrowning = false;
 
   // ice event
-  bool iceEvent = true;
+  bool iceEvent = false;
   //Player health
   PlayerHealth playerHealth =
       PlayerHealth(health: 3); //default, will be initialized again later
@@ -72,15 +72,6 @@ class PacificOceanUnderwater extends Component
     loadToolbar(playeritems);
 
     await add(underwaterWorld);
-
-    //Initialization of variables for event (these are dependent on the level value that was passed when this component was added to the game)
-    if (tideEvent) {
-      eventNum = random.nextInt(2);
-    }
-
-    if (breathingEvent) {
-      initBreathingArea();
-    }
 
     return super.onLoad();
   }
@@ -113,9 +104,21 @@ class PacificOceanUnderwater extends Component
       //Breathing
       if (breathingEvent) {
         breathingEventEffect();
+        switchPlayerAnimation();
       }
     }
     super.update(dt);
+  }
+
+  void switchPlayerAnimation() {
+    if (game.player.position.y <= landwaterlevel.y &&
+        game.player.animation != game.player.breathingAnimation) {
+      game.player.animation = game.player.breathingAnimation;
+    } else if (game.player.position.y > landwaterlevel.y &&
+        game.player.animation == game.player.breathingAnimation) {
+      game.player.animation = SpriteAnimation.fromFrameData(
+          game.player.swimimage, game.player.swimanimationData);
+    }
   }
 
   void wasteSpawn() {
@@ -165,6 +168,8 @@ class PacificOceanUnderwater extends Component
     breathingBar =
         PlayerBreathingBar(breathingSeconds: game.player.breathingSeconds);
     underwaterWorld.add(breathingBar..position = Vector2(0, 50));
+
+    // game.player.debugMode = true;
 
     (Platform.isAndroid || Platform.isIOS)
         ? game.camera.viewport.add(game.joystick)
@@ -236,6 +241,8 @@ class PacificOceanUnderwater extends Component
     tideEvent = LevelProperty.levelProperty['$levelNumber']['tideEvent'];
     breathingEvent =
         LevelProperty.levelProperty['$levelNumber']['breathingEvent'];
+    iceEvent = LevelProperty.levelProperty['$levelNumber']['iceEvent'];
+    game.camera.viewport.add(TextComponent(text: 'Hello'));
   }
 
   void loadPuzzle() {}
@@ -294,6 +301,7 @@ class PacificOceanUnderwater extends Component
 
     for (TiledObject object in objects) {
       landwaterlevel = Vector2(object.x, object.y);
+      print('Landwater level : $landwaterlevel');
     }
   }
 
@@ -305,8 +313,7 @@ class PacificOceanUnderwater extends Component
       breathingEffect = false;
       Future.delayed(const Duration(seconds: 2), () {
         game.player.breathingSeconds -= 1;
-        print(
-            'Player have ${game.player.breathingSeconds} breathing seconds left');
+        _updateBreathingBar();
         breathingEffect = true;
       });
     } else if (game.player.position.y <= landwaterlevel.y &&
@@ -315,6 +322,7 @@ class PacificOceanUnderwater extends Component
       breathingEffect = false;
       Future.delayed(const Duration(seconds: 2), () {
         game.player.breathingSeconds += 1;
+        _updateBreathingBar();
         breathingEffect = true;
       });
     } else if (game.player.breathingSeconds == 0) {
@@ -326,6 +334,13 @@ class PacificOceanUnderwater extends Component
         });
       }
     }
+  }
+
+  void _updateBreathingBar() {
+    breathingBar.removeFromParent();
+    breathingBar =
+        PlayerBreathingBar(breathingSeconds: game.player.breathingSeconds);
+    underwaterWorld.add(breathingBar..position = Vector2(0, 50));
   }
 
   void iceformationEvent() {
@@ -383,6 +398,14 @@ class PacificOceanUnderwater extends Component
     //Ice layer formation
     if (iceEvent) {
       iceformationEvent();
+    }
+    //Initialization of variables for event (these are dependent on the level value that was passed when this component was added to the game)
+    if (tideEvent) {
+      eventNum = random.nextInt(2);
+    }
+
+    if (breathingEvent) {
+      initBreathingArea();
     }
   }
 

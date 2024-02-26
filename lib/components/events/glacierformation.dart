@@ -45,8 +45,7 @@ class GlacierFormation extends SpriteAnimationComponent
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
     // TODO: implement onCollisionStart
-    if (other.parent == game.player) {
-      print('test1');
+    if (other  == game.player) {
       game.player.setMovementBoundary(
           maxX: game.player.movementBoundary[1],
           minX: game.player.movementBoundary[0],

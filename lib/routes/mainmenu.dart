@@ -106,8 +106,8 @@ class _MainMenuState extends State<MainMenu> {
                               iconSize: iconButtonSize,
                               onPressed: () =>
                                   _showOverlay(AchievementDashboard.id),
-                              icon: const Icon(Icons.emoji_events),
-                              color: Colors.amber,
+                              icon: const Icon(Icons.shopping_cart),
+                              color: Colors.grey[800],
                               style: ButtonStyle(
                                 padding: MaterialStateProperty.all(
                                   EdgeInsets.all(10),
@@ -135,16 +135,6 @@ class _MainMenuState extends State<MainMenu> {
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: IconButton(
-                  icon: Icon(Icons.shopping_cart),
-                  onPressed: () {},
-                ),
-              ),
-            )
           ],
         ),
       ),

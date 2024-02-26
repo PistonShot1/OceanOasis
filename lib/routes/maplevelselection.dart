@@ -9,6 +9,7 @@ import 'package:flutter/material.dart' hide Route;
 import 'package:oceanoasis/components/Boss/bossfight.dart';
 import 'package:oceanoasis/components/mapmarker.dart';
 import 'package:oceanoasis/maps/pacificunderwater.dart';
+import 'package:oceanoasis/property/mapLocationdata.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/maps/pacific.dart';
 
@@ -52,34 +53,13 @@ class MapLevelSelection extends Component with HasGameReference<MyGame> {
   List<MapMarker> _getMarkers() {
     //adding here temporarily without tileset location
     // TODO : convert the map to tiled tmx and add these markers
-    return [
-      MapMarker(
-        locationOnMap: Vector2(100, 300),
-        bossFightSceneRoute: () {
-          game.router.pushReplacement(Route(() => PacificOceanBossFight()));
-        },
-        levelChallengeRoute: () {
-          game.router.pushReplacement(Route(
-              () => PacificOceanUnderwater(levelNumber: 4, playeritems: 3)));
-        },
-      ),
-    ];
-  }
-
-  // Generate the scene according to ID specified
-  Component _generateScene(String mapId) {
-    switch (mapId) {
-      case 'pacific':
-        return PacificOcean();
-      default:
-        return Component();
-    }
+    return MapLocationData.mapMarkerData['MapMarkers'];
   }
 
   @override
   void onRemove() {
     // TODO: implement onRemove
-    
+
     super.onRemove();
   }
 

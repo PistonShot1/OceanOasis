@@ -1,7 +1,9 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:flame/geometry.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
@@ -19,12 +21,12 @@ class JoystickPlayer extends SpriteAnimationComponent
   SpriteComponent currentToolIndicator = SpriteComponent.fromImage(
       Flame.images.fromCache('ui/selected-item-ui.png'));
 
-  Image idleimage;
-  SpriteAnimationData idleanimationData;
+  Image swimimage;
+  SpriteAnimationData swimanimationData;
   // SpriteAnimationComponent?
   //     idle; //Note : acts as the 'body' (the main character spriteanimationcomponent)
   SpriteAnimation? hitAnimation;
-  SpriteAnimation? swimAnimation;
+  SpriteAnimation? breathingAnimation;
   //Debug variables
   final _collisionStartColor = Colors.amber;
   final _defaultColor = Colors.cyan;
@@ -60,7 +62,7 @@ class JoystickPlayer extends SpriteAnimationComponent
 
   Tools currentTool = ToolSlashProperty.toolIcon[0]
       ['tool']!; //default tool , need to see user data/state
-
+  PositionComponent currentToolOrigin = PositionComponent();
   //High tide event variable
   List<double> highTideSlower = [
     1,
@@ -73,27 +75,26 @@ class JoystickPlayer extends SpriteAnimationComponent
     required this.joystick,
     required Vector2 position,
     required this.playerScene,
-    required this.idleimage,
-    required this.idleanimationData,
+    required this.swimimage,
+    required this.swimanimationData,
     this.hitAnimation,
-    this.swimAnimation,
-  }) : super.fromFrameData(idleimage, idleanimationData,
+    this.breathingAnimation,
+  }) : super.fromFrameData(swimimage, swimanimationData,
             anchor: Anchor.center, position: position);
 
   @override
   Future<void> onLoad() async {
     //FOR DEBUG
-    final defaultPaint = Paint()
-      ..color = _defaultColor
-      ..style = PaintingStyle.stroke;
-    hitbox = RectangleHitbox()
-      ..paint = defaultPaint //FOR DEBUG
-      ..renderShape = true;
+
+    hitbox = RectangleHitbox();
     add(hitbox);
 
     //Current Tool held
     if (playerScene == 0) {
-      add(currentTool);
+      add(currentToolOrigin
+        ..position = Vector2(
+            size.x / sqrt(pow(scale.x, 2)), size.y / sqrt(pow(scale.y, 2))));
+      updateCurrentTool(currentTool);
     }
   }
 
@@ -174,17 +175,24 @@ class JoystickPlayer extends SpriteAnimationComponent
       velocity = Vector2.zero();
       horizontalDirection = 0;
       verticalDirection = 0;
-      animation = hitAnimation;
+      // animation = hitAnimation;
+
+      currentToolOrigin.add(
+          RotateEffect.by(tau, EffectController(duration: 0.5), onComplete: () {
+        isHitAnimationPlaying = false;
+      }));
+
       add(currentTool.slashEffect!
         ..anchor = Anchor.center
         ..size = Vector2.all(64)
         ..position = Vector2(100, 0));
 
-      Future.delayed(const Duration(milliseconds: 700), () {
-        //reset back to original position after attack animation finish
-        animation = SpriteAnimation.fromFrameData(idleimage, idleanimationData);
-        isHitAnimationPlaying = false;
-      });
+      // Future.delayed(const Duration(milliseconds: 600), () {
+      //   //reset back to original position after attack animation finish
+      //   animation = SpriteAnimation.fromFrameData(swimimage, swimanimationData);
+
+      //   isHitAnimationPlaying = false;
+      // });
     }
   }
 
@@ -245,13 +253,13 @@ class JoystickPlayer extends SpriteAnimationComponent
     movementBoundary = [minX, maxX, minY, maxY];
   }
 
-  //TODO : This logic works atm but check later
   void updateCurrentTool(Tools component) {
     if (currentTool.isMounted) {
-      remove(currentTool);
+      currentTool.removeFromParent();
     }
     currentTool = component;
-    add(currentTool);
+
+    currentToolOrigin.add(currentTool..angle = pi * 0.25);
   }
 
   void trackFacingDirection(Set<LogicalKeyboardKey> keysPressed) {

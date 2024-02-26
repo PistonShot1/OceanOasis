@@ -31,4 +31,5 @@ class PlayerBreathingBar extends PositionComponent
     addAll(breathingBar);
     return super.onLoad();
   }
+
 }

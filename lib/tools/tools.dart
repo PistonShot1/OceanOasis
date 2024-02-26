@@ -9,26 +9,25 @@ import 'package:oceanoasis/tools/slashEffect.dart';
 
 class Tools extends SpriteComponent with CollisionCallbacks {
   String? id;
-
+  RectangleHitbox hitbox = RectangleHitbox();
   SlashEffect? slashEffect;
-  String? slashType;
+
   Tools(
       {required Sprite sprite,
       required Vector2 size,
       required Vector2 position,
-      this.slashType,
-      ComponentKey? key,
       this.slashEffect,
       this.id})
-      : super(sprite: sprite, position: position, size: size, key: key);
+      : super(
+          sprite: sprite,
+          position: position,
+          size: size,
+        );
 
   @override
   FutureOr<void> onLoad() {
     // TODO: implement onLoad
-
-    
+    add(hitbox);
     return super.onLoad();
   }
-
-  
 }

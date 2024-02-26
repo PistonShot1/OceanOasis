@@ -17,7 +17,7 @@ class SlashEffect extends SpriteAnimationComponent
   final double stepTime;
   final Vector2 frameSize;
   final int frameAmount;
-  final String slashType;
+  final List<String> slashType;
   final String toolType;
   SlashEffect(this.spriteSheetImage, this.slashType,
       {required this.frameAmount,

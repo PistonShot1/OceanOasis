@@ -18,6 +18,7 @@ class Waste extends SpriteComponent
   int decayTime;
   final String wasteType;
   double points;
+  Map<String, Component> wastechildren;
   bool lastWaste =
       false; // default is false (this is a helper variable to detect last spawn in the tree)
   Waste({
@@ -25,8 +26,8 @@ class Waste extends SpriteComponent
     required this.wasteType,
     required this.points,
     required this.decayTime,
-    ComponentKey? key,
-  }) : super(sprite: sprite, size: Vector2.all(64), key: key);
+    required this.wastechildren,
+  }) : super(sprite: sprite, size: Vector2.all(64));
 
   Waste.clone(Waste waste, ComponentKey? key)
       : this(
@@ -34,7 +35,7 @@ class Waste extends SpriteComponent
             wasteType: waste.wasteType,
             points: waste.points,
             decayTime: waste.decayTime,
-            key: key);
+            wastechildren: waste.wastechildren);
 
   bool startDecay = true;
   @override
@@ -83,8 +84,12 @@ class Waste extends SpriteComponent
   }
 
   void detectSlash(PositionComponent other) {
-    if (other is SlashEffect && other.slashType.compareTo(wasteType) == 0) {
-      collect(game.player);
+    if (other is SlashEffect) {
+      for (String element in other.slashType) {
+        if (element.compareTo(wasteType) == 0) {
+          collect(game.player);
+        }
+      }
     }
   }
 

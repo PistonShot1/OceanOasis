@@ -34,7 +34,10 @@ class ItemToolBox extends SpriteComponent
   @override
   FutureOr<void> onLoad() async {
     // TODO: implement onLoad
-    iconItem.position = Vector2(size.x / (scale.x), size.y / (scale.y));
+    // debugMode = true;
+    //Frame is 6 pixel wide/tall
+    // iconItem.position = Vector2(iconItem.size.x+6,0);
+    
     add(iconItem..priority = 1);
     return super.onLoad();
   }
