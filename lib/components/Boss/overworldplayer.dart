@@ -30,6 +30,8 @@ class OverworldPlayer extends SpriteAnimationComponent
 
   Tools currentTool = WeaponProperty.weapons[0]['weapon']!;
 
+  List<double> playerBoundary = [];
+
   OverworldPlayer({
     required this.joystick,
     required Vector2 position,
@@ -55,6 +57,12 @@ class OverworldPlayer extends SpriteAnimationComponent
   @override
   void update(double dt) {
     super.update(dt);
+
+    if (playerBoundary.isNotEmpty) {
+      position.x = position.x.clamp(playerBoundary[0], playerBoundary[1]);
+      position.y = position.y.clamp(playerBoundary[2], playerBoundary[3]);
+    }
+
     if (!joystick.delta.isZero() && activeCollisions.isEmpty) {
       _lastSize.setFrom(size);
       _lastTransform.setFrom(transform);
@@ -118,8 +126,14 @@ class OverworldPlayer extends SpriteAnimationComponent
       currentTool.removeFromParent();
     }
     currentTool = component;
-    add(currentTool..scale=Vector2.all(0.5)..position=Vector2.all(20));
+    add(currentTool
+      ..scale = Vector2.all(0.5)
+      ..position = Vector2.all(20));
   }
 
   void hitAction() {}
+
+  set setPlayerBoundary(List<double> list) {
+    playerBoundary = list;
+  }
 }

@@ -48,6 +48,8 @@ class PacificOceanBossFight extends Component
     //finally add world
     await add(bossWorld);
 
+    
+
     cameraSettings();
     add(ScreenHitbox());
     addPlayer();
@@ -95,6 +97,12 @@ class PacificOceanBossFight extends Component
     player.scale = Vector2.all(3);
 
     bossWorld.add(player);
+
+    bossWorld.add(PositionComponent()
+      ..size = Vector2(tiledMap.size.x - 50, tiledMap.size.y - 50)
+      ..position = Vector2.all(25)
+      ..debugMode = true);                                                      //just for debug
+    player.setPlayerBoundary = [25, tiledMap.size.x - 50, 25, tiledMap.size.y]; //Here to set boundary
     (Platform.isAndroid || Platform.isIOS)
         ? game.camera.viewport.add(joystick)
         : '';
