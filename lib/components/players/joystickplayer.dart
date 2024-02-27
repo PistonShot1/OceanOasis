@@ -9,6 +9,7 @@ import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
+import 'package:oceanoasis/tools/slashEffect.dart';
 import 'package:oceanoasis/tools/tools.dart';
 import 'dart:math';
 
@@ -42,7 +43,8 @@ class JoystickPlayer extends SpriteAnimationComponent
   Vector2 velocity = Vector2.zero();
   double moveSpeed = 300; //this the speed
   final double pushAwaySpeed = 200.0;
-  bool isHitAnimationPlaying = false;
+  bool isHitAnimationPlaying =
+      false; //this variables acts as pause flag to stop spamming on hit action
   List<double> movementBoundary = [];
 
   //Facing direction
@@ -51,6 +53,7 @@ class JoystickPlayer extends SpriteAnimationComponent
     LogicalKeyboardKey.keyA: 'West',
     LogicalKeyboardKey.keyD: 'East'
   };
+  double facingDirectionnum = 1;
 
   //player properties
   ValueNotifier<double> currentLoad = ValueNotifier<double>(0);
@@ -131,8 +134,10 @@ class JoystickPlayer extends SpriteAnimationComponent
 
     if (horizontalDirection < 0 && scale.x > 0) {
       flipHorizontally();
+      facingDirectionnum = facingDirectionnum * -1;
     } else if (horizontalDirection > 0 && scale.x < 0) {
       flipHorizontally();
+      facingDirectionnum = facingDirectionnum * -1;
     }
 
     super.update(dt);
@@ -168,24 +173,34 @@ class JoystickPlayer extends SpriteAnimationComponent
   }
 
   void hitAction(Set<LogicalKeyboardKey> keysPressed) {
+    // print('Current facing direciton : $facingDirectionnum');
     if (keysPressed.contains(LogicalKeyboardKey.space) &&
         !isHitAnimationPlaying) {
-      //on hit animation , reset velocity, horizontal and vertical direction (to avoid movement while on hit animation)
+      //on hit animation , reset velocity, horizontal and vertical direction (to avoid update on position on long press)
       isHitAnimationPlaying = true;
       velocity = Vector2.zero();
       horizontalDirection = 0;
       verticalDirection = 0;
-      // animation = hitAnimation;
 
+      // animation = hitAnimation;
       currentToolOrigin.add(
-          RotateEffect.by(tau, EffectController(duration: 0.5), onComplete: () {
+          RotateEffect.by(tau, EffectController(duration: 0.1), onComplete: () {
         isHitAnimationPlaying = false;
+        currentTool.hitbox.collisionType = CollisionType.inactive;
       }));
 
-      add(currentTool.slashEffect!
-        ..anchor = Anchor.center
-        ..size = Vector2.all(64)
-        ..position = Vector2(100, 0));
+      if (currentTool.slashEffect != null) {
+        final component = SlashEffect.clone(currentTool.slashEffect!)
+          ..anchor = Anchor.center
+          ..size = Vector2(64, 32)
+          ..position = position;
+        (facingDirectionnum < 0) ? component.flipHorizontally() : '';
+        parent!.add(component
+          ..effects = MoveEffect.by(Vector2(400 * facingDirectionnum, 0),
+              EffectController(duration: 0.8), onComplete: () {
+            component.removeFromParent();
+          }));
+      }
 
       // Future.delayed(const Duration(milliseconds: 600), () {
       //   //reset back to original position after attack animation finish

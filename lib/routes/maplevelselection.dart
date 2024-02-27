@@ -53,7 +53,16 @@ class MapLevelSelection extends Component with HasGameReference<MyGame> {
   List<MapMarker> _getMarkers() {
     //adding here temporarily without tileset location
     // TODO : convert the map to tiled tmx and add these markers
-    return MapLocationData.mapMarkerData['MapMarkers'];
+    return [
+      MapMarker(
+        levelNumber: 1,
+        locationOnMap: Vector2(100, 300),
+        bossFightSceneRoute: Route(() => PacificOceanBossFight()),
+        levelChallengeRoute:
+            Route(() => PacificOceanUnderwater(levelNumber: 1, playeritems: 3)),
+        locationName: 'North Pacific Ocean',
+      )
+    ];
   }
 
   @override

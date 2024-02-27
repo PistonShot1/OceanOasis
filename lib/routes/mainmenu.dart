@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
+import 'package:oceanoasis/property/playerProperty.dart';
+import 'package:oceanoasis/property/playerScores.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/maps/pacific.dart';
 import 'package:oceanoasis/routes/achievementdashboard.dart';
@@ -8,6 +10,7 @@ import 'package:oceanoasis/routes/levelselection.dart';
 import 'package:oceanoasis/routes/maplevelselection.dart';
 import 'package:oceanoasis/routes/settings.dart';
 import 'package:oceanoasis/routes/userprofile.dart';
+import 'package:provider/provider.dart';
 
 class MainMenu extends StatefulWidget {
   static const id = 'MainMenu';
@@ -24,6 +27,7 @@ class _MainMenuState extends State<MainMenu> {
   double iconButtonSize = 35;
   double text1 = 50;
   double text2 = 30;
+  PlayerProperty playerData = PlayerProperty(tools: [], weapons: []);
   @override
   void initState() {
     super.initState();
@@ -144,7 +148,7 @@ class _MainMenuState extends State<MainMenu> {
   void oldWidget(BuildContext context) {
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
       return GameWidget(
-        game: MyGame(MediaQuery.of(context)),
+        game: MyGame(MediaQuery.of(context), playerData: playerData),
         loadingBuilder: (p0) {
           return Stack(
             children: [
@@ -218,14 +222,18 @@ class _MainMenuState extends State<MainMenu> {
           "Score": (context, MyGame game) {
             return Align(
               alignment: Alignment.topCenter,
-              child: ValueListenableBuilder<double>(
-                valueListenable: game.player.currentLoad,
-                builder: (BuildContext context, double value, Widget? child) {
+              child: ListenableBuilder(
+                listenable: game.playerData,
+                builder: (BuildContext context, Widget? child) {
                   return Material(
-                      color: Colors.transparent, child: Text('$value'));
+                      color: Colors.transparent,
+                      child: Text('${game.playerData.currentScore}'));
                 },
               ),
             );
+          },
+          "WasteScores": (context, MyGame game) {
+            return ScoreWidget(game: game);
           }
         },
         initialActiveOverlays: [],

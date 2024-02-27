@@ -7,7 +7,9 @@ import 'package:flame/effects.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:oceanoasis/components/Boss/crabBoss.dart';
+import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
+import 'package:oceanoasis/wasteComponents/waste.dart';
 
 class SlashEffect extends SpriteAnimationComponent
     with CollisionCallbacks, HasGameReference<MyGame> {
@@ -17,14 +19,16 @@ class SlashEffect extends SpriteAnimationComponent
   final double stepTime;
   final Vector2 frameSize;
   final int frameAmount;
-  final List<String> slashType;
+  final List<WasteType> slashType;
   final String toolType;
+  Effect? effects;
   SlashEffect(this.spriteSheetImage, this.slashType,
       {required this.frameAmount,
       required this.stepTime,
       required this.frameSize,
       required this.toolType,
-      this.damage})
+      this.damage,
+      this.effects})
       : super.fromFrameData(
             spriteSheetImage,
             SpriteAnimationData.sequenced(
@@ -57,9 +61,10 @@ class SlashEffect extends SpriteAnimationComponent
   void onMount() {
     // TODO: implement onMount
 
-    Future.delayed(Duration(milliseconds: animation!.frames.length * 100), () {
-      removeFromParent();
-    });
+    // Future.delayed(Duration(milliseconds: animation!.frames.length * 100), () {
+    //   removeFromParent();
+    // });
+    hitEffect();
     super.onMount();
   }
 
@@ -79,6 +84,10 @@ class SlashEffect extends SpriteAnimationComponent
     } else if (other is ScreenHitbox) {
       print('Screenhitbox was hit');
     }
+
+    if (other is Waste) {
+      removeFromParent();
+    }
     super.onCollisionStart(intersectionPoints, other);
   }
 
@@ -86,5 +95,15 @@ class SlashEffect extends SpriteAnimationComponent
   void onRemove() {
     // TODO: implement onRemove
     super.onRemove();
+  }
+
+  void hitEffect() {
+    // effects = MoveEffect.by(Vector2(200, 0), EffectController(duration: 0.8),
+    //     onComplete: () {
+    //   removeFromParent();
+    // });
+    if (effects != null) {
+      add(effects!);
+    }
   }
 }

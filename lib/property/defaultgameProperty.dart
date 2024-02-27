@@ -12,10 +12,11 @@ class LevelProperty {
   static Map<String, dynamic> levelProperty = {
     '1': {
       'levelNumber': 1,
-      'maxSpawn': 100,
+      'maxSpawn': 1,
       'tideEvent': false,
-      'breathingEvent': true,
+      'breathingEvent': false,
       'iceEvent': false,
+      'listOfWastes': [WasteType.paper, WasteType.plastic]
     },
     '2': {
       'levelNumber': 2,
@@ -23,6 +24,7 @@ class LevelProperty {
       'tideEvent': false,
       'breathingEvent': true,
       'iceEvent': false,
+      'listOfWastes': [WasteType.metal]
     },
     '3': {
       'levelNumber': 3,
@@ -30,6 +32,7 @@ class LevelProperty {
       'tideEvent': true,
       'breathingEvent': true,
       'iceEvent': true,
+      'listOfWastes': [WasteType.paper]
     },
     '4': {
       'levelNumber': 4,
@@ -37,6 +40,7 @@ class LevelProperty {
       'tideEvent': true,
       'breathingEvent': true,
       'iceEvent': true,
+      'listOfWastes': [WasteType.radioactive]
     },
     '5': {
       'levelNumber': 5,
@@ -44,6 +48,7 @@ class LevelProperty {
       'tideEvent': true,
       'breathingEvent': true,
       'iceEvent': true,
+      'listOfWastes': [WasteType.glass]
     },
   };
 }
@@ -57,12 +62,13 @@ class ToolSlashProperty {
           size: Vector2(32, 64),
           position: Vector2(-16, 24),
           slashEffect: SlashEffect(
-              Flame.images.fromCache('tools/slash-effect1.png'),
-              ['Paper', 'Plastic', 'Glass'],
-              frameAmount: 10,
+              Flame.images.fromCache('tools/water-hit-effect.png'),
+              [WasteType.paper, WasteType.plastic, WasteType.glass],
+              frameAmount: 21,
               stepTime: 0.05,
-              frameSize: Vector2.all(128),
-              toolType: _toolType))
+              frameSize: Vector2(256, 137),
+              toolType: _toolType),
+          slashType: [WasteType.paper, WasteType.plastic, WasteType.glass])
         ..anchor = Anchor.center,
       'icontool': Tools(
         sprite: Sprite(Flame.images.fromCache('tools/rubbish-picker.png')),
@@ -76,11 +82,13 @@ class ToolSlashProperty {
           position: Vector2(-16, 24),
           size: Vector2(64 * 0.5, 64 * 0.5),
           slashEffect: SlashEffect(
-              Flame.images.fromCache('tools/slash-effect2.png'), ['Metal'],
-              frameAmount: 9,
+              Flame.images.fromCache('tools/water-hit-effect.png'),
+              [WasteType.metal],
+              frameAmount: 21,
               stepTime: 0.05,
-              frameSize: Vector2.all(128),
-              toolType: _toolType))
+              frameSize: Vector2(256, 137),
+              toolType: _toolType),
+          slashType: [WasteType.metal])
         ..anchor = Anchor.center,
       'icontool': Tools(
         sprite: Sprite(Flame.images.fromCache('tools/magnet.png')),
@@ -90,17 +98,19 @@ class ToolSlashProperty {
     },
     {
       'tool': Tools(
-          sprite: Sprite(Flame.images.fromCache('tools/dropper.png')),
-          position: Vector2(-16, 24),
-          size: Vector2(32, 64),
-          slashEffect: SlashEffect(
-              Flame.images.fromCache('tools/slash-effect3.png'),
-              ['Radioactive'],
-              frameAmount: 8,
-              stepTime: 0.05,
-              frameSize: Vector2.all(128),
-              toolType: _toolType))
-        ..anchor = Anchor.center,
+        sprite: Sprite(Flame.images.fromCache('tools/dropper.png')),
+        position: Vector2(-16, 24),
+        size: Vector2(32, 64),
+        slashEffect: SlashEffect(
+          Flame.images.fromCache('tools/water-hit-effect.png'),
+          [WasteType.radioactive],
+          frameAmount: 21,
+          stepTime: 0.05,
+          frameSize: Vector2(256, 137),
+          toolType: _toolType,
+        ),
+        slashType: [WasteType.radioactive],
+      )..anchor = Anchor.center,
       'icontool': Tools(
         sprite: Sprite(Flame.images.fromCache('tools/dropper.png')),
         position: Vector2(32 * 0.5 + 6, 0),
@@ -110,34 +120,52 @@ class ToolSlashProperty {
   ];
 }
 
+enum WasteType { paper, plastic, glass, metal, radioactive }
+
 class WasteProperty {
-  //temporary
-  static List<Waste> wasteProperty = [
-    Waste(
-        sprite: Sprite(Flame.images.fromCache('waste/newspaper.png')),
-        wasteType: 'Paper',
-        points: 5,
-        decayTime: 10,
-        wastechildren: {}),
-    Waste(
-        sprite: Sprite(Flame.images.fromCache('waste/plastic-bag.png')),
-        wasteType: 'Plastic',
-        points: 10,
-        decayTime: 10,
-        wastechildren: {}),
-    Waste(
-        sprite: Sprite(Flame.images.fromCache('waste/plastic-bag.png')),
-        wasteType: 'Glass',
-        points: 10,
-        decayTime: 10,
-        wastechildren: {}),
-    Waste(
-        sprite: Sprite(Flame.images.fromCache('waste/can.png')),
-        wasteType: 'Metal',
-        points: 15,
-        decayTime: 10,
-        wastechildren: {}),
-  ];
+  final WasteType type;
+
+  WasteProperty({required this.type});
+
+  Waste get mapWasteComponent {
+    switch (type) {
+      case WasteType.paper:
+        return Waste(
+            sprite: Sprite(Flame.images.fromCache('waste/newspaper.png')),
+            wasteType: WasteType.paper,
+            points: 5,
+            decayTime: 10,
+            wastechildren: {});
+      case WasteType.plastic:
+        return Waste(
+            sprite: Sprite(Flame.images.fromCache('waste/plastic-bag.png')),
+            wasteType: WasteType.plastic,
+            points: 10,
+            decayTime: 10,
+            wastechildren: {});
+      case WasteType.glass:
+        return Waste(
+            sprite: Sprite(Flame.images.fromCache('waste/glass-bottle.png')),
+            wasteType: WasteType.glass,
+            points: 15,
+            decayTime: 10,
+            wastechildren: {});
+      case WasteType.metal:
+        return Waste(
+            sprite: Sprite(Flame.images.fromCache('waste/can.png')),
+            wasteType: WasteType.metal,
+            points: 15,
+            decayTime: 10,
+            wastechildren: {});
+      case WasteType.radioactive:
+        return Waste(
+            sprite: Sprite(Flame.images.fromCache('waste/radioactive-can.png')),
+            wasteType: WasteType.radioactive,
+            points: 15,
+            decayTime: 10,
+            wastechildren: {});
+    }
+  }
 }
 
 class WeaponProperty {

@@ -44,10 +44,12 @@ class MapMarker extends SpriteComponent
         OverlayRoute((context, game) => ChallengeBossSelection(
               levelNumber: levelNumber,
               toChallengeLevel: () {
-                (game as MyGame).router.pushReplacement(levelChallengeRoute);
+                game.router.pop();
+                (game).router.pushRoute(levelChallengeRoute);
               },
               toBossWorldSelection: () {
-                (game as MyGame).router.pushReplacement(bossFightSceneRoute);
+                
+                (game).router.pushRoute(bossFightSceneRoute);
               },
               locationName: locationName,
               game: game as MyGame,

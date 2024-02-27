@@ -3,11 +3,13 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/palette.dart';
 import 'package:flame/text.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:oceanoasis/components/events/glacierformation.dart';
+import 'package:oceanoasis/components/players/joystickplayer.dart';
 import 'package:oceanoasis/components/players/playerbreathingbar.dart';
 import 'package:oceanoasis/components/players/playerhealth.dart';
 import 'package:oceanoasis/tools/toolbox.dart';
@@ -27,8 +29,9 @@ class PacificOceanUnderwater extends Component
   final int levelNumber;
   bool startSpawn = false;
   int wasteList = 0;
+
+  late JoystickPlayer player;
   int playeritems;
-  String gameState = 'Loading';
 
   //tide event variables
   Map<int, String> tideDirection = {0: 'Left', 1: 'Right', 2: 'Up', 3: 'Down'};
@@ -52,6 +55,8 @@ class PacificOceanUnderwater extends Component
   PlayerBreathingBar breathingBar = PlayerBreathingBar(
       breathingSeconds: 10); //default , will be initialized again later
 
+  String gameState = 'Loading';
+
   PacificOceanUnderwater(
       {required this.levelNumber, required this.playeritems});
   @override
@@ -60,16 +65,13 @@ class PacificOceanUnderwater extends Component
     game.camera.stop();
     game.resumeEngine();
     game.overlays.remove('ToFacility');
-
+    game.overlays.add('WasteScores');
     underwaterWorld = World();
     tiledMap =
         await TiledComponent.load('pacific-ocean-final.tmx', Vector2.all(16));
     await underwaterWorld.add(tiledMap);
 
-    //JoyStick addition and player for mobile
-
     cameraSettings();
-    loadToolbar(playeritems);
 
     await add(underwaterWorld);
 
@@ -81,6 +83,7 @@ class PacificOceanUnderwater extends Component
     // TODO: implement onMount
     if (gameState.compareTo('Loading') == 0) {
       startGame();
+      game.playerData.resetScore();
     }
 
     super.onMount();
@@ -110,34 +113,47 @@ class PacificOceanUnderwater extends Component
     super.update(dt);
   }
 
-  void switchPlayerAnimation() {
-    if (game.player.position.y <= landwaterlevel.y &&
-        game.player.animation != game.player.breathingAnimation) {
-      game.player.animation = game.player.breathingAnimation;
-    } else if (game.player.position.y > landwaterlevel.y &&
-        game.player.animation == game.player.breathingAnimation) {
-      game.player.animation = SpriteAnimation.fromFrameData(
-          game.player.swimimage, game.player.swimanimationData);
-    }
-  }
-
-  void wasteSpawn() {
-    if (startSpawn &&
-        wasteList < LevelProperty.levelProperty['$levelNumber']['maxSpawn']) {
-      //it will end at -1
-      startSpawn = false;
-      Random random = Random();
-      Waste wasteProperty = WasteProperty.wasteProperty[random.nextInt(3)];
-      Waste oceanWaste = Waste.clone(wasteProperty, null)
-        ..position = spawnLogic();
-
-      Future.delayed(const Duration(seconds: 3), () async {
-        if (gameState.compareTo('Start') == 0) {
-          await underwaterWorld.add(oceanWaste);
-          startSpawn = true;
-          wasteList++;
-        }
+  void startGame() async {
+    final regular = TextPaint(
+      style: TextStyle(
+          fontSize: 48.0,
+          color: BasicPalette.white.color,
+          fontFamily: 'Retro Gaming'),
+    );
+    TextComponent numberText = TextComponent(text: '3', textRenderer: regular);
+    for (int i = 3; i >= 1; i--) {
+      await Future.delayed(const Duration(seconds: 1), () async {
+        await underwaterWorld.add(numberText
+          ..text = '$i'
+          ..position = Vector2(1920 / 2, 1080 / 2));
       });
+    }
+    await Future.delayed(const Duration(seconds: 1), () {
+      numberText.removeFromParent();
+      gameState = 'Start';
+    });
+
+    loadPlayerJoystick();
+    initPlayerBoundary();
+    loadToolbar(playeritems);
+    initspawnWaste();
+    initChallenges();
+    //Events
+    //Tide
+    if (tideEvent) {
+      highTideEvent(5);
+    }
+    //Ice layer formation
+    if (iceEvent) {
+      iceformationEvent();
+    }
+    //Initialization of variables for event (these are dependent on the level value that was passed when this component was added to the game)
+    if (tideEvent) {
+      eventNum = random.nextInt(2);
+    }
+
+    if (breathingEvent) {
+      initBreathingArea();
     }
   }
 
@@ -156,26 +172,95 @@ class PacificOceanUnderwater extends Component
 
   void loadPlayerJoystick() {
     final spawnPoint = tiledMap.tileMap.getLayer<ObjectGroup>("Player Spawn");
-    game.player.setPosition =
+    player = JoystickPlayer(
+        joystick: game.joystick,
+        position: Vector2(0, 0),
+        playerScene: 0,
+        swimimage: Flame.images.fromCache('main-character-1/Swim.png'),
+        swimanimationData: SpriteAnimationData.sequenced(
+            amount: 6, // Number of frames in your animation
+            stepTime: 0.15, // Duration of each frame
+            textureSize: Vector2(48, 48)),
+        hitAnimation: SpriteAnimation.fromFrameData(
+          Flame.images.fromCache('main-character-1/Attack.png'),
+          SpriteAnimationData.sequenced(
+              amount: 6, // Number of frames in your animation
+              stepTime: 0.15, // Duration of each frame
+              textureSize: Vector2(48, 48)),
+        ),
+        breathingAnimation: SpriteAnimation.fromFrameData(
+            Flame.images.fromCache('main-character-1/Idle.png'),
+            SpriteAnimationData.sequenced(
+                amount: 6, // Number of frames in your animation
+                stepTime: 0.15, // Duration of each frame
+                textureSize: Vector2(35, 39))));
+    player.size = Vector2.all(64);
+    player.scale = Vector2.all(2.5);
+    player.setPosition =
         Vector2(spawnPoint!.objects.first.x, spawnPoint.objects.first.y);
-    game.player.setSpeed = 500;
+    player.setSpeed = 500;
 
-    underwaterWorld.add(game.player);
+    underwaterWorld.add(player);
 
-    playerHealth = PlayerHealth(health: game.player.playerHealth);
+    playerHealth = PlayerHealth(health: player.playerHealth);
     underwaterWorld.add(playerHealth);
 
     breathingBar =
-        PlayerBreathingBar(breathingSeconds: game.player.breathingSeconds);
+        PlayerBreathingBar(breathingSeconds: player.breathingSeconds);
     underwaterWorld.add(breathingBar..position = Vector2(0, 50));
 
-    // game.player.debugMode = true;
+    // player.debugMode = true;
 
     (Platform.isAndroid || Platform.isIOS)
         ? game.camera.viewport.add(game.joystick)
         : '';
   }
 
+  void initPlayerBoundary() {
+    final movementLayer =
+        tiledMap.tileMap.getLayer<ObjectGroup>('Movement Layer');
+    final objects = movementLayer!.objects;
+    for (TiledObject object in objects) {
+      player.setMovementBoundary(
+          maxX: object.x + object.width,
+          minX: object.x,
+          maxY: object.y + object.height,
+          minY: object.y);
+    }
+    print('Player boundary ${player.movementBoundary}');
+  }
+
+  void loadToolbar(int itemNum) async {
+    final toolbarPoint = tiledMap.tileMap.getLayer<ObjectGroup>('UI layer');
+    final objects = toolbarPoint!.objects;
+
+    // toolbox
+    for (TiledObject object in objects) {
+      for (int i = 0; i < itemNum; i++) {
+        final toolbox = ItemToolBox(() {},
+            position: Vector2(object.x - 16 * 3, object.y + 16 * 2 * 3 * i),
+            iconItem: ToolSlashProperty.toolIcon[i]['icontool']!,
+            item: ToolSlashProperty.toolIcon[i]['tool'],
+            detectTap: true,
+            player: player)
+          ..scale = Vector2.all(3);
+        await underwaterWorld.add(toolbox);
+
+        // 16*2(the size of the tile image)* 3 (the set scale) * i (y positioning)
+      }
+    }
+  }
+
+  //Initialize challenges
+  void initChallenges() {
+    tideEvent = LevelProperty.levelProperty['$levelNumber']['tideEvent'];
+    breathingEvent =
+        LevelProperty.levelProperty['$levelNumber']['breathingEvent'];
+    iceEvent = LevelProperty.levelProperty['$levelNumber']['iceEvent'];
+    game.camera.viewport.add(TextComponent(text: 'Hello'));
+  }
+
+  //##SPAWN OF WASTE##
   void _initSpawnArea(double minX, double minY, double maxX, double maxY) {
     spawnArea = {'minX': minX, 'minY': minY, 'maxX': maxX, 'maxY': maxY};
   }
@@ -191,38 +276,30 @@ class PacificOceanUnderwater extends Component
     startSpawn = true;
   }
 
-  void initPlayerBoundary() {
-    final movementLayer =
-        tiledMap.tileMap.getLayer<ObjectGroup>('Movement Layer');
-    final objects = movementLayer!.objects;
-    for (TiledObject object in objects) {
-      game.player.setMovementBoundary(
-          maxX: object.x + object.width,
-          minX: object.x,
-          maxY: object.y + object.height,
-          minY: object.y);
-    }
-    print('Player boundary ${game.player.movementBoundary}');
-  }
+  void wasteSpawn() {
+    final List<WasteType> listOfWastes =
+        LevelProperty.levelProperty['$levelNumber']['listOfWastes'];
+    Random random = Random();
+    if (startSpawn &&
+        wasteList < LevelProperty.levelProperty['$levelNumber']['maxSpawn']) {
+      //it will end at -1
+      startSpawn = false;
 
-  void loadToolbar(int itemNum) async {
-    final toolbarPoint = tiledMap.tileMap.getLayer<ObjectGroup>('UI layer');
-    final objects = toolbarPoint!.objects;
+      // Waste wasteProperty = WasteProperty.wasteProperty[random.nextInt(3)];
+      Waste wasteProperty =
+          WasteProperty(type: listOfWastes[random.nextInt(listOfWastes.length)])
+              .mapWasteComponent;
 
-    // toolbox
-    for (TiledObject object in objects) {
-      for (int i = 0; i < itemNum; i++) {
-        final toolbox = ItemToolBox(() {},
-            position: Vector2(object.x - 16 * 3, object.y + 16 * 2 * 3 * i),
-            iconItem: ToolSlashProperty.toolIcon[i]['icontool']!,
-            item: ToolSlashProperty.toolIcon[i]['tool'],
-            detectTap: true,
-            player: game.player)
-          ..scale = Vector2.all(3);
-        await underwaterWorld.add(toolbox);
+      Waste oceanWaste = Waste.clone(wasteProperty, null)
+        ..position = spawnLogic();
 
-        // 16*2(the size of the tile image)* 3 (the set scale) * i (y positioning)
-      }
+      Future.delayed(const Duration(seconds: 3), () async {
+        if (gameState.compareTo('Start') == 0) {
+          await underwaterWorld.add(oceanWaste);
+          startSpawn = true;
+          wasteList++;
+        }
+      });
     }
   }
 
@@ -237,37 +314,15 @@ class PacificOceanUnderwater extends Component
     return Vector2(x, y);
   }
 
-  void initChallenges() {
-    tideEvent = LevelProperty.levelProperty['$levelNumber']['tideEvent'];
-    breathingEvent =
-        LevelProperty.levelProperty['$levelNumber']['breathingEvent'];
-    iceEvent = LevelProperty.levelProperty['$levelNumber']['iceEvent'];
-    game.camera.viewport.add(TextComponent(text: 'Hello'));
-  }
-
-  void loadPuzzle() {}
-
-  void spawnEvent(bool spawnEvent) {}
-
-  void gameOver() {
-    if ((wasteList >= LevelProperty.levelProperty['$levelNumber']['maxSpawn'] &&
-            underwaterWorld.children.query<Waste>().isEmpty) ||
-        game.player.playerHealth == 0) {
-      gameState = 'Game Over';
-      game.pauseEngine();
-      game.router.pushNamed(GameOver.id);
-    }
-  }
-
 // ### TIDE EVENT ###
   void highTideEvent(double duration) {
     print('Current tide is from : ${tideDirection[eventNum]}');
 
     switch (eventNum) {
       case 0:
-        game.player.highTideSlower[0] = 0.5;
+        player.highTideSlower[0] = 0.5;
       case 1:
-        game.player.highTideSlower[1] = 0.5;
+        player.highTideSlower[1] = 0.5;
     }
   }
 
@@ -277,14 +332,14 @@ class PacificOceanUnderwater extends Component
       switch (eventNum) {
         case 0:
           eventTidemovePlayer = false;
-          game.player.add(
+          player.add(
               MoveEffect.by(Vector2(300 * 1, 0), EffectController(duration: 5))
                 ..onComplete = () {
                   eventTidemovePlayer = true;
                 });
         case 1:
           eventTidemovePlayer = false;
-          game.player.add(
+          player.add(
               MoveEffect.by(Vector2(300 * -1, 0), EffectController(duration: 5))
                 ..onComplete = () {
                   eventTidemovePlayer = true;
@@ -307,25 +362,25 @@ class PacificOceanUnderwater extends Component
 
   void breathingEventEffect() {
     //axis is flipped for anchor.center of camera
-    if (game.player.position.y > landwaterlevel.y &&
+    if (player.position.y > landwaterlevel.y &&
         breathingEffect &&
-        game.player.breathingSeconds > 0) {
+        player.breathingSeconds > 0) {
       breathingEffect = false;
       Future.delayed(const Duration(seconds: 2), () {
-        game.player.breathingSeconds -= 1;
+        player.breathingSeconds -= 1;
         _updateBreathingBar();
         breathingEffect = true;
       });
-    } else if (game.player.position.y <= landwaterlevel.y &&
+    } else if (player.position.y <= landwaterlevel.y &&
         breathingEffect &&
-        game.player.breathingSeconds < game.player.maxbreathingDuration) {
+        player.breathingSeconds < player.maxbreathingDuration) {
       breathingEffect = false;
       Future.delayed(const Duration(seconds: 2), () {
-        game.player.breathingSeconds += 1;
+        player.breathingSeconds += 1;
         _updateBreathingBar();
         breathingEffect = true;
       });
-    } else if (game.player.breathingSeconds == 0) {
+    } else if (player.breathingSeconds == 0) {
       if (!playerisDrowning) {
         playerisDrowning = true;
         damageOnPlayer(1);
@@ -339,7 +394,7 @@ class PacificOceanUnderwater extends Component
   void _updateBreathingBar() {
     breathingBar.removeFromParent();
     breathingBar =
-        PlayerBreathingBar(breathingSeconds: game.player.breathingSeconds);
+        PlayerBreathingBar(breathingSeconds: player.breathingSeconds);
     underwaterWorld.add(breathingBar..position = Vector2(0, 50));
   }
 
@@ -351,77 +406,48 @@ class PacificOceanUnderwater extends Component
       ..position = Vector2(objects.first.x, objects.first.y));
   }
 
-  @override
-  void onRemove() {
-    // TODO: implement onRemove
-
-    game.player.playerHealth = 3;
-    game.player.breathingSeconds = 10;
-    game.player.currentTool.removeFromParent();
-    game.player.highTideSlower[0] = 1;
-    game.player.highTideSlower[1] = 1;
-    game.player.movementBoundary = List.empty();
-    print('exited');
-    super.onRemove();
-  }
-
-  void startGame() async {
-    final regular = TextPaint(
-      style: TextStyle(
-          fontSize: 48.0,
-          color: BasicPalette.white.color,
-          fontFamily: 'Retro Gaming'),
-    );
-    TextComponent numberText = TextComponent(text: '3', textRenderer: regular);
-    for (int i = 3; i >= 1; i--) {
-      await Future.delayed(const Duration(seconds: 1), () async {
-        await underwaterWorld.add(numberText
-          ..text = '$i'
-          ..position = Vector2(1920 / 2, 1080 / 2));
-      });
-    }
-    await Future.delayed(const Duration(seconds: 1), () {
-      numberText.removeFromParent();
-      gameState = 'Start';
-    });
-
-    initPlayerBoundary();
-    loadPlayerJoystick();
-
-    initspawnWaste();
-    initChallenges();
-    //Events
-    //Tide
-    if (tideEvent) {
-      highTideEvent(5);
-    }
-    //Ice layer formation
-    if (iceEvent) {
-      iceformationEvent();
-    }
-    //Initialization of variables for event (these are dependent on the level value that was passed when this component was added to the game)
-    if (tideEvent) {
-      eventNum = random.nextInt(2);
-    }
-
-    if (breathingEvent) {
-      initBreathingArea();
+  void switchPlayerAnimation() {
+    if (player.position.y <= landwaterlevel.y &&
+        player.animation != player.breathingAnimation) {
+      player.animation = player.breathingAnimation;
+    } else if (player.position.y > landwaterlevel.y &&
+        player.animation == player.breathingAnimation) {
+      player.animation = SpriteAnimation.fromFrameData(
+          player.swimimage, player.swimanimationData);
     }
   }
 
   void damageOnPlayer(double value) {
     //Condition to check game over and avoid null error
-    if (game.player.playerHealth > 0) {
+    if (player.playerHealth > 0) {
       underwaterWorld.remove(playerHealth);
-      game.player.setPlayerHealth = game.player.playerHealth - value;
-      playerHealth = PlayerHealth(health: game.player.playerHealth);
+      player.setPlayerHealth = player.playerHealth - value;
+      playerHealth = PlayerHealth(health: player.playerHealth);
       final effect = ColorEffect(
         Colors.red,
         EffectController(duration: 0.1, alternate: true, repeatCount: 1),
       );
-      game.player.add(effect);
+      player.add(effect);
       underwaterWorld.add(playerHealth);
-      print('Player health: ${game.player.playerHealth}');
+      print('Player health: ${player.playerHealth}');
+    }
+  }
+
+  @override
+  void onRemove() {
+    // TODO: implement onRemove
+    game.overlays.remove('WasteScores');
+    print('exited');
+    super.onRemove();
+  }
+
+  void gameOver() {
+    if ((wasteList >= LevelProperty.levelProperty['$levelNumber']['maxSpawn'] &&
+            underwaterWorld.children.query<Waste>().isEmpty) ||
+        player.playerHealth == 0) {
+      gameState = 'Game Over';
+      game.pauseEngine();
+      game.router.pushNamed(GameOver.id);
     }
   }
 }

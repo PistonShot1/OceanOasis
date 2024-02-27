@@ -14,7 +14,7 @@ class MapLocationData {
         locationOnMap: Vector2(100, 300),
         bossFightSceneRoute: Route(() => PacificOceanBossFight()),
         levelChallengeRoute:
-            Route(() => PacificOceanUnderwater(levelNumber: 4, playeritems: 3)),
+            Route(() => PacificOceanUnderwater(levelNumber: 1, playeritems: 3)),
         locationName: locationName[0],
       )
     ],
@@ -24,7 +24,8 @@ class MapLocationData {
     locationName[0]: {
       'history':
           'The Great Pacific Garbage Patch is a collection of marine debris in the North Pacific Ocean. Also known as the Pacific trash vortex, the garbage patch is actually two distinct collections of debris bounded by the massive North Pacific Subtropical Gyre.',
-      'image': Image.asset('assets/images/sample-data/sample1.jpg', fit: BoxFit.cover)
+      'image': Image.asset('assets/images/sample-data/sample1.jpg',
+          fit: BoxFit.cover)
     }
   };
 }
