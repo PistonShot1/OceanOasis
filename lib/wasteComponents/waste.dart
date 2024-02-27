@@ -2,13 +2,12 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/events.dart';
-import 'package:flame/flame.dart';
-import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
-import 'package:oceanoasis/components/players/joystickplayer.dart';
+import 'package:oceanoasis/property/defaultgameProperty.dart';
+import 'package:oceanoasis/property/playerProperty.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/tools/slashEffect.dart';
+import 'package:oceanoasis/tools/tools.dart';
 
 class Waste extends SpriteComponent
     with CollisionCallbacks, HasGameReference<MyGame> {
@@ -16,8 +15,9 @@ class Waste extends SpriteComponent
   final _collisionStartColor = Colors.amber;
   final _defaultColor = Colors.green;
   int decayTime;
-  final String wasteType;
+  final WasteType wasteType;
   double points;
+  Map<String, Component> wastechildren;
   bool lastWaste =
       false; // default is false (this is a helper variable to detect last spawn in the tree)
   Waste({
@@ -25,8 +25,8 @@ class Waste extends SpriteComponent
     required this.wasteType,
     required this.points,
     required this.decayTime,
-    ComponentKey? key,
-  }) : super(sprite: sprite, size: Vector2.all(64), key: key);
+    required this.wastechildren,
+  }) : super(sprite: sprite, size: Vector2.all(64));
 
   Waste.clone(Waste waste, ComponentKey? key)
       : this(
@@ -34,7 +34,7 @@ class Waste extends SpriteComponent
             wasteType: waste.wasteType,
             points: waste.points,
             decayTime: waste.decayTime,
-            key: key);
+            wastechildren: waste.wastechildren);
 
   bool startDecay = true;
   @override
@@ -49,10 +49,6 @@ class Waste extends SpriteComponent
       ..collisionType = CollisionType.passive;
     add(hitbox);
 
-    // add(MoveByEffect(
-    //   Vector2(0, -10),
-    //   EffectController(duration: 0.5, infinite: true),
-    // ));
     return super.onLoad();
   }
 
@@ -83,8 +79,18 @@ class Waste extends SpriteComponent
   }
 
   void detectSlash(PositionComponent other) {
-    if (other is SlashEffect && other.slashType.compareTo(wasteType) == 0) {
-      collect(game.player);
+    if (other is SlashEffect) {
+      for (WasteType element in other.slashType) {
+        if (wasteType == element) {
+          collect(game.playerData);
+        }
+      }
+    } else if (other is Tools) {
+      for (WasteType element in other.slashType!) {
+        if (wasteType == element) {
+          collect(game.playerData);
+        }
+      }
     }
   }
 
@@ -104,14 +110,15 @@ class Waste extends SpriteComponent
   }
 
   //when player interacts with it, it will be removed and points will be added
-  void collect(JoystickPlayer player) {
+  void collect(PlayerProperty player) {
     addAll([
       OpacityEffect.fadeOut(
         EffectController(duration: 1),
         target: this,
         onComplete: () {
           removeFromParent();
-          player.addLoad(this.points);
+          player.addScore(points);
+          player.addWasteScore(wasteType);
         },
       ),
     ]);
@@ -136,9 +143,4 @@ class Waste extends SpriteComponent
     // TODO: implement onRemove
     super.onRemove();
   }
-  // Waste clone() {
-  //   Waste newComponent =
-  //       Waste(sprite: this.sprite!, id: this.id, points: this.points);
-  //   return newComponent;
-  // }
 }

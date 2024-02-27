@@ -1,12 +1,15 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:flame/geometry.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
+import 'package:oceanoasis/tools/slashEffect.dart';
 import 'package:oceanoasis/tools/tools.dart';
 import 'dart:math';
 
@@ -19,12 +22,12 @@ class JoystickPlayer extends SpriteAnimationComponent
   SpriteComponent currentToolIndicator = SpriteComponent.fromImage(
       Flame.images.fromCache('ui/selected-item-ui.png'));
 
-  Image idleimage;
-  SpriteAnimationData idleanimationData;
+  Image swimimage;
+  SpriteAnimationData swimanimationData;
   // SpriteAnimationComponent?
   //     idle; //Note : acts as the 'body' (the main character spriteanimationcomponent)
   SpriteAnimation? hitAnimation;
-  SpriteAnimation? swimAnimation;
+  SpriteAnimation? breathingAnimation;
   //Debug variables
   final _collisionStartColor = Colors.amber;
   final _defaultColor = Colors.cyan;
@@ -40,7 +43,8 @@ class JoystickPlayer extends SpriteAnimationComponent
   Vector2 velocity = Vector2.zero();
   double moveSpeed = 300; //this the speed
   final double pushAwaySpeed = 200.0;
-  bool isHitAnimationPlaying = false;
+  bool isHitAnimationPlaying =
+      false; //this variables acts as pause flag to stop spamming on hit action
   List<double> movementBoundary = [];
 
   //Facing direction
@@ -49,6 +53,7 @@ class JoystickPlayer extends SpriteAnimationComponent
     LogicalKeyboardKey.keyA: 'West',
     LogicalKeyboardKey.keyD: 'East'
   };
+  double facingDirectionnum = 1;
 
   //player properties
   ValueNotifier<double> currentLoad = ValueNotifier<double>(0);
@@ -60,7 +65,7 @@ class JoystickPlayer extends SpriteAnimationComponent
 
   Tools currentTool = ToolSlashProperty.toolIcon[0]
       ['tool']!; //default tool , need to see user data/state
-
+  PositionComponent currentToolOrigin = PositionComponent();
   //High tide event variable
   List<double> highTideSlower = [
     1,
@@ -73,27 +78,26 @@ class JoystickPlayer extends SpriteAnimationComponent
     required this.joystick,
     required Vector2 position,
     required this.playerScene,
-    required this.idleimage,
-    required this.idleanimationData,
+    required this.swimimage,
+    required this.swimanimationData,
     this.hitAnimation,
-    this.swimAnimation,
-  }) : super.fromFrameData(idleimage, idleanimationData,
+    this.breathingAnimation,
+  }) : super.fromFrameData(swimimage, swimanimationData,
             anchor: Anchor.center, position: position);
 
   @override
   Future<void> onLoad() async {
     //FOR DEBUG
-    final defaultPaint = Paint()
-      ..color = _defaultColor
-      ..style = PaintingStyle.stroke;
-    hitbox = RectangleHitbox()
-      ..paint = defaultPaint //FOR DEBUG
-      ..renderShape = true;
+
+    hitbox = RectangleHitbox();
     add(hitbox);
 
     //Current Tool held
     if (playerScene == 0) {
-      add(currentTool);
+      add(currentToolOrigin
+        ..position = Vector2(
+            size.x / sqrt(pow(scale.x, 2)), size.y / sqrt(pow(scale.y, 2))));
+      updateCurrentTool(currentTool);
     }
   }
 
@@ -130,8 +134,10 @@ class JoystickPlayer extends SpriteAnimationComponent
 
     if (horizontalDirection < 0 && scale.x > 0) {
       flipHorizontally();
+      facingDirectionnum = facingDirectionnum * -1;
     } else if (horizontalDirection > 0 && scale.x < 0) {
       flipHorizontally();
+      facingDirectionnum = facingDirectionnum * -1;
     }
 
     super.update(dt);
@@ -167,24 +173,41 @@ class JoystickPlayer extends SpriteAnimationComponent
   }
 
   void hitAction(Set<LogicalKeyboardKey> keysPressed) {
+    // print('Current facing direciton : $facingDirectionnum');
     if (keysPressed.contains(LogicalKeyboardKey.space) &&
         !isHitAnimationPlaying) {
-      //on hit animation , reset velocity, horizontal and vertical direction (to avoid movement while on hit animation)
+      //on hit animation , reset velocity, horizontal and vertical direction (to avoid update on position on long press)
       isHitAnimationPlaying = true;
       velocity = Vector2.zero();
       horizontalDirection = 0;
       verticalDirection = 0;
-      animation = hitAnimation;
-      add(currentTool.slashEffect!
-        ..anchor = Anchor.center
-        ..size = Vector2.all(64)
-        ..position = Vector2(100, 0));
 
-      Future.delayed(const Duration(milliseconds: 700), () {
-        //reset back to original position after attack animation finish
-        animation = SpriteAnimation.fromFrameData(idleimage, idleanimationData);
+      // animation = hitAnimation;
+      currentToolOrigin.add(
+          RotateEffect.by(tau, EffectController(duration: 0.1), onComplete: () {
         isHitAnimationPlaying = false;
-      });
+        currentTool.hitbox.collisionType = CollisionType.inactive;
+      }));
+
+      if (currentTool.slashEffect != null) {
+        final component = SlashEffect.clone(currentTool.slashEffect!)
+          ..anchor = Anchor.center
+          ..size = Vector2(64, 32)
+          ..position = position;
+        (facingDirectionnum < 0) ? component.flipHorizontally() : '';
+        parent!.add(component
+          ..effects = MoveEffect.by(Vector2(400 * facingDirectionnum, 0),
+              EffectController(duration: 0.8), onComplete: () {
+            component.removeFromParent();
+          }));
+      }
+
+      // Future.delayed(const Duration(milliseconds: 600), () {
+      //   //reset back to original position after attack animation finish
+      //   animation = SpriteAnimation.fromFrameData(swimimage, swimanimationData);
+
+      //   isHitAnimationPlaying = false;
+      // });
     }
   }
 
@@ -245,13 +268,13 @@ class JoystickPlayer extends SpriteAnimationComponent
     movementBoundary = [minX, maxX, minY, maxY];
   }
 
-  //TODO : This logic works atm but check later
   void updateCurrentTool(Tools component) {
     if (currentTool.isMounted) {
-      remove(currentTool);
+      currentTool.removeFromParent();
     }
     currentTool = component;
-    add(currentTool);
+
+    currentToolOrigin.add(currentTool..angle = pi * 0.25);
   }
 
   void trackFacingDirection(Set<LogicalKeyboardKey> keysPressed) {
