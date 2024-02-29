@@ -5,13 +5,16 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/palette.dart';
+import 'package:flame/particles.dart';
 import 'package:flame/text.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:oceanoasis/components/events/glacierformation.dart';
+import 'package:oceanoasis/components/events/tideEvent.dart';
 import 'package:oceanoasis/components/players/joystickplayer.dart';
 import 'package:oceanoasis/components/players/playerbreathingbar.dart';
 import 'package:oceanoasis/components/players/playerhealth.dart';
+import 'package:oceanoasis/property/levelProperty.dart';
 import 'package:oceanoasis/tools/toolbox.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
@@ -100,10 +103,6 @@ class PacificOceanUnderwater extends Component
       //check for gameOver
       gameOver();
       //---Event----
-      //Tide
-      if (isMounted && tideEvent && eventTidemovePlayer) {
-        highTideEventMovePlayer(eventNum);
-      }
       //Breathing
       if (breathingEvent) {
         breathingEventEffect();
@@ -141,15 +140,18 @@ class PacificOceanUnderwater extends Component
     //Events
     //Tide
     if (tideEvent) {
-      highTideEvent(5);
+      // highTideEvent(5);
+      // eventNum = random.nextInt(2);
+      underwaterWorld.add(TideEvent(
+          tideEvent: tideEvent,
+          duration: 5,
+          worldSize: tiledMap.size,
+          player: player,
+          tiledMap: tiledMap));
     }
     //Ice layer formation
     if (iceEvent) {
       iceformationEvent();
-    }
-    //Initialization of variables for event (these are dependent on the level value that was passed when this component was added to the game)
-    if (tideEvent) {
-      eventNum = random.nextInt(2);
     }
 
     if (breathingEvent) {
@@ -253,11 +255,9 @@ class PacificOceanUnderwater extends Component
 
   //Initialize challenges
   void initChallenges() {
-    tideEvent = LevelProperty.levelProperty['$levelNumber']['tideEvent'];
-    breathingEvent =
-        LevelProperty.levelProperty['$levelNumber']['breathingEvent'];
-    iceEvent = LevelProperty.levelProperty['$levelNumber']['iceEvent'];
-    game.camera.viewport.add(TextComponent(text: 'Hello'));
+    tideEvent = LevelProperty.levelProperty[levelNumber]['tideEvent'];
+    breathingEvent = LevelProperty.levelProperty[levelNumber]['breathingEvent'];
+    iceEvent = LevelProperty.levelProperty[levelNumber]['iceEvent'];
   }
 
   //##SPAWN OF WASTE##
@@ -278,19 +278,20 @@ class PacificOceanUnderwater extends Component
 
   void wasteSpawn() {
     final List<WasteType> listOfWastes =
-        LevelProperty.levelProperty['$levelNumber']['listOfWastes'];
+        LevelProperty.levelProperty[levelNumber]['listOfWastes'];
     Random random = Random();
     if (startSpawn &&
-        wasteList < LevelProperty.levelProperty['$levelNumber']['maxSpawn']) {
+        wasteList < LevelProperty.levelProperty[levelNumber]['maxSpawn']) {
       //it will end at -1
       startSpawn = false;
-
-      // Waste wasteProperty = WasteProperty.wasteProperty[random.nextInt(3)];
+      ;
       Waste wasteProperty =
           WasteProperty(type: listOfWastes[random.nextInt(listOfWastes.length)])
               .mapWasteComponent;
 
       Waste oceanWaste = Waste.clone(wasteProperty, null)
+        ..size = Vector2(128, 128)
+        ..paint.filterQuality = FilterQuality.none
         ..position = spawnLogic();
 
       Future.delayed(const Duration(seconds: 3), () async {
@@ -312,40 +313,6 @@ class PacificOceanUnderwater extends Component
         random.nextInt(
             spawnArea['maxY']!.round() - spawnArea['minY']!.round() + 1);
     return Vector2(x, y);
-  }
-
-// ### TIDE EVENT ###
-  void highTideEvent(double duration) {
-    print('Current tide is from : ${tideDirection[eventNum]}');
-
-    switch (eventNum) {
-      case 0:
-        player.highTideSlower[0] = 0.5;
-      case 1:
-        player.highTideSlower[1] = 0.5;
-    }
-  }
-
-  //Moves the player continuously when tide is on
-  void highTideEventMovePlayer(int eventNum) {
-    if (eventTidemovePlayer) {
-      switch (eventNum) {
-        case 0:
-          eventTidemovePlayer = false;
-          player.add(
-              MoveEffect.by(Vector2(300 * 1, 0), EffectController(duration: 5))
-                ..onComplete = () {
-                  eventTidemovePlayer = true;
-                });
-        case 1:
-          eventTidemovePlayer = false;
-          player.add(
-              MoveEffect.by(Vector2(300 * -1, 0), EffectController(duration: 5))
-                ..onComplete = () {
-                  eventTidemovePlayer = true;
-                });
-      }
-    }
   }
 
   // ## BREATHING EVENT ##
@@ -442,7 +409,7 @@ class PacificOceanUnderwater extends Component
   }
 
   void gameOver() {
-    if ((wasteList >= LevelProperty.levelProperty['$levelNumber']['maxSpawn'] &&
+    if ((wasteList >= LevelProperty.levelProperty[levelNumber]['maxSpawn'] &&
             underwaterWorld.children.query<Waste>().isEmpty) ||
         player.playerHealth == 0) {
       gameState = 'Game Over';

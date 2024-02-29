@@ -11,7 +11,7 @@ import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/maps/pacific.dart';
 
 class MapMarker extends SpriteComponent
-    with TapCallbacks, HasGameReference<MyGame> {
+    with TapCallbacks, HasGameReference<MyGame>{
   final Vector2 locationOnMap;
   String locationName;
   Route bossFightSceneRoute;

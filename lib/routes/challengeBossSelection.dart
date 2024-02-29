@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:oceanoasis/property/mapLocationdata.dart';
+import 'package:oceanoasis/property/levelProperty.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 
 class ChallengeBossSelection extends StatefulWidget {
@@ -66,8 +66,8 @@ class _ChallengeBossSelectionState extends State<ChallengeBossSelection> {
                           height:
                               MediaQuery.of(context).size.height * 0.5 * 0.4,
                           width: MediaQuery.of(context).size.width * 0.4 * 0.5,
-                          child: MapLocationData
-                              .locationInfo[widget.locationName]['image'],
+                          child: LevelProperty.locationInfo[widget.levelNumber]
+                              ['image'],
                         ),
                       ),
                     ),
@@ -77,8 +77,8 @@ class _ChallengeBossSelectionState extends State<ChallengeBossSelection> {
                     child: SingleChildScrollView(
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
-                        child: Text(MapLocationData
-                            .locationInfo[widget.locationName]['history']),
+                        child: Text(LevelProperty
+                            .locationInfo[widget.levelNumber]['history']),
                       ),
                     ),
                   ),

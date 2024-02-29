@@ -18,15 +18,17 @@ class Waste extends SpriteComponent
   final WasteType wasteType;
   double points;
   Map<String, Component> wastechildren;
-  bool lastWaste =
-      false; // default is false (this is a helper variable to detect last spawn in the tree)
+
+  //Optional characteristic
+  double? density;
+  
   Waste({
     required Sprite sprite,
     required this.wasteType,
     required this.points,
     required this.decayTime,
     required this.wastechildren,
-  }) : super(sprite: sprite, size: Vector2.all(64));
+  }) : super(sprite: sprite);
 
   Waste.clone(Waste waste, ComponentKey? key)
       : this(

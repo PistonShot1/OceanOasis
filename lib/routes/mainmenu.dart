@@ -62,7 +62,10 @@ class _MainMenuState extends State<MainMenu> {
         child: Stack(
           children: [
             Positioned.fill(
-              child: Image.asset('assets/images/main-menu-background.jpg'),
+              child: Image.asset(
+                'assets/images/main-menu/background.png',
+                fit: BoxFit.cover,
+              ),
             ),
             Align(
               alignment: Alignment.center,
@@ -71,11 +74,11 @@ class _MainMenuState extends State<MainMenu> {
                 width: MediaQuery.of(context).size.width * 0.6,
                 padding: const EdgeInsets.all(20),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Expanded(
                         child: Text(
-                      'Ocean Oasis',
+                      'OCEAN OASIS',
                       style: TextStyle(fontSize: text1),
                     )),
                     Expanded(

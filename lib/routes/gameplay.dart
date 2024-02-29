@@ -84,7 +84,7 @@ class MyGame extends FlameGame
     // List<SpriteAnimationFrame> frames = [];
     // player.animation = SpriteAnimation(frames);
 
-    world.add(router);
+    add(router);
 
     //DEBUG
     // debugMode = true;
