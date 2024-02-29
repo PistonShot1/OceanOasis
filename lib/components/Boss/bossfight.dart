@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/palette.dart';
 
@@ -50,8 +51,6 @@ class PacificOceanBossFight extends Component
     //finally add world
     await add(bossWorld);
 
-    
-
     cameraSettings();
     add(ScreenHitbox());
     addPlayer();
@@ -61,11 +60,14 @@ class PacificOceanBossFight extends Component
   }
 
   void cameraSettings() {
-    game.camera = CameraComponent.withFixedResolution(
-        world: bossWorld, width: 1920, height: 1080)
-      ..viewport.anchor = Anchor.center;
-    game.camera.viewfinder.zoom = 1;
-    game.camera.moveBy(Vector2(1920 * 0.5, 1080 * 0.5));
+    game.camera = CameraComponent(world: bossWorld)
+      ..viewfinder.anchor = Anchor.center;
+    game.camera.moveBy(tiledMap.size / 2);
+    game.camera.viewfinder.visibleGameSize =
+        Vector2(tiledMap.size.x * 0.9, tiledMap.size.y * 0.9);
+    game.camera.setBounds(Rectangle.fromPoints(
+        Vector2(0, 0), Vector2(tiledMap.size.x * 0.5, tiledMap.size.y * 0.5)));
+    // game.camera.moveBy(Vector2(1920 * 0.5, 1080 * 0.5));
   }
 
   //For every frame update
@@ -103,19 +105,22 @@ class PacificOceanBossFight extends Component
     bossWorld.add(PositionComponent()
       ..size = Vector2(tiledMap.size.x - 50, tiledMap.size.y - 50)
       ..position = Vector2.all(25)
-      ..debugMode = true);                                                      //just for debug
-    player.setPlayerBoundary = [25, tiledMap.size.x - 50, 25, tiledMap.size.y]; //Here to set boundary
+      ..debugMode = true); //just for debug
+    player.setPlayerBoundary = [
+      25,
+      tiledMap.size.x - 50,
+      25,
+      tiledMap.size.y
+    ]; //Here to set boundary
     (Platform.isAndroid || Platform.isIOS)
         ? game.camera.viewport.add(joystick)
         : '';
   }
 
   void spawnBoss() {
-    boss = crabBoss(bossWorld, player);
+    boss = crabBoss(bossWorld, player, tiledMap);
     bossWorld.add(boss);
   }
-
-
 
   void loadToolbar(int itemNum) async {
     final toolbarPoint = tiledMap.tileMap.getLayer<ObjectGroup>('UI Layer');
@@ -152,7 +157,7 @@ class PacificOceanBossFight extends Component
     }
   }
 
-   void playerShoot(Set<LogicalKeyboardKey> keysPressed) {
+  void playerShoot(Set<LogicalKeyboardKey> keysPressed) {
     if (keysPressed.contains(LogicalKeyboardKey.space)) {
       player.add(SlashEffect.clone(player.currentTool
           .slashEffect!)); //Makesure to use clone , this is to reference the same component and easier for reuse
