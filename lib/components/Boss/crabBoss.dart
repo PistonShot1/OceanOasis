@@ -5,28 +5,50 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
+import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide Image;
+import 'package:oceanoasis/components/Boss/overworldplayer.dart';
+import 'package:oceanoasis/components/projectiles/bigFish.dart';
+import 'package:oceanoasis/components/projectiles/bossDamagedEffect.dart';
+import 'package:oceanoasis/components/projectiles/cautionEffect.dart';
+import 'package:oceanoasis/components/projectiles/mine.dart';
 import 'package:oceanoasis/components/projectiles/mutantFish.dart';
+import 'package:oceanoasis/components/projectiles/mutantFishDeath.dart';
 import 'package:oceanoasis/components/projectiles/toxicSmoke.dart';
+import 'package:oceanoasis/components/projectiles/toxicBubble.dart';
+import 'package:oceanoasis/components/Boss/bossfight.dart';
 import 'package:oceanoasis/routes/homescreen.dart';
 
 class crabBoss extends SpriteAnimationComponent
     with HasGameReference<MyGame>, CollisionCallbacks {
-  final initialPosition = Vector2(1000, 700);
-  final initialSize = Vector2(256, 256);
-  final double speed = 700;
+  final Vector2 initialPosition = Vector2(1700, 700);
+  final Vector2 initialSize = Vector2(256, 256);
+  final double speed = 300;
   late double moveDirection = 1;
-  final leftBoundaries = 0;
-  final rightBoundaries = 1700;
-  final freezeDuration = 3;
-  final cooldown = 7;
+  final double leftBoundaries = 0;
+  final double rightBoundaries = 1700;
+  final int freezeDuration = 1;
+  late double movingDirectionVertical = 1;
+  late final TiledComponent tiledMap;
+
+ 
+
+  final double topBoundaries = 50;
+  final double bottomBoundaries = 700;
+
   final double leftDirection = -1;
   final double rightDirection = 1;
+  late final OverworldPlayer player;
   int randomNumber = 0;
   bool freezing = false;
   World bossWorld = World();
   bool attackOnCooldown = false;
   bool switchingDirection = false;
+  bool toxicBubbleCooldown = false;
+  bool canDamage = true;
+
+  final double hitboxOffsetX = 60;
+  final double hitboxOffsetY = 60;
 
   double currentHealth = 100;
   double maxHealth = 100;
@@ -37,7 +59,8 @@ class crabBoss extends SpriteAnimationComponent
     EffectController(duration: 0.05, repeatCount: 20, reverseDuration: 0.05),
   );
 
-  crabBoss(World w) {
+  crabBoss(World w, OverworldPlayer p) {
+    player = p;
     super.position = initialPosition;
     super.size = initialSize;
     bossWorld = w;
@@ -49,12 +72,15 @@ class crabBoss extends SpriteAnimationComponent
     // TODO: implement render
     double barWidth = (currentHealth / maxHealth) * size.x;
     canvas.drawRect(
-        Rect.fromLTWH(0, 0, barWidth, 20), Paint()..color = Colors.red);
+        Rect.fromLTWH(0, 0, barWidth, 10), Paint()..color = Colors.red);
     super.render(canvas);
   }
 
   @override
   FutureOr<void> onLoad() async {
+    tiledMap = await TiledComponent.load('boss-fight-scene.tmx', Vector2.all(16));
+    
+    
     effect.removeOnFinish = false;
     add(effect);
     Image image = await Flame.images.load('bossfight/radioactive-boss.png');
@@ -63,7 +89,9 @@ class crabBoss extends SpriteAnimationComponent
         image,
         SpriteAnimationData.sequenced(
             amount: 14, stepTime: 0.2, textureSize: Vector2(512, 512)));
-    add(RectangleHitbox());
+           CircleHitbox c = CircleHitbox.relative(0.8, parentSize: initialSize, position: Vector2(hitboxOffsetX, hitboxOffsetY));
+
+      add(c);
     debugMode = true;
 
     add(PositionComponent()
@@ -76,7 +104,7 @@ class crabBoss extends SpriteAnimationComponent
     return Future.delayed(Duration(seconds: freezeDuration));
   }
 
-  Future<void> attackCooldown() {
+  Future<void> attackCooldown(cooldown) {
     return Future.delayed(Duration(seconds: cooldown));
   }
 
@@ -90,8 +118,13 @@ class crabBoss extends SpriteAnimationComponent
     return min + random.nextDouble() * (max - min);
   }
 
-  void horizontalMovement(double dt) {
+ /* void horizontalMovement(double dt) {
+    
     position.x += moveDirection * speed * dt;
+  }*/
+
+  void verticalMovement(double dt) {
+    position.y += movingDirectionVertical * speed * dt;
   }
 
   Future<bool> vulnerableFrame() async {
@@ -104,36 +137,60 @@ class crabBoss extends SpriteAnimationComponent
     return false;
   }
 
-  void switchMovingDirection(double direction) async {
-    if (switchingDirection == false) {
+  void switchMovingDirectionTop(double direction) async {
       switchingDirection = true;
-      moveDirection = 0;
+      movingDirectionVertical = 0;
       await wait();
       if (await vulnerableFrame()) {
-        moveDirection = direction;
+        movingDirectionVertical = direction;
+        while (position.y < topBoundaries){
+          await wait();
+        }
+        switchingDirection = false;
+      }
+  }
+
+  void switchMovingDirectionBot(double direction) async {
+    if (switchingDirection == false) {
+      switchingDirection = true;
+      movingDirectionVertical = 0;
+      await wait();
+      if (await vulnerableFrame()) {
+        movingDirectionVertical = direction;
+        while (position.y > bottomBoundaries){
+          await wait();
+        }
         switchingDirection = false;
       }
     }
   }
 
+
   void toxicAttack() async {
     attackOnCooldown = true;
     toxicSmoke smoke = toxicSmoke(position.x, position.y);
     bossWorld.add(smoke);
-    await attackCooldown();
+    await attackCooldown(7);
     bossWorld.remove(smoke);
     attackOnCooldown = false;
+  }
+
+  void spawntoxicBubble() async {
+    toxicBubbleCooldown = true;
+    bossWorld.add(toxicBubble(super.position, player.getPlayerPosition()));
+    await attackCooldown(1);
+    toxicBubbleCooldown = false;
   }
 
   void spawnMutantFish() async {
     attackOnCooldown = true;
     for (int i = 0; i < 5; i++) {
-      for (int j = 0; j < 2; j++) {
-        mutantFish m = mutantFish(getRandomNumber(0, 1800));
+
+        mutantFish m = mutantFish(getRandomNumber(0, 1800), bossWorld);
         bossWorld.add(m);
-      }
+      
     }
-    await attackCooldown();
+    await attackCooldown(3);
     attackOnCooldown = false;
   }
 
@@ -141,33 +198,98 @@ class crabBoss extends SpriteAnimationComponent
   void update(double dt) {
     //Random random = new Random();
     //int randomNumber = random.nextInt(1);
-    horizontalMovement(dt);
-    if (position.x > rightBoundaries) {
+    if (toxicBubbleCooldown == false) {
+      spawntoxicBubble();
+    }
+    
+    verticalMovement(dt);
+
+    if (position.y < topBoundaries) {
+      
+      if (switchingDirection == false) {
+        switchMovingDirectionTop(1);
+      }
+    } else if (position.y > bottomBoundaries) {
+      if (switchingDirection == false) {
+        switchMovingDirectionBot(-1);
+      }
+    }
+  
+    /*if (position.x > rightBoundaries) {
       switchMovingDirection(leftDirection);
     } else if (position.x < leftBoundaries) {
       switchMovingDirection(rightDirection);
-    }
-    if (moveDirection == 0 && attackOnCooldown == false) {
+    }*/
+
+    if (movingDirectionVertical == 0 && attackOnCooldown == false) {
       effect.reset();
       randomNumber = getRandomInt(0, 1);
       if (randomNumber == 0) {
         spawnMutantFish();
       } else {
-        toxicAttack();
+     
+        spawnBigFish();
       }
     }
 
-    if (takeDamageEverySecond) {
-      takeDamage();
+    if (  currentHealth < 0){
+      bossDefeated();
     }
+
+
     super.update(dt);
   }
 
-  void takeDamage() {
-    takeDamageEverySecond = false;
-    Future.delayed(const Duration(seconds: 5), () {
-      currentHealth = currentHealth - 5;
-      takeDamageEverySecond = true;
-    });
+  void takeDamage(double damage) {
+      bossDamagedEffect b = bossDamagedEffect(super.position, super.size);
+      bossWorld.add(b);
+      currentHealth = currentHealth - damage;
+
+  }
+
+  
+
+
+  void spawnBigFish() async{
+    attackOnCooldown = true;
+   final bigFishspawnPoint = tiledMap.tileMap.getLayer<ObjectGroup>('BigFishSpawn');
+    randomNumber = getRandomInt(0, 2);
+
+  if (randomNumber == 0){
+    for(final spawnPoint in bigFishspawnPoint!.objects){
+      if (spawnPoint.name == 'top'){
+        bossWorld.add(cautiousEffect(Vector2(spawnPoint.x, spawnPoint.y)));
+        Future.delayed(const Duration(seconds: 2), () {
+          bossWorld.add(bigFish(Vector2(spawnPoint.x, spawnPoint.y), bossWorld));
+        });
+      }
+    }
+  } else if (randomNumber == 1){
+    for(final spawnPoint in bigFishspawnPoint!.objects){
+      if (spawnPoint.name == 'mid'){
+        bossWorld.add(cautiousEffect(Vector2(spawnPoint.x, spawnPoint.y)));
+        Future.delayed(const Duration(seconds: 2), () {
+          bossWorld.add(bigFish(Vector2(spawnPoint.x, spawnPoint.y), bossWorld));
+        });
+      }
+    }
+  } else if (randomNumber == 2){
+    for(final spawnPoint in bigFishspawnPoint!.objects){
+      if (spawnPoint.name == 'bot'){
+        bossWorld.add(cautiousEffect(Vector2(spawnPoint.x, spawnPoint.y)));
+        Future.delayed(const Duration(seconds: 2), () {
+          bossWorld.add(bigFish(Vector2(spawnPoint.x, spawnPoint.y), bossWorld));
+        });
+      }
+    }
+  }
+  await attackCooldown(3);
+    attackOnCooldown = false;
+  }
+
+  void bossDefeated() {
+      mutantFishDeath m = mutantFishDeath(super.position, bossWorld, super.size, Vector2(0, 0));
+      super.removeFromParent();
+      bossWorld.add(m);
   }
 }

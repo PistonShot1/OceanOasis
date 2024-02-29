@@ -12,6 +12,7 @@ import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:flutter/src/services/raw_keyboard.dart';
 import 'package:oceanoasis/components/Boss/crabBoss.dart';
 import 'package:oceanoasis/components/Boss/overworldplayer.dart';
+import 'package:oceanoasis/components/projectiles/bullet.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/routes/homescreen.dart';
 import 'package:oceanoasis/tools/slashEffect.dart';
@@ -23,6 +24,7 @@ class PacificOceanBossFight extends Component
   static const id = 'PacificOceanBoss';
   late final World bossWorld;
   late final OverworldPlayer player;
+  late final crabBoss boss;
 
   //DEFINE YOUR CONSTRUCTOR HERE
   PacificOceanBossFight() {}
@@ -94,7 +96,7 @@ class PacificOceanBossFight extends Component
           stepTime: 0.15, // Duration of each frame
           textureSize: Vector2(35, 39)),
     );
-    player.scale = Vector2.all(3);
+    player.scale = Vector2.all(2);
 
     bossWorld.add(player);
 
@@ -109,9 +111,11 @@ class PacificOceanBossFight extends Component
   }
 
   void spawnBoss() {
-    final boss = crabBoss(bossWorld);
+    boss = crabBoss(bossWorld, player);
     bossWorld.add(boss);
   }
+
+
 
   void loadToolbar(int itemNum) async {
     final toolbarPoint = tiledMap.tileMap.getLayer<ObjectGroup>('UI Layer');
@@ -137,7 +141,7 @@ class PacificOceanBossFight extends Component
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     // TODO: implement onKeyEvent
-    playerAttack(keysPressed);
+    playerShoot(keysPressed);
     return super.onKeyEvent(event, keysPressed);
   }
 
@@ -145,6 +149,14 @@ class PacificOceanBossFight extends Component
     if (keysPressed.contains(LogicalKeyboardKey.space)) {
       player.add(SlashEffect.clone(player.currentTool
           .slashEffect!)); //Makesure to use clone , this is to reference the same component and easier for reuse
+    }
+  }
+
+   void playerShoot(Set<LogicalKeyboardKey> keysPressed) {
+    if (keysPressed.contains(LogicalKeyboardKey.space)) {
+      player.add(SlashEffect.clone(player.currentTool
+          .slashEffect!)); //Makesure to use clone , this is to reference the same component and easier for reuse
+      bossWorld.add(bullet(player.position, player.facingDirection, bossWorld));
     }
   }
 }

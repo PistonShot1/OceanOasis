@@ -1,5 +1,6 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/image_composition.dart';
@@ -23,14 +24,36 @@ class OverworldPlayer extends SpriteAnimationComponent
   final _defaultColor = Colors.cyan;
   final JoystickComponent joystick;
   late ShapeHitbox hitbox;
+  late int facingDirection = 1;
   int horizontalDirection = 0;
   int verticalDirection = 0;
   final Vector2 velocity = Vector2.zero();
   double moveSpeed = 300;
 
+  double currentHealth = 100;
+  final double maxHealth = 100;
+
+  late bool canDamage = true;
+
   Tools currentTool = WeaponProperty.weapons[0]['weapon']!;
 
   List<double> playerBoundary = [];
+
+  final takeDamageEffect = SequenceEffect([
+    ColorEffect(
+    const Color(0x00FF0000),
+    EffectController(duration: 0.2),
+    opacityFrom: 0,
+    opacityTo: 0.8,
+    ),
+    ColorEffect(
+    const Color(0x00FF0000),
+    EffectController(duration: 0.2),
+    opacityTo: 0,
+    ),
+  ]);
+  
+
 
   OverworldPlayer({
     required this.joystick,
@@ -43,6 +66,8 @@ class OverworldPlayer extends SpriteAnimationComponent
 
   @override
   Future<void> onLoad() async {
+    takeDamageEffect.removeOnFinish = false;
+    add(takeDamageEffect);
     //--- FOR DEBUG---
     final defaultPaint = Paint()
       ..color = _defaultColor
@@ -56,8 +81,9 @@ class OverworldPlayer extends SpriteAnimationComponent
 
   @override
   void update(double dt) {
-    super.update(dt);
-
+    if (currentHealth < 0) {
+      gameOver();
+    }
     if (playerBoundary.isNotEmpty) {
       position.x = position.x.clamp(playerBoundary[0], playerBoundary[1]);
       position.y = position.y.clamp(playerBoundary[2], playerBoundary[3]);
@@ -76,8 +102,10 @@ class OverworldPlayer extends SpriteAnimationComponent
 
     if (horizontalDirection < 0 && scale.x > 0) {
       flipHorizontally();
+      facingDirection = -1;
     } else if (horizontalDirection > 0 && scale.x < 0) {
       flipHorizontally();
+      facingDirection = 1;
     }
     super.update(dt);
   }
@@ -94,6 +122,15 @@ class OverworldPlayer extends SpriteAnimationComponent
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     movementKey(keysPressed);
     return true;
+  }
+
+  @override
+  void render(Canvas canvas) {
+    // TODO: implement render
+    double barWidth = (currentHealth / maxHealth) * size.x;
+    canvas.drawRect(
+        Rect.fromLTWH(0, 0, barWidth, 10), Paint()..color = Colors.red);
+    super.render(canvas);
   }
 
   void movementKey(Set<LogicalKeyboardKey> keysPressed) {
@@ -132,6 +169,24 @@ class OverworldPlayer extends SpriteAnimationComponent
   }
 
   void hitAction() {}
+
+  Vector2 getPlayerPosition() {
+    return super.position;
+  }
+
+  void takeDamage(double damage) {
+    currentHealth = currentHealth - damage;
+    // ignore: avoid_print
+    print(currentHealth);
+    takeDamageEffect.reset();
+  }
+
+  void gameOver() {
+    // ignore: avoid_print
+    print("RIP BOZO");
+    super.removeFromParent();
+  }
+
 
   set setPlayerBoundary(List<double> list) {
     playerBoundary = list;

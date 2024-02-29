@@ -140,21 +140,21 @@ class WeaponProperty {
     {
       'weapon': Tools(
           id: '',
-          sprite: Sprite(Flame.images.fromCache('weapons/staff1.png')),
+          sprite: Sprite(Flame.images.fromCache('weapons/gun.png')),
           size: Vector2.all(32),
           position: Vector2(-16, 24),
           slashType: '',
           slashEffect: SlashEffect(
-            Flame.images.fromCache('weapons/Lightning-effect.png'),
+            Flame.images.fromCache('weapons/muzzleEffect.png'),
             '',
-            frameAmount: 7,
+            frameAmount: 4,
             stepTime: 0.1,
-            frameSize: Vector2(32, 193),
-          )..scale = Vector2.all(0.5))
+            frameSize: Vector2(23, 23),
+          )..scale = Vector2.all(1))
         ..anchor = Anchor.center,
       'iconweapon': Tools(
         id: '',
-        sprite: Sprite(Flame.images.fromCache('weapons/staff1.png')),
+        sprite: Sprite(Flame.images.fromCache('weapons/gun.png')),
         size: Vector2.all(16),
         position: Vector2.all(16),
       )
