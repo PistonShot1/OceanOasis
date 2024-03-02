@@ -32,6 +32,8 @@ class MyGame extends FlameGame
 
   List<ItemToolBox>? toolboxItems;
 
+  int? currentLevel;
+
   AudioPlayer? mainBgm;
   MyGame(this.screeninfo, {required this.playerData});
   @override
@@ -67,7 +69,8 @@ class MyGame extends FlameGame
         ),
       ),
     };
-    router = RouterComponent(initialRoute: MapLevelSelection.id, routes: routes);
+    router =
+        RouterComponent(initialRoute: MapLevelSelection.id, routes: routes);
 
     final knobPaint = BasicPalette.blue.withAlpha(200).paint();
     final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
@@ -84,7 +87,7 @@ class MyGame extends FlameGame
     // List<SpriteAnimationFrame> frames = [];
     // player.animation = SpriteAnimation(frames);
 
-    world.add(router);
+    add(router);
 
     //DEBUG
     // debugMode = true;

@@ -7,6 +7,8 @@ import 'package:flame/geometry.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
+import 'package:oceanoasis/components/events/longswordfish.dart';
+import 'package:oceanoasis/components/players/playerhealth.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/tools/slashEffect.dart';
@@ -60,7 +62,7 @@ class JoystickPlayer extends SpriteAnimationComponent
   double? maxLoad;
   int breathingSeconds = 10;
   int maxbreathingDuration = 10;
-  double playerHealth = 3;
+  PlayerHealth playerHealth = PlayerHealth(health: 3);
   //Inventory & tools
 
   Tools currentTool = ToolSlashProperty.toolIcon[0]
@@ -73,6 +75,8 @@ class JoystickPlayer extends SpriteAnimationComponent
     1,
     1
   ]; //effect for each : left,right,up,down
+
+  bool playerVulnerability = true;
 
   JoystickPlayer({
     required this.joystick,
@@ -89,8 +93,8 @@ class JoystickPlayer extends SpriteAnimationComponent
   Future<void> onLoad() async {
     //FOR DEBUG
 
-    hitbox = RectangleHitbox();
-    add(hitbox);
+    hitbox = CircleHitbox(radius: 10, position: size * 0.5);
+    add(hitbox..debugMode = true);
 
     //Current Tool held
     if (playerScene == 0) {
@@ -141,24 +145,6 @@ class JoystickPlayer extends SpriteAnimationComponent
     }
 
     super.update(dt);
-  }
-
-  @override
-  void onCollisionStart(
-      Set<Vector2> intersectionPoints, PositionComponent other) {
-    super.onCollisionStart(intersectionPoints, other);
-
-    //DEBUG
-    hitbox.paint.color = _collisionStartColor;
-  }
-
-  @override
-  void onCollisionEnd(PositionComponent other) {
-    // TODO: implement onCollisionEnd
-    //DEBUG
-    hitbox.paint.color = _defaultColor;
-
-    super.onCollisionEnd(other);
   }
 
   @override
@@ -257,7 +243,31 @@ class JoystickPlayer extends SpriteAnimationComponent
   }
 
   set setPlayerHealth(double value) {
-    playerHealth = value;
+    playerHealth.health = value;
+  }
+
+  void hit(double value) {
+    if (playerVulnerability) {
+      playerVulnerability = false;
+      game.camera.viewport.remove(playerHealth);
+      playerHealth = PlayerHealth(health: playerHealth.health - value);
+
+      Future.delayed(const Duration(seconds: 1), () {
+        playerVulnerability = true;
+      });
+      final effect = ColorEffect(
+        Colors.red,
+        EffectController(duration: 0.5, alternate: true, repeatCount: 1),
+      );
+
+      effect.onComplete = () {
+        effect.reset();
+      };
+
+      add(effect);
+      // effect.reset();
+      game.camera.viewport.add(playerHealth);
+    }
   }
 
   void setMovementBoundary(

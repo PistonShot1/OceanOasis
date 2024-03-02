@@ -87,6 +87,8 @@ flutter:
     - assets/images/sample-data/
     - assets/audio/underwater/
     - assets/images/score-icon/
+    - assets/images/main-menu/
+    - assets/images/tileset/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

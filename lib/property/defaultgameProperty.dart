@@ -3,55 +3,12 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/material.dart' hide Route;
+import 'package:oceanoasis/components/Boss/bossfight.dart';
 import 'package:oceanoasis/maps/pacificunderwater.dart';
 import 'package:oceanoasis/tools/tools.dart';
 import 'package:oceanoasis/tools/slashEffect.dart';
 import 'package:oceanoasis/wasteComponents/waste.dart';
-
-class LevelProperty {
-  static Map<String, dynamic> levelProperty = {
-    '1': {
-      'levelNumber': 1,
-      'maxSpawn': 1,
-      'tideEvent': false,
-      'breathingEvent': false,
-      'iceEvent': false,
-      'listOfWastes': [WasteType.paper, WasteType.plastic]
-    },
-    '2': {
-      'levelNumber': 2,
-      'maxSpawn': 15,
-      'tideEvent': false,
-      'breathingEvent': true,
-      'iceEvent': false,
-      'listOfWastes': [WasteType.metal]
-    },
-    '3': {
-      'levelNumber': 3,
-      'maxSpawn': 15,
-      'tideEvent': true,
-      'breathingEvent': true,
-      'iceEvent': true,
-      'listOfWastes': [WasteType.paper]
-    },
-    '4': {
-      'levelNumber': 4,
-      'maxSpawn': 15,
-      'tideEvent': true,
-      'breathingEvent': true,
-      'iceEvent': true,
-      'listOfWastes': [WasteType.radioactive]
-    },
-    '5': {
-      'levelNumber': 5,
-      'maxSpawn': 15,
-      'tideEvent': true,
-      'breathingEvent': true,
-      'iceEvent': true,
-      'listOfWastes': [WasteType.glass]
-    },
-  };
-}
 
 class ToolSlashProperty {
   static const String _toolType = 'WasteCollector';
@@ -74,7 +31,9 @@ class ToolSlashProperty {
         sprite: Sprite(Flame.images.fromCache('tools/rubbish-picker.png')),
         size: Vector2(32 * 0.5, 64 * 0.5),
         position: Vector2(32 * 0.5 + 6, 0),
-      )..angle = pi * 0.25
+      )
+        ..angle = pi * 0.25
+        ..paint.filterQuality = FilterQuality.none
     },
     {
       'tool': Tools(
@@ -94,7 +53,9 @@ class ToolSlashProperty {
         sprite: Sprite(Flame.images.fromCache('tools/magnet.png')),
         position: Vector2(64 * 0.25, 6),
         size: Vector2(64 * 0.25, 64 * 0.25),
-      )..angle = pi * 0.25
+      )
+        ..angle = pi * 0.25
+        ..paint.filterQuality = FilterQuality.none
     },
     {
       'tool': Tools(

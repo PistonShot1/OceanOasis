@@ -2,13 +2,14 @@ import 'dart:async';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:oceanoasis/property/playerProperty.dart';
-import 'package:oceanoasis/property/playerScores.dart';
+import 'package:oceanoasis/routes/playerScores.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/maps/pacific.dart';
 import 'package:oceanoasis/routes/achievementdashboard.dart';
 import 'package:oceanoasis/routes/levelselection.dart';
 import 'package:oceanoasis/routes/maplevelselection.dart';
 import 'package:oceanoasis/routes/settings.dart';
+import 'package:oceanoasis/routes/totalScoreWidget.dart';
 import 'package:oceanoasis/routes/userprofile.dart';
 import 'package:provider/provider.dart';
 
@@ -62,7 +63,10 @@ class _MainMenuState extends State<MainMenu> {
         child: Stack(
           children: [
             Positioned.fill(
-              child: Image.asset('assets/images/main-menu-background.jpg'),
+              child: Image.asset(
+                'assets/images/main-menu/background.png',
+                fit: BoxFit.cover,
+              ),
             ),
             Align(
               alignment: Alignment.center,
@@ -71,11 +75,11 @@ class _MainMenuState extends State<MainMenu> {
                 width: MediaQuery.of(context).size.width * 0.6,
                 padding: const EdgeInsets.all(20),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Expanded(
                         child: Text(
-                      'Ocean Oasis',
+                      'OCEAN OASIS',
                       style: TextStyle(fontSize: text1),
                     )),
                     Expanded(
@@ -234,6 +238,9 @@ class _MainMenuState extends State<MainMenu> {
           },
           "WasteScores": (context, MyGame game) {
             return ScoreWidget(game: game);
+          },
+          "TotalScores": (context, MyGame game) {
+            return TotalScoreWidget(game: game);
           }
         },
         initialActiveOverlays: [],

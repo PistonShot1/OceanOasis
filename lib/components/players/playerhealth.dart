@@ -9,9 +9,9 @@ class PlayerHealth extends PositionComponent {
   final Sprite fullheart = Sprite(Flame.images.fromCache('heart-Sheet.png'),
       srcPosition: Vector2.zero(), srcSize: Vector2.all(32));
   final Sprite halfheart = Sprite(Flame.images.fromCache('heart-Sheet.png'),
-      srcPosition: Vector2(32 * 2, 32), srcSize: Vector2.all(32));
+      srcPosition: Vector2(32 * 2, 0), srcSize: Vector2.all(32));
   final Sprite emptyheart = Sprite(Flame.images.fromCache('heart-Sheet.png'),
-      srcPosition: Vector2(32 * 3, 32), srcSize: Vector2.all(32));
+      srcPosition: Vector2(32 * 3, 0), srcSize: Vector2.all(32));
   PlayerHealth({
     required this.health,
   });
@@ -23,6 +23,14 @@ class PlayerHealth extends PositionComponent {
     for (i = 0; i < health.floor(); i++) {
       final spriteComponent = SpriteComponent(
         sprite: fullheart,
+        size: Vector2.all(64),
+        position: Vector2(i * 64, 0),
+      );
+      healthBar.add(spriteComponent);
+    }
+    if(health.round()-health > 0){
+      final spriteComponent = SpriteComponent(
+        sprite: halfheart,
         size: Vector2.all(64),
         position: Vector2(i * 64, 0),
       );

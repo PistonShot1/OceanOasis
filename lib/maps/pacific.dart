@@ -32,6 +32,7 @@ class PacificOcean extends Component
     // game.camera.stop();
     overlaysSetting();
     myWorld = World();
+
     tiledMap = await TiledComponent.load('depositeland.tmx', Vector2.all(16));
     await myWorld.add(tiledMap);
 
@@ -113,7 +114,6 @@ class PacificOcean extends Component
 
   @override
   void onRemove() {
-    game.overlays.remove("TopMenu");
     cameraComponent.removeFromParent();
     myWorld.removeFromParent();
     super.onRemove();
@@ -131,6 +131,7 @@ class PacificOcean extends Component
       game.overlays.remove('ToFacility');
     }
     game.overlays.add('ToMapSelection');
+    game.overlays.add('TotalScores');
   }
   //SOME LEGIT CODE I COOK : MIGHT NEED IT LATER
   // for (final object in objectGroup!.objects) {
