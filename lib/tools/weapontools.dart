@@ -7,13 +7,14 @@ import 'package:flame_noise/flame_noise.dart';
 import 'package:flutter/material.dart';
 import 'package:oceanoasis/tools/slashEffect.dart';
 
-class Tools extends SpriteComponent with CollisionCallbacks {
+class weaponTools extends SpriteComponent with CollisionCallbacks {
   String? id;
 
   SlashEffect? slashEffect;
   String? slashType;
-  Tools(
+  weaponTools(
       {
+      required double fireRate,
       required Sprite sprite,
       required Vector2 size,
       required Vector2 position,

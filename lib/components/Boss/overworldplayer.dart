@@ -6,8 +6,12 @@ import 'package:flame/game.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
+import 'package:oceanoasis/components/projectiles/bigFish.dart';
+import 'package:oceanoasis/components/projectiles/bullet.dart';
+import 'package:oceanoasis/components/projectiles/mutantFish.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/tools/slashEffect.dart';
 import 'package:oceanoasis/tools/tools.dart';
 
 class OverworldPlayer extends SpriteAnimationComponent
@@ -30,6 +34,8 @@ class OverworldPlayer extends SpriteAnimationComponent
   final Vector2 velocity = Vector2.zero();
   double moveSpeed = 300;
 
+  late final World currentWorld;
+
   double currentHealth = 100;
   final double maxHealth = 100;
 
@@ -37,18 +43,36 @@ class OverworldPlayer extends SpriteAnimationComponent
 
   Tools currentTool = WeaponProperty.weapons[0]['weapon']!;
 
+  double currentEnergyLevel = 0;
+  final double MaxEnergyLevel = 100;
+
   List<double> playerBoundary = [];
 
   final takeDamageEffect = SequenceEffect([
     ColorEffect(
     const Color(0x00FF0000),
-    EffectController(duration: 0.2),
+    EffectController(duration: 1),
     opacityFrom: 0,
     opacityTo: 0.8,
     ),
     ColorEffect(
     const Color(0x00FF0000),
-    EffectController(duration: 0.2),
+    EffectController(duration: 1),
+    opacityTo: 0,
+    ),
+  ]);
+
+  final chargeEnergyEffect = SequenceEffect([
+  
+    ColorEffect(
+    Color.fromARGB(255, 2, 27, 255),
+    EffectController(duration: 1),
+    opacityFrom: 0,
+    opacityTo: 0.8,
+    ),
+    ColorEffect(
+    Color.fromARGB(255, 0, 60, 255),
+    EffectController(duration: 1),
     opacityTo: 0,
     ),
   ]);
@@ -56,6 +80,7 @@ class OverworldPlayer extends SpriteAnimationComponent
 
 
   OverworldPlayer({
+    required this.currentWorld,
     required this.joystick,
     required Vector2 position,
     required this.playerScene,
@@ -67,6 +92,8 @@ class OverworldPlayer extends SpriteAnimationComponent
   @override
   Future<void> onLoad() async {
     takeDamageEffect.removeOnFinish = false;
+    chargeEnergyEffect.removeOnFinish = false;
+    add(chargeEnergyEffect);
     add(takeDamageEffect);
     //--- FOR DEBUG---
     final defaultPaint = Paint()
@@ -116,13 +143,9 @@ class OverworldPlayer extends SpriteAnimationComponent
     // TODO: implement onCollisionStart
     super.onCollisionStart(intersectionPoints, other);
     hitbox.paint.color = _collisionStartColor;
+
   }
 
-  @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    movementKey(keysPressed);
-    return true;
-  }
 
   @override
   void render(Canvas canvas) {
@@ -131,6 +154,12 @@ class OverworldPlayer extends SpriteAnimationComponent
     canvas.drawRect(
         Rect.fromLTWH(0, 0, barWidth, 10), Paint()..color = Colors.red);
     super.render(canvas);
+
+    double energybarWidth = (currentEnergyLevel / MaxEnergyLevel) * size.x;
+    canvas.drawRect(
+        Rect.fromLTWH(0, 10, energybarWidth, 10), Paint()..color = Colors.blue);
+    super.render(canvas);
+    
   }
 
   void movementKey(Set<LogicalKeyboardKey> keysPressed) {
@@ -187,8 +216,29 @@ class OverworldPlayer extends SpriteAnimationComponent
     super.removeFromParent();
   }
 
+  void chargeEnergy(double energy){
+    chargeEnergyEffect.reset();
+    currentEnergyLevel = currentEnergyLevel + energy;
+    
+    // ignore: avoid_print
+    print(currentEnergyLevel);
+  }
+
 
   set setPlayerBoundary(List<double> list) {
     playerBoundary = list;
   }
+
+    
+
+  @override
+  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    movementKey(keysPressed);
+    
+
+    return super.onKeyEvent(event, keysPressed);
+  }
+
+ 
+
 }

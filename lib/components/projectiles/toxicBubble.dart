@@ -1,16 +1,20 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:oceanoasis/components/Boss/crabBoss.dart';
+import 'package:oceanoasis/components/Boss/freezeEffect.dart';
 import 'package:oceanoasis/components/Boss/overworldplayer.dart';
+import 'package:oceanoasis/components/projectiles/mutantFish.dart';
+import 'package:oceanoasis/components/projectiles/mutantFishDeath.dart';
 import 'package:oceanoasis/routes/homescreen.dart';
 
 class toxicBubble extends SpriteAnimationComponent with HasGameReference<MyGame>, CollisionCallbacks{
-  final destroyTime = 5;
-  final projectileSpeed = 666;
+
+   double projectileSpeed = 666;
   late double projectileDirection;
   final Vector2 initialSize = Vector2(128,128);
   late Vector2 thisfacingDirection;
@@ -18,8 +22,11 @@ class toxicBubble extends SpriteAnimationComponent with HasGameReference<MyGame>
   late double ydirectionRatio;
   final double hitboxOffsetX = 30;
   final double hitboxOffsetY = 30;
+  late final World currentWorld;
+  final double damageToOverworldPlayer = 10;
 
-  toxicBubble(sourcePosition, destinationPos) {
+  toxicBubble(Vector2 sourcePosition, Vector2 destinationPos, World w) {
+    currentWorld = w;
     thisfacingDirection  = destinationPos - sourcePosition;
     xdirectionRatio = thisfacingDirection.y / thisfacingDirection.x;
     if (xdirectionRatio < 0 ){
@@ -46,31 +53,40 @@ class toxicBubble extends SpriteAnimationComponent with HasGameReference<MyGame>
   }
 
   void removeComponent() {
-      Future.delayed(const Duration(seconds: 5), () {
+      Future.delayed(const Duration(seconds: 15), () {
         super.removeFromParent();
       });
   }
+
+  final Vector2 overWorldPlayerOffset = Vector2(-60,-60);
 
   @override
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is OverworldPlayer){
-      other.takeDamage(10);
-      other.canDamage = false;
+      other.takeDamage(damageToOverworldPlayer);
+      currentWorld.add(mutantFishDeath(other.position, super.size, overWorldPlayerOffset));
+      super.removeFromParent();
+    }
+    if (other is freezeEffect && frozen == false){
+      freezeEvent();
     }
 
   }
+  bool frozen = false;
+  static const int freezeDuration = 7;
 
-  @override
-  void onCollisionEnd(PositionComponent other) {
-
-    if (other is OverworldPlayer){
-      other.canDamage = true;
-    }
-
-    super.onCollisionEnd(other);
+  void freezeEvent(){
+    frozen = true;
+    projectileSpeed = 0;
+    Future.delayed(const Duration(seconds: freezeDuration), () {
+        projectileSpeed = 666;
+        frozen = false;
+      });
   }
+
+
 
   @override
   void update(double dt){

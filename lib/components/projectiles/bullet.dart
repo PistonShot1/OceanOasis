@@ -22,12 +22,11 @@ class bullet extends SpriteAnimationComponent with HasGameReference<MyGame>, Col
   final double hitboxOffsetX = 30;
   final double hitboxOffsetY = 30;
 
-  late final World currentWorld;
 
-  bullet(Vector2 sourcePosition, int facingDirection, World w) {
-    currentWorld = w;
+  bullet(Vector2 sourcePosition, int facingDirection, Vector2 positionOffset) {
+
     thisfacingDirection = facingDirection;
-    super.position = sourcePosition;
+    super.position = sourcePosition + positionOffset;
     super.size = initialSize;
     //super.angle = pi/2;
   }

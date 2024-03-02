@@ -139,7 +139,7 @@ class WeaponProperty {
   static List<Map<String, Tools>> weapons = [
     {
       'weapon': Tools(
-          id: '',
+          id: 'pistol',
           sprite: Sprite(Flame.images.fromCache('weapons/gun.png')),
           size: Vector2.all(32),
           position: Vector2(-16, 24),
@@ -161,7 +161,7 @@ class WeaponProperty {
     },
     {
       'weapon': Tools(
-          id: '',
+          id: 'freezeDevice',
           sprite: Sprite(Flame.images.fromCache('weapons/staff2.png')),
           position: Vector2(-16, 24),
           size: Vector2.all(32),

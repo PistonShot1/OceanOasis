@@ -3,14 +3,15 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
+import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:oceanoasis/routes/homescreen.dart';
+
 import 'package:oceanoasis/tools/tools.dart';
 
 class ItemToolBox extends SpriteComponent
     with TapCallbacks, KeyboardHandler, HasGameReference<MyGame> {
-
   VoidCallback? callback;
   LogicalKeyboardKey? keybind;
   Tools iconItem;
@@ -35,8 +36,21 @@ class ItemToolBox extends SpriteComponent
   @override
   FutureOr<void> onLoad() async {
     // TODO: implement onLoad
-    iconItem.position = Vector2(size.x / (scale.x), size.y / (scale.y));
+    // debugMode = true;
+    //Frame is 6 pixel wide/tall
+    // iconItem.position = Vector2(iconItem.size.x+6,0);
+
     add(iconItem..priority = 1);
+    if (keybind != null) {
+      final renderer = TextPaint(
+        style: TextStyle(
+            fontSize: 10.0,
+            color: BasicPalette.white.color,
+            fontFamily: 'Retro Gaming'),
+      );
+      add(TextComponent(
+          text: keybind!.keyLabel, textRenderer: renderer, priority: 2));
+    }
     return super.onLoad();
   }
 
@@ -54,10 +68,9 @@ class ItemToolBox extends SpriteComponent
     super.update(dt);
   }
 
-  @override
+@override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    // TODO: implement onKeyEvent
-    if (keybind != null) {
+     if (keybind != null) {
       itemSelection(keysPressed: keysPressed, detectTap: detectTap);
     }
     return super.onKeyEvent(event, keysPressed);

@@ -7,11 +7,13 @@ import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide Image;
+
 import 'package:oceanoasis/components/Boss/overworldplayer.dart';
+import 'package:oceanoasis/components/Boss/screenFreezeEffect.dart';
 import 'package:oceanoasis/components/projectiles/bigFish.dart';
 import 'package:oceanoasis/components/projectiles/bossDamagedEffect.dart';
 import 'package:oceanoasis/components/projectiles/cautionEffect.dart';
-import 'package:oceanoasis/components/projectiles/mine.dart';
+
 import 'package:oceanoasis/components/projectiles/mutantFish.dart';
 import 'package:oceanoasis/components/projectiles/mutantFishDeath.dart';
 import 'package:oceanoasis/components/projectiles/toxicSmoke.dart';
@@ -23,7 +25,7 @@ class crabBoss extends SpriteAnimationComponent
     with HasGameReference<MyGame>, CollisionCallbacks {
   final Vector2 initialPosition = Vector2(1600, 700);
   final Vector2 initialSize = Vector2(256, 256);
-  final double speed = 300;
+   double speed = 300;
   late double moveDirection = 1;
   final double leftBoundaries = 0;
   final double rightBoundaries = 1700;
@@ -44,6 +46,7 @@ class crabBoss extends SpriteAnimationComponent
   bool switchingDirection = false;
   bool toxicBubbleCooldown = false;
   bool canDamage = true;
+
 
   final double hitboxOffsetX = 60;
   final double hitboxOffsetY = 60;
@@ -173,11 +176,16 @@ class crabBoss extends SpriteAnimationComponent
     attackOnCooldown = false;
   }
 
+  bool canSpawntoxicBubble = true;
+
   void spawntoxicBubble() async {
-    toxicBubbleCooldown = true;
-    bossWorld.add(toxicBubble(super.position, player.getPlayerPosition()));
-    await attackCooldown(1);
-    toxicBubbleCooldown = false;
+    if (canSpawntoxicBubble == true) {
+      toxicBubbleCooldown = true;
+      bossWorld.add(toxicBubble(super.position, player.getPlayerPosition(), bossWorld));
+      await attackCooldown(1);
+      toxicBubbleCooldown = false;
+    }
+
   }
 
   void spawnMutantFish() async {
@@ -284,7 +292,7 @@ class crabBoss extends SpriteAnimationComponent
 
   void bossDefeated() {
     mutantFishDeath m =
-        mutantFishDeath(super.position, bossWorld, super.size, Vector2(0, 0));
+        mutantFishDeath(super.position, super.size, Vector2(0, 0));
     super.removeFromParent();
     bossWorld.add(m);
   }
@@ -295,12 +303,22 @@ class crabBoss extends SpriteAnimationComponent
     cutscene();
     super.onMount();
   }
+  void freezeEvent(){
+    canSpawntoxicBubble = false;
+    speed = 0;
+    screenFreezeEffect b = screenFreezeEffect(Vector2(0,0));
+    bossWorld.add(b);
+    Future.delayed(const Duration(seconds: 7), () {
+        speed = 300;
+         canSpawntoxicBubble = true;
+      });
+  }
 
   void cutscene() {
     position = tiledMap.size / 2 - size / 2;
     // game.camera.viewfinder.visibleGameSize = size;
     // game.camera.follow(this);
-    final dialog = TextComponent(text: 'U ded')..position = Vector2.zero();
+    final dialog = TextComponent(text: 'nanda gey')..position = Vector2.zero();
     add(dialog);
     game.camera.viewfinder.add(ScaleEffect.by(
         Vector2.all(2), EffectController(duration: 2), onComplete: () async {

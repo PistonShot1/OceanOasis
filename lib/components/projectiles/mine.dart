@@ -14,7 +14,7 @@ class mine extends SpriteAnimationComponent with HasGameReference<MyGame>, Colli
   final Vector2 initialSize = Vector2.all(100);
   bool playingEffect = false;
   late final World currentWorld;
-  final double damage = 50;
+
 
   final scaleEffect = SizeEffect.by(
     Vector2(50, 50),

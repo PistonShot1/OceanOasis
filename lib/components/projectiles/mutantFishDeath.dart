@@ -8,12 +8,11 @@ import 'package:oceanoasis/routes/homescreen.dart';
 
 class mutantFishDeath extends SpriteAnimationComponent with HasGameReference<MyGame>, CollisionCallbacks{
 
-  late final World currentWorld;
 
 
-  mutantFishDeath(Vector2 sourcePosition , World w, Vector2 size, Vector2 offset) {
+  mutantFishDeath(Vector2 sourcePosition, Vector2 size, Vector2 offset) {
 
-    currentWorld = w;
+
     super.position = sourcePosition;
     super.position.x = super.position.x + offset.x;
     super.position.y = super.position.y + offset.y;
@@ -27,7 +26,7 @@ class mutantFishDeath extends SpriteAnimationComponent with HasGameReference<MyG
     animation = SpriteAnimation.fromFrameData(image, SpriteAnimationData.sequenced(
       amount: 6,
       stepTime: 0.2,
-      textureSize: Vector2.all(54),
+      textureSize: Vector2(52,53),
       ));
       
     return super.onLoad();

@@ -1,17 +1,19 @@
 import 'dart:async';
-import 'dart:math';
+
 import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
-import 'package:oceanoasis/components/Boss/crabBoss.dart';
+
+import 'package:oceanoasis/components/Boss/freezeEffect.dart';
 import 'package:oceanoasis/components/Boss/overworldplayer.dart';
+
 import 'package:oceanoasis/components/projectiles/mine.dart';
 import 'package:oceanoasis/routes/homescreen.dart';
 
 class bigFish extends SpriteAnimationComponent with HasGameReference<MyGame>, CollisionCallbacks{
-  final destroyTime = 5;
-  final projectileSpeed = 666;
+  final int destroyTime = 5;
+  double projectileSpeed = 666;
   late double projectileDirection;
   final Vector2 initialSize = Vector2(300,300);
   final double hitboxOffsetX = 100;
@@ -19,6 +21,8 @@ class bigFish extends SpriteAnimationComponent with HasGameReference<MyGame>, Co
   final double spawnOffsetX = -500;
   final double spawnOffsetY = 0;
   late final World currentWorld;
+
+  final double damageToPlayer = 30;
 
   bool mineCooldown = false;
 
@@ -45,7 +49,7 @@ class bigFish extends SpriteAnimationComponent with HasGameReference<MyGame>, Co
   }
 
   void removeComponent() {
-      Future.delayed(const Duration(seconds: 5), () {
+      Future.delayed(const Duration(seconds: 15), () {
         super.removeFromParent();
       });
   }
@@ -55,7 +59,10 @@ class bigFish extends SpriteAnimationComponent with HasGameReference<MyGame>, Co
       Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
     if (other is OverworldPlayer){
-      other.takeDamage(50);
+      other.takeDamage(damageToPlayer);
+    }
+    if (other is freezeEffect && frozen == false){
+      freezeEvent();
     }
 
   }
@@ -71,7 +78,7 @@ class bigFish extends SpriteAnimationComponent with HasGameReference<MyGame>, Co
   final double mineSpawnOffsetY = 50;
 
   void spawnMine() {
-    if (mineCooldown == false){
+    if (mineCooldown == false && frozen == false ){
       mineCooldown = true;
       Future.delayed(const Duration(seconds: 1), () {
         mine m = mine(super.position, currentWorld, Vector2(mineSpawnOffsetX, mineSpawnOffsetY));
@@ -80,6 +87,16 @@ class bigFish extends SpriteAnimationComponent with HasGameReference<MyGame>, Co
       });
     }
 
+  }
+  bool frozen = false;
+
+  void freezeEvent(){
+    frozen = true;
+    projectileSpeed = 0;
+    Future.delayed(const Duration(seconds: 7), () {
+        projectileSpeed = 666;
+        frozen = false;
+      });
   }
 
 

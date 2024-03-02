@@ -4,6 +4,9 @@ import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
+import 'package:oceanoasis/components/Boss/freezeEffect.dart';
+import 'package:oceanoasis/components/Boss/overworldplayer.dart';
+import 'package:oceanoasis/components/Boss/screenFreezeEffect.dart';
 import 'package:oceanoasis/components/projectiles/mutantFishDeath.dart';
 import 'package:oceanoasis/routes/homescreen.dart';
 
@@ -15,6 +18,8 @@ class mutantFish extends SpriteAnimationComponent with HasGameReference<MyGame>,
   int randomNumber = 0;
   final double hitboxOffsetX = 30;
   final double hitboxOffsetY = 0;
+
+  final double damageToOverWorldPlayer = 20;
 
   mutantFish(double sourcePosition, World w) {
     currentWorld = w;
@@ -44,20 +49,46 @@ class mutantFish extends SpriteAnimationComponent with HasGameReference<MyGame>,
   }
 
   void removeComponent() {
-    if (position.y > 1000 ){
- 
-      mutantFishDeath m =  mutantFishDeath(super.position, currentWorld, super.size, Vector2(-100,0));
+      mutantFishDeath m =  mutantFishDeath(super.position, super.size, Vector2(-100,0));
       currentWorld.add(m);
+      super.removeFromParent();
 
-        super.removeFromParent();
-
-    }
   }
+
+  @override
+  void onCollisionStart(
+      Set<Vector2> intersectionPoints, PositionComponent other) {
+    // TODO: implement onCollisionStart
+    if (other is OverworldPlayer){
+      other.takeDamage(damageToOverWorldPlayer);
+      removeComponent();
+    }
+    if (other is freezeEffect && frozen == false){
+      freezeEvent();
+    }
+    super.onCollisionStart(intersectionPoints, other);
+  }
+  bool frozen = false;
+
+  void freezeEvent(){
+    frozen = true;
+    projectileSpeed = 0;
+    Future.delayed(const Duration(seconds: 7), () {
+        projectileSpeed = 300;
+        frozen = false;
+      });
+  }
+
+
+
+
 
   @override
   void update(double dt){
     position.y += (1* projectileSpeed * dt);
-    removeComponent();
+     if (position.y > 900 ){
+       removeComponent();
+     }
     super.update(dt);
   }
   
