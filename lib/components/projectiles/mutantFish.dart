@@ -8,7 +8,7 @@ import 'package:oceanoasis/components/Boss/freezeEffect.dart';
 import 'package:oceanoasis/components/Boss/overworldplayer.dart';
 import 'package:oceanoasis/components/Boss/screenFreezeEffect.dart';
 import 'package:oceanoasis/components/projectiles/mutantFishDeath.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 
 class mutantFish extends SpriteAnimationComponent with HasGameReference<MyGame>, CollisionCallbacks{
   double projectileSpeed = 300;

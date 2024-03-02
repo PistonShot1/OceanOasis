@@ -8,7 +8,7 @@ import 'package:flame/flame.dart';
 import 'package:oceanoasis/components/Boss/overworldplayer.dart';
 import 'package:oceanoasis/components/projectiles/bullet.dart';
 import 'package:oceanoasis/components/projectiles/mineExplosionEffect.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 
 class powerUp extends SpriteAnimationComponent with HasGameReference<MyGame>, CollisionCallbacks{
   final Vector2 initialSize = Vector2.all(50);

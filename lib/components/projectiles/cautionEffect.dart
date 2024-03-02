@@ -7,7 +7,7 @@ import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
 import 'package:oceanoasis/components/Boss/crabBoss.dart';
 import 'package:oceanoasis/components/Boss/overworldplayer.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 
 class cautiousEffect extends SpriteAnimationComponent with HasGameReference<MyGame>, CollisionCallbacks{
   final int destroyTime = 5;

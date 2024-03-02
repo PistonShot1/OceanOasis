@@ -3,12 +3,12 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/palette.dart';
 
 import 'package:flame_tiled/flame_tiled.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/src/services/hardware_keyboard.dart';
 import 'package:flutter/src/services/keyboard_key.g.dart';
@@ -20,7 +20,6 @@ import 'package:oceanoasis/components/projectiles/bullet.dart';
 import 'package:oceanoasis/components/projectiles/powerUp.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
-import 'package:oceanoasis/tools/slashEffect.dart';
 import 'package:oceanoasis/tools/toolbox.dart';
 
 class PacificOceanBossFight extends Component
@@ -54,9 +53,10 @@ class PacificOceanBossFight extends Component
 
     //finally add world
     await add(bossWorld);
-
+    bossWorld.add(ScreenHitbox()..debugMode = true);
+    
     cameraSettings();
-    add(ScreenHitbox());
+
     addPlayer();
     spawnBoss();
     loadToolbar(WeaponProperty.weapons.length);
@@ -73,8 +73,6 @@ class PacificOceanBossFight extends Component
         Vector2(0, 0), Vector2(tiledMap.size.x * 0.5, tiledMap.size.y * 0.5)));
     // game.camera.moveBy(Vector2(1920 * 0.5, 1080 * 0.5));
   }
-
-
 
   void addPlayer() {
     final knobPaint = BasicPalette.blue.withAlpha(200).paint();
@@ -143,8 +141,6 @@ class PacificOceanBossFight extends Component
         final toolbox = ItemToolBox(() {},
             position: Vector2(
                 tiledMap.size.x / 2 - 100 + 32 * 3 * i, tiledMap.size.y * 0.9),
-            position: Vector2(
-                tiledMap.size.x / 2 - 100 + 32 * 3 * i, tiledMap.size.y * 0.9),
             iconItem: WeaponProperty.weapons[i]['iconweapon']!,
             item: WeaponProperty.weapons[i]['weapon'],
             detectTap: true,
@@ -171,9 +167,6 @@ class PacificOceanBossFight extends Component
     }
   }
 
-
-
-
   int randomNumber = 0;
   Vector2 spawnOffset = Vector2(0, 0);
 
@@ -185,99 +178,146 @@ class PacificOceanBossFight extends Component
   bool spawnPowerUpCooldown = false;
 
   void spawnPowerUps() {
-    if (spawnPowerUpCooldown == false){
+    if (spawnPowerUpCooldown == false) {
       // ignore: avoid_print
       print("HEY");
       spawnPowerUpCooldown = true;
-    final bigFishspawnPoint =
-        tiledMap.tileMap.getLayer<ObjectGroup>('powerUpSpawn');
-    randomNumber = getRandomInt(1, 9);
-    switch (randomNumber) {
-      case 1:
-        for (final spawnPoint in bigFishspawnPoint!.objects) {
-        if (spawnPoint.name == '1'){ powerUp p = powerUp(Vector2(spawnPoint.x,spawnPoint.y), Vector2 (spawnOffset.x, spawnOffset.y));bossWorld.add(p);}}
-        break;
-      case 2:
-        for (final spawnPoint in bigFishspawnPoint!.objects) {
-        if (spawnPoint.name == '2'){ powerUp p = powerUp(Vector2(spawnPoint.x,spawnPoint.y), Vector2 (spawnOffset.x, spawnOffset.y));bossWorld.add(p);}}
-        break;
-      case 3:
-        for (final spawnPoint in bigFishspawnPoint!.objects) {
-        if (spawnPoint.name == '3'){ powerUp p = powerUp(Vector2(spawnPoint.x,spawnPoint.y), Vector2 (spawnOffset.x, spawnOffset.y));bossWorld.add(p);}}
-        break;
-      case 4:
-        for (final spawnPoint in bigFishspawnPoint!.objects) {
-        if (spawnPoint.name == '4'){ powerUp p = powerUp(Vector2(spawnPoint.x,spawnPoint.y), Vector2 (spawnOffset.x, spawnOffset.y));bossWorld.add(p);}}
-        break;
-      case 5:
-        for (final spawnPoint in bigFishspawnPoint!.objects) {
-        if (spawnPoint.name == '5'){ powerUp p = powerUp(Vector2(spawnPoint.x,spawnPoint.y), Vector2 (spawnOffset.x, spawnOffset.y));bossWorld.add(p);}}
-        break;
-      case 6:
-        for (final spawnPoint in bigFishspawnPoint!.objects) {
-        if (spawnPoint.name == '6'){ powerUp p = powerUp(Vector2(spawnPoint.x,spawnPoint.y), Vector2 (spawnOffset.x, spawnOffset.y));bossWorld.add(p);}}
-        break;
-      case 7:
-        for (final spawnPoint in bigFishspawnPoint!.objects) {
-        if (spawnPoint.name == '7'){ powerUp p = powerUp(Vector2(spawnPoint.x,spawnPoint.y), Vector2 (spawnOffset.x, spawnOffset.y));bossWorld.add(p);}}
-        break;
-      case 8:
-        for (final spawnPoint in bigFishspawnPoint!.objects) {
-        if (spawnPoint.name == '8'){ powerUp p = powerUp(Vector2(spawnPoint.x,spawnPoint.y), Vector2 (spawnOffset.x, spawnOffset.y));bossWorld.add(p);}}
-        break;
-      case 9:
-        for (final spawnPoint in bigFishspawnPoint!.objects) {
-        if (spawnPoint.name == '9'){ powerUp p = powerUp(Vector2(spawnPoint.x,spawnPoint.y), Vector2 (spawnOffset.x, spawnOffset.y));bossWorld.add(p);}}
-        break;
-      default:
-      break;
+      final bigFishspawnPoint =
+          tiledMap.tileMap.getLayer<ObjectGroup>('powerUpSpawn');
+      randomNumber = getRandomInt(1, 9);
+      switch (randomNumber) {
+        case 1:
+          for (final spawnPoint in bigFishspawnPoint!.objects) {
+            if (spawnPoint.name == '1') {
+              powerUp p = powerUp(Vector2(spawnPoint.x, spawnPoint.y),
+                  Vector2(spawnOffset.x, spawnOffset.y));
+              bossWorld.add(p);
+            }
+          }
+          break;
+        case 2:
+          for (final spawnPoint in bigFishspawnPoint!.objects) {
+            if (spawnPoint.name == '2') {
+              powerUp p = powerUp(Vector2(spawnPoint.x, spawnPoint.y),
+                  Vector2(spawnOffset.x, spawnOffset.y));
+              bossWorld.add(p);
+            }
+          }
+          break;
+        case 3:
+          for (final spawnPoint in bigFishspawnPoint!.objects) {
+            if (spawnPoint.name == '3') {
+              powerUp p = powerUp(Vector2(spawnPoint.x, spawnPoint.y),
+                  Vector2(spawnOffset.x, spawnOffset.y));
+              bossWorld.add(p);
+            }
+          }
+          break;
+        case 4:
+          for (final spawnPoint in bigFishspawnPoint!.objects) {
+            if (spawnPoint.name == '4') {
+              powerUp p = powerUp(Vector2(spawnPoint.x, spawnPoint.y),
+                  Vector2(spawnOffset.x, spawnOffset.y));
+              bossWorld.add(p);
+            }
+          }
+          break;
+        case 5:
+          for (final spawnPoint in bigFishspawnPoint!.objects) {
+            if (spawnPoint.name == '5') {
+              powerUp p = powerUp(Vector2(spawnPoint.x, spawnPoint.y),
+                  Vector2(spawnOffset.x, spawnOffset.y));
+              bossWorld.add(p);
+            }
+          }
+          break;
+        case 6:
+          for (final spawnPoint in bigFishspawnPoint!.objects) {
+            if (spawnPoint.name == '6') {
+              powerUp p = powerUp(Vector2(spawnPoint.x, spawnPoint.y),
+                  Vector2(spawnOffset.x, spawnOffset.y));
+              bossWorld.add(p);
+            }
+          }
+          break;
+        case 7:
+          for (final spawnPoint in bigFishspawnPoint!.objects) {
+            if (spawnPoint.name == '7') {
+              powerUp p = powerUp(Vector2(spawnPoint.x, spawnPoint.y),
+                  Vector2(spawnOffset.x, spawnOffset.y));
+              bossWorld.add(p);
+            }
+          }
+          break;
+        case 8:
+          for (final spawnPoint in bigFishspawnPoint!.objects) {
+            if (spawnPoint.name == '8') {
+              powerUp p = powerUp(Vector2(spawnPoint.x, spawnPoint.y),
+                  Vector2(spawnOffset.x, spawnOffset.y));
+              bossWorld.add(p);
+            }
+          }
+          break;
+        case 9:
+          for (final spawnPoint in bigFishspawnPoint!.objects) {
+            if (spawnPoint.name == '9') {
+              powerUp p = powerUp(Vector2(spawnPoint.x, spawnPoint.y),
+                  Vector2(spawnOffset.x, spawnOffset.y));
+              bossWorld.add(p);
+            }
+          }
+          break;
+        default:
+          break;
+      }
+      Future.delayed(const Duration(seconds: 10), () {
+        spawnPowerUpCooldown = false;
+      });
     }
-    Future.delayed(const Duration(seconds: 10), () {
-      spawnPowerUpCooldown = false;
-    });
   }
-  }
+
   bool canShoot = true;
   @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-
-    if (keysPressed.contains(LogicalKeyboardKey.space) && player.currentTool.id == 'pistol' && canShoot == true){
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    // TODO: implement onKeyEvent
+    if (keysPressed.contains(LogicalKeyboardKey.space) &&
+        player.currentTool.id == 'pistol' &&
+        canShoot == true) {
       canShoot = false;
       playerShoot();
       Future.delayed(const Duration(milliseconds: 200), () {
         canShoot = true;
       });
-    } else if (keysPressed.contains(LogicalKeyboardKey.space) && player.currentTool.id == 'freezeDevice' && canShoot == true){
+    } else if (keysPressed.contains(LogicalKeyboardKey.space) &&
+        player.currentTool.id == 'freezeDevice' &&
+        canShoot == true) {
       canShoot = false;
       playerFreeze();
       Future.delayed(const Duration(seconds: 1), () {
         canShoot = true;
       });
     }
-
-
     return super.onKeyEvent(event, keysPressed);
   }
 
   final Vector2 bulletPositionOffset = Vector2(0, -30);
 
   void playerShoot() {
-      bossWorld.add(bullet(player.position, player.facingDirection, bulletPositionOffset));
+    bossWorld.add(
+        bullet(player.position, player.facingDirection, bulletPositionOffset));
   }
-
 
   void playerFreeze() {
-      if (player.currentEnergyLevel >= 0){//energy to use the device 
-        player.currentEnergyLevel = player.currentEnergyLevel - 0;//subtract accordingly
-        bossWorld.add(freezeEffect(player.position));
-        Future.delayed(const Duration(seconds: 1), () {
-          boss.freezeEvent();
-          
-        });
-      }
-
+    if (player.currentEnergyLevel >= 0) {
+      //energy to use the device
+      player.currentEnergyLevel =
+          player.currentEnergyLevel - 0; //subtract accordingly
+      bossWorld.add(freezeEffect(player.position));
+      Future.delayed(const Duration(seconds: 1), () {
+        boss.freezeEvent();
+      });
+    }
   }
-
 
   @override
   void update(double dt) {

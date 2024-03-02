@@ -140,10 +140,11 @@ class WeaponProperty {
           position: Vector2(-16, 24),
           slashEffect: SlashEffect(
             Flame.images.fromCache('weapons/muzzleEffect.png'),
-            '',
+            [],
             frameAmount: 4,
             stepTime: 0.1,
             frameSize: Vector2(23, 23),
+            toolType: _toolType,
           )..scale = Vector2.all(1))
         ..anchor = Anchor.center,
       'iconweapon': Tools(

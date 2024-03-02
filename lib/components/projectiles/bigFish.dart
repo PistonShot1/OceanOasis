@@ -9,7 +9,7 @@ import 'package:oceanoasis/components/Boss/freezeEffect.dart';
 import 'package:oceanoasis/components/Boss/overworldplayer.dart';
 
 import 'package:oceanoasis/components/projectiles/mine.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 
 class bigFish extends SpriteAnimationComponent
     with HasGameReference<MyGame>, CollisionCallbacks {

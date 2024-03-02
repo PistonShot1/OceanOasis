@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 
 class mutantFishDeath extends SpriteAnimationComponent with HasGameReference<MyGame>, CollisionCallbacks{
 
