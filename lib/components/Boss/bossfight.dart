@@ -26,7 +26,7 @@ class PacificOceanBossFight extends Component
   late final OverworldPlayer player;
 
   //DEFINE YOUR CONSTRUCTOR HERE
-  PacificOceanBossFight() {}
+  PacificOceanBossFight();
 
   @override
   FutureOr<void> onLoad() async {
@@ -107,23 +107,48 @@ class PacificOceanBossFight extends Component
   }
 
   void loadToolbar(int itemNum) async {
-    final toolbarPoint = tiledMap.tileMap.getLayer<ObjectGroup>('UI Layer');
-    final objects = toolbarPoint!.objects;
-
-    // toolbox
-    for (TiledObject object in objects) {
+    if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
       for (int i = 0; i < itemNum; i++) {
         final toolbox = ItemToolBox(() {},
-            position: Vector2(object.x - 16 * 3, object.y + 16 * 2 * 3 * i),
+            position: Vector2(
+                tiledMap.size.x / 2 - 100 + 32 * 3 * i, tiledMap.size.y * 0.9),
+            iconItem: WeaponProperty.weapons[i]['iconweapon']!,
+            item: WeaponProperty.weapons[i]['weapon'],
+            keybind: _mapKeyBind(i),
+            detectTap: true,
+            player: player)
+          ..scale = Vector2.all(2);
+        await game.camera.viewport.add(toolbox);
+
+        // 16*2(the size of the tile image)* 3 (the set scale) * i (y positioning)
+      }
+    } else {
+      for (int i = 0; i < itemNum; i++) {
+        final toolbox = ItemToolBox(() {},
+            position: Vector2(
+                tiledMap.size.x / 2 - 100 + 32 * 3 * i, tiledMap.size.y * 0.9),
             iconItem: WeaponProperty.weapons[i]['iconweapon']!,
             item: WeaponProperty.weapons[i]['weapon'],
             detectTap: true,
             player: player)
           ..scale = Vector2.all(3);
-        await bossWorld.add(toolbox);
+        await game.camera.viewport.add(toolbox);
 
         // 16*2(the size of the tile image)* 3 (the set scale) * i (y positioning)
       }
+    }
+  }
+
+  LogicalKeyboardKey? _mapKeyBind(int i) {
+    switch (i) {
+      case 0:
+        return LogicalKeyboardKey.digit1;
+      case 1:
+        return LogicalKeyboardKey.digit2;
+      case 2:
+        return LogicalKeyboardKey.digit3;
+      default:
+        return null;
     }
   }
 

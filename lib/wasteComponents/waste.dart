@@ -21,7 +21,7 @@ class Waste extends SpriteComponent
 
   //Optional characteristic
   double? density;
-  
+
   Waste({
     required Sprite sprite,
     required this.wasteType,
@@ -45,10 +45,11 @@ class Waste extends SpriteComponent
     final defaultPaint = Paint()
       ..color = _defaultColor
       ..style = PaintingStyle.stroke;
-    hitbox = RectangleHitbox()
+    hitbox = CircleHitbox()
       ..paint = defaultPaint
       ..renderShape = true
       ..collisionType = CollisionType.passive;
+    scale = Vector2.all(0.6);
     add(hitbox);
 
     return super.onLoad();
@@ -119,7 +120,7 @@ class Waste extends SpriteComponent
         target: this,
         onComplete: () {
           removeFromParent();
-          player.addScore(points);
+          player.addScore();
           player.addWasteScore(wasteType);
         },
       ),

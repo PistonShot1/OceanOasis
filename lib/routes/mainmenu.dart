@@ -2,13 +2,14 @@ import 'dart:async';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:oceanoasis/property/playerProperty.dart';
-import 'package:oceanoasis/property/playerScores.dart';
+import 'package:oceanoasis/routes/playerScores.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/maps/pacific.dart';
 import 'package:oceanoasis/routes/achievementdashboard.dart';
 import 'package:oceanoasis/routes/levelselection.dart';
 import 'package:oceanoasis/routes/maplevelselection.dart';
 import 'package:oceanoasis/routes/settings.dart';
+import 'package:oceanoasis/routes/totalScoreWidget.dart';
 import 'package:oceanoasis/routes/userprofile.dart';
 import 'package:provider/provider.dart';
 
@@ -237,6 +238,9 @@ class _MainMenuState extends State<MainMenu> {
           },
           "WasteScores": (context, MyGame game) {
             return ScoreWidget(game: game);
+          },
+          "TotalScores": (context, MyGame game) {
+            return TotalScoreWidget(game: game);
           }
         },
         initialActiveOverlays: [],

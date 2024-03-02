@@ -8,6 +8,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/particles.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
+import 'package:oceanoasis/components/events/whirlpool.dart';
 import 'package:oceanoasis/components/players/joystickplayer.dart';
 
 class TideEvent extends PositionComponent {
@@ -18,12 +19,11 @@ class TideEvent extends PositionComponent {
   bool eventTidemovePlayer = true;
   Sprite cloud = Sprite(Flame.images.fromCache('events/black-cloud.png'));
   Random random = Random();
-  Vector2 randomVector2() =>
-      (Vector2.random(random) - Vector2.random(random)) * 200;
   int?
       eventNum; // 0 corresponds to tide from left and 1 corresponds to tide from right
   Map<int, String> tideDirection = {0: 'Left', 1: 'Right'};
 
+  bool onWarningComplete = false;
   TideEvent(
       {required this.tideEvent,
       required this.duration,
@@ -39,13 +39,40 @@ class TideEvent extends PositionComponent {
   }
 
   @override
-  void onMount() {
+  void onMount() async {
     // TODO: implement onMount
     debugMode = true;
-    addClouds();
+    onWarningComplete = await warning();
 
+    addClouds();
     highTideEvent();
+    addPortals();
+    Future.delayed(Duration(seconds: duration), () {
+      removeFromParent();
+    });
+
     super.onMount();
+  }
+
+  Future<bool> warning() async {
+    TextPaint regular = TextPaint(
+      style: const TextStyle(
+        fontFamily: 'Retro Gaming',
+        fontSize: 48.0,
+        color: Colors.white,
+      ),
+    );
+    final text = TextComponent(
+        text: 'Current tide is from : ${tideDirection[eventNum]}',
+        textRenderer: regular,
+        position: Vector2(size.x / 2, 100),
+        priority: 2);
+    add(text
+      ..position = Vector2(text.position.x - text.size.x, text.position.y));
+    await Future.delayed(Duration(seconds: 3), () {
+      remove(text);
+    });
+    return true;
   }
 
   void addClouds() {
@@ -71,7 +98,9 @@ class TideEvent extends PositionComponent {
   @override
   void update(double dt) {
     // TODO: implement update
-    highTideEventMovePlayer();
+    if (onWarningComplete) {
+      highTideEventMovePlayer();
+    }
     super.update(dt);
   }
 
@@ -81,29 +110,51 @@ class TideEvent extends PositionComponent {
         case 0:
           eventTidemovePlayer = false;
           player.add(
-              MoveEffect.by(Vector2(300 * 1, 0), EffectController(duration: 5))
+              MoveEffect.by(Vector2(1200 * 1, 0), EffectController(duration: 5))
                 ..onComplete = () {
                   eventTidemovePlayer = true;
                 });
         case 1:
           eventTidemovePlayer = false;
-          player.add(
-              MoveEffect.by(Vector2(300 * -1, 0), EffectController(duration: 5))
-                ..onComplete = () {
-                  eventTidemovePlayer = true;
-                });
+          player.add(MoveEffect.by(
+              Vector2(1200 * -1, 0), EffectController(duration: 5))
+            ..onComplete = () {
+              eventTidemovePlayer = true;
+            });
       }
     }
   }
 
   void highTideEvent() {
-    print('Current tide is from : ${tideDirection[eventNum]}');
-
     switch (eventNum) {
       case 0:
         player.highTideSlower[0] = 0.5;
       case 1:
         player.highTideSlower[1] = 0.5;
     }
+  }
+
+  @override
+  void onRemove() {
+    // TODO: implement onRemove
+    print('exited');
+    super.onRemove();
+  }
+
+  void addPortals() {
+    _linkPortals(Whirlpool(), Whirlpool(), Vector2(100, size.y / 3),
+        Vector2(size.x - 150, size.y / 3));
+    _linkPortals(Whirlpool(), Whirlpool(), Vector2(100, size.y / 2),
+        Vector2(size.x - 150, size.y / 2));
+    _linkPortals(Whirlpool(), Whirlpool(), Vector2(100, size.y * 2 / 3),
+        Vector2(size.x - 150, size.y * 2 / 3 ));
+  }
+
+  void _linkPortals(Whirlpool portal1, Whirlpool portal2, Vector2 position1,
+      Vector2 position2) {
+    portal1.linkPortal = portal2;
+    portal2.linkPortal = portal1;
+    add(portal1..position = position1);
+    add(portal2..position = position2);
   }
 }

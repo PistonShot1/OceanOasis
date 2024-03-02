@@ -5,27 +5,31 @@ import 'package:oceanoasis/tools/tools.dart';
 class PlayerProperty extends ChangeNotifier {
   List<Tools> tools;
   List<Tools> weapons;
-  ValueNotifier<double> currentScore = ValueNotifier(0);
+
   late ValueNotifier<Map<WasteType, double>> wasteScores;
+
+  late ValueNotifier<Map<WasteType, double>> levelwasteScores;
+  ValueNotifier<double> currentScore = ValueNotifier(0);
 
   PlayerProperty({required this.tools, required this.weapons}) {
     Map<WasteType, double> wasteType = {};
     for (WasteType element in WasteType.values) {
       wasteType[element] = 0;
     }
+    levelwasteScores = ValueNotifier(wasteType);
     wasteScores = ValueNotifier(wasteType);
   }
 
-  void addScore(double value) {
-    currentScore.value += value;
+  void addScore() {
+    currentScore.value++;
     notifyListeners();
   }
 
   void addWasteScore(WasteType wasteType) {
+    levelwasteScores.value[wasteType] = levelwasteScores.value[wasteType]! + 1;
     wasteScores.value[wasteType] = wasteScores.value[wasteType]! + 1;
-
     //DEBUG
-    wasteScores.value.forEach((key, value) {
+    levelwasteScores.value.forEach((key, value) {
       print('$key:$value');
     });
 
@@ -33,9 +37,9 @@ class PlayerProperty extends ChangeNotifier {
   }
 
   void resetScore() {
-    wasteScores.value.forEach(
+    levelwasteScores.value.forEach(
       (key, value) {
-        wasteScores.value[key] = 0;
+        levelwasteScores.value[key] = 0;
       },
     );
     notifyListeners();

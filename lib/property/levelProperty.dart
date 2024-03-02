@@ -12,10 +12,11 @@ class LevelProperty {
       'levelNumber': 1,
       'locationName': 'North Pacific Ocean',
       'maxSpawn': 30,
-      'tideEvent': true,
-      'breathingEvent': false,
+      'tideEvent': false,
+      'breathingEvent': true,
       'iceEvent': false,
-      'listOfWastes': [WasteType.paper, WasteType.plastic]
+      'listOfWastes': [WasteType.paper, WasteType.plastic],
+      'swordFishInterval':4.0,
     },
     2: {
       'levelNumber': 2,
@@ -24,7 +25,8 @@ class LevelProperty {
       'tideEvent': false,
       'breathingEvent': true,
       'iceEvent': false,
-      'listOfWastes': [WasteType.metal]
+      'listOfWastes': [WasteType.metal],
+      'swordFishInterval':3.0,
     },
     3: {
       'levelNumber': 3,
@@ -33,7 +35,8 @@ class LevelProperty {
       'tideEvent': true,
       'breathingEvent': true,
       'iceEvent': false,
-      'listOfWastes': [WasteType.paper]
+      'listOfWastes': [WasteType.paper],
+      'swordFishInterval':2.0,
     },
     4: {
       'levelNumber': 4,
@@ -42,7 +45,8 @@ class LevelProperty {
       'tideEvent': true,
       'breathingEvent': true,
       'iceEvent': true,
-      'listOfWastes': [WasteType.radioactive]
+      'listOfWastes': [WasteType.radioactive],
+      'swordFishInterval':2.0,
     },
     5: {
       'levelNumber': 5,
@@ -51,7 +55,8 @@ class LevelProperty {
       'tideEvent': true,
       'breathingEvent': true,
       'iceEvent': true,
-      'listOfWastes': [WasteType.glass]
+      'listOfWastes': [WasteType.glass],
+      'swordFishInterval':2.0,
     },
   };
 
