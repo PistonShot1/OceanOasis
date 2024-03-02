@@ -134,20 +134,22 @@ class WeaponProperty {
   static List<Map<String, Tools>> weapons = [
     {
       'weapon': Tools(
-          sprite: Sprite(Flame.images.fromCache('weapons/staff1.png')),
+          id: 'pistol',
+          sprite: Sprite(Flame.images.fromCache('weapons/gun.png')),
           size: Vector2.all(32),
           position: Vector2(-16, 24),
           slashEffect: SlashEffect(
-              Flame.images.fromCache('weapons/Lightning-effect.png'), [],
-              frameAmount: 7,
-              stepTime: 0.1,
-              frameSize: Vector2(32, 193),
-              toolType: _toolType)
-            ..scale = Vector2.all(0.5))
+            Flame.images.fromCache('weapons/muzzleEffect.png'),
+            [],
+            frameAmount: 4,
+            stepTime: 0.1,
+            frameSize: Vector2(23, 23),
+            toolType: _toolType,
+          )..scale = Vector2.all(1))
         ..anchor = Anchor.center,
       'iconweapon': Tools(
         id: '',
-        sprite: Sprite(Flame.images.fromCache('weapons/staff1.png')),
+        sprite: Sprite(Flame.images.fromCache('weapons/gun.png')),
         size: Vector2.all(16),
         position: Vector2.all(16),
       )

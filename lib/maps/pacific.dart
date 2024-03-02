@@ -62,6 +62,7 @@ class PacificOcean extends Component
     );
     final spawnPoint = tiledMap.tileMap.getLayer<ObjectGroup>('Spawn Point');
     player = OverworldPlayer(
+      currentWorld: myWorld,
       joystick: joystick,
       position: Vector2.zero(),
       playerScene: 1,
