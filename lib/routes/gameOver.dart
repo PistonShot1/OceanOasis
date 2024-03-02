@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:flutter/widgets.dart';
+import 'package:oceanoasis/property/playerProperty.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
+import 'package:provider/provider.dart';
 
 class GameOver extends StatelessWidget {
   static const String id = 'Game Over';
@@ -43,11 +46,11 @@ class GameOver extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              ValueListenableBuilder<double>(
-                valueListenable: game.player.currentLoad,
-                builder: (BuildContext context, double value, Widget? child) {
+              ListenableBuilder(
+                listenable: game.playerData,
+                builder: (BuildContext context, Widget? child) {
                   return Text(
-                    'Score: $value',
+                    'Score: ${game.playerData.currentScore}',
                     style: TextStyle(
                       color: Colors.grey[400],
                       fontSize: 18,
@@ -58,7 +61,7 @@ class GameOver extends StatelessWidget {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  
+                  game.router.pop();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF008cba),
@@ -85,7 +88,9 @@ class GameOver extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 10),
                     child: InkWell(
                       onTap: () {
-                        back();
+                        game.resumeEngine();
+                        game.router.pop();
+                        game.toMapSelection();
                       },
                       child: Container(
                           height: 50,
@@ -93,7 +98,7 @@ class GameOver extends StatelessWidget {
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               color: Color(0xFF008cba),
-                              boxShadow: [
+                              boxShadow: const [
                                 BoxShadow(color: Colors.black, blurRadius: 2)
                               ]),
                           child: Image.asset(
@@ -106,91 +111,6 @@ class GameOver extends StatelessWidget {
           ),
         ),
       ),
-      // Stack(
-      //   children: [
-      //     Positioned.fill(
-      //       child: Padding(
-      //         padding: EdgeInsets.fromLTRB(
-      //           MediaQuery.of(context).size.width * 0.3 * 0.5,
-      //           MediaQuery.of(context).size.height * 0.3 * 0.5,
-      //           MediaQuery.of(context).size.width * 0.3 * 0.5,
-      //           MediaQuery.of(context).size.height * 0.3 * 0.5,
-      //         ),
-      //         child: Image.asset(
-      //           'assets/images/ui/pane.png',
-      //           fit: BoxFit.fitHeight,
-      //         ),
-      //       ),
-      //     ),
-      //     Center(
-      //       child: Container(
-      //         height: MediaQuery.of(context).size.height * 0.5,
-      //         width: MediaQuery.of(context).size.width * 0.3,
-      //         decoration: const BoxDecoration(
-      //           color: Colors.transparent,
-      //           borderRadius: BorderRadius.all(Radius.circular(10)),
-      //         ),
-      //         child: Column(
-      //           children: [
-      //             const Expanded(
-      //                 flex: 2,
-      //                 child: Text(
-      //                   'Game Over',
-      //                   style: TextStyle(fontSize: 30),
-      //                 )),
-      //             const Expanded(
-      //                 flex: 1,
-      //                 child: Text(
-      //                   'Level XXXX',
-      //                   style: TextStyle(fontSize: 20),
-      //                 )),
-      //             const Expanded(
-      //                 flex: 1,
-      //                 child: Text(
-      //                   'Points XXXX',
-      //                   style: TextStyle(fontSize: 20),
-      //                 )),
-      //             Flexible(
-      //               flex: 1,
-      //               child: ElevatedButton(
-      //                   onPressed: () {
-      //                     nextLevel.call(5); //hard coded value for now
-      //                   },
-      //                   child: const Text('Next Level')),
-      //             ),
-      //             Flexible(
-      //               flex: 1,
-      //               child: Padding(
-      //                 padding: const EdgeInsets.all(10.0),
-      //                 child: Row(
-      //                   mainAxisAlignment: MainAxisAlignment.center,
-      //                   children: [
-
-      //                     InkWell(
-      //                       onTap: () {},
-      //                       child: Container(
-      //                           height: 50,
-      //                           width: 50,
-      //                           decoration: BoxDecoration(
-      //                               borderRadius: BorderRadius.circular(10),
-      //                               color: Colors.blue,
-      //                               boxShadow: [
-      //                                 BoxShadow(
-      //                                     color: Colors.black, blurRadius: 2)
-      //                               ]),
-      //                           child: Image.asset(
-      //                               'assets/images/earth-pixel-icon.png')),
-      //                     )
-      //                   ],
-      //                 ),
-      //               ),
-      //             )
-      //           ],
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
     );
   }
 }

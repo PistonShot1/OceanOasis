@@ -1,6 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/property/levelProperty.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/maps/pacificunderwater.dart';
 
@@ -124,7 +125,7 @@ class _LevelSelectionState extends State<LevelSelection> {
   }
 
   List<Row> buildColumn() {
-    Map<String, dynamic> levelProperty = LevelProperty.levelProperty;
+    Map<int, dynamic> levelProperty = LevelProperty.levelProperty;
     List<Widget> buttonList = [];
     List<Row> columnList = [];
     columnList.add(Row(

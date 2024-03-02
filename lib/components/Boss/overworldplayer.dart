@@ -195,6 +195,9 @@ class OverworldPlayer extends SpriteAnimationComponent
     add(currentTool
       ..scale = Vector2.all(0.5)
       ..position = Vector2.all(20));
+    add(currentTool
+      ..scale = Vector2.all(0.5)
+      ..position = Vector2.all(20));
   }
 
   void hitAction() {}

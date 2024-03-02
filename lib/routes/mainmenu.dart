@@ -1,13 +1,17 @@
 import 'dart:async';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/property/playerProperty.dart';
+import 'package:oceanoasis/routes/playerScores.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/maps/pacific.dart';
 import 'package:oceanoasis/routes/achievementdashboard.dart';
 import 'package:oceanoasis/routes/levelselection.dart';
 import 'package:oceanoasis/routes/maplevelselection.dart';
 import 'package:oceanoasis/routes/settings.dart';
+import 'package:oceanoasis/routes/totalScoreWidget.dart';
 import 'package:oceanoasis/routes/userprofile.dart';
+import 'package:provider/provider.dart';
 
 class MainMenu extends StatefulWidget {
   static const id = 'MainMenu';
@@ -24,6 +28,7 @@ class _MainMenuState extends State<MainMenu> {
   double iconButtonSize = 35;
   double text1 = 50;
   double text2 = 30;
+  PlayerProperty playerData = PlayerProperty(tools: [], weapons: []);
   @override
   void initState() {
     super.initState();
@@ -58,7 +63,10 @@ class _MainMenuState extends State<MainMenu> {
         child: Stack(
           children: [
             Positioned.fill(
-              child: Image.asset('assets/images/main-menu-background.jpg'),
+              child: Image.asset(
+                'assets/images/main-menu/background.png',
+                fit: BoxFit.cover,
+              ),
             ),
             Align(
               alignment: Alignment.center,
@@ -67,11 +75,11 @@ class _MainMenuState extends State<MainMenu> {
                 width: MediaQuery.of(context).size.width * 0.6,
                 padding: const EdgeInsets.all(20),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Expanded(
                         child: Text(
-                      'Ocean Oasis',
+                      'OCEAN OASIS',
                       style: TextStyle(fontSize: text1),
                     )),
                     Expanded(
@@ -106,8 +114,8 @@ class _MainMenuState extends State<MainMenu> {
                               iconSize: iconButtonSize,
                               onPressed: () =>
                                   _showOverlay(AchievementDashboard.id),
-                              icon: const Icon(Icons.emoji_events),
-                              color: Colors.amber,
+                              icon: const Icon(Icons.shopping_cart),
+                              color: Colors.grey[800],
                               style: ButtonStyle(
                                 padding: MaterialStateProperty.all(
                                   EdgeInsets.all(10),
@@ -135,16 +143,6 @@ class _MainMenuState extends State<MainMenu> {
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: IconButton(
-                  icon: Icon(Icons.shopping_cart),
-                  onPressed: () {},
-                ),
-              ),
-            )
           ],
         ),
       ),
@@ -154,7 +152,7 @@ class _MainMenuState extends State<MainMenu> {
   void oldWidget(BuildContext context) {
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
       return GameWidget(
-        game: MyGame(MediaQuery.of(context)),
+        game: MyGame(MediaQuery.of(context), playerData: playerData),
         loadingBuilder: (p0) {
           return Stack(
             children: [
@@ -170,104 +168,56 @@ class _MainMenuState extends State<MainMenu> {
           );
         },
         overlayBuilderMap: {
-          "TopMenu": (context, MyGame game) {
-            return Material(
-              color: Colors.transparent,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: InkWell(
-                          onTap: () {
-                            game.router.pushNamed(LevelSelection.id);
-                          },
-                          child: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.blue,
-                                  boxShadow: const [
-                                    BoxShadow(
-                                        color: Colors.black, blurRadius: 2)
-                                  ]),
-                              child:
-                                  Image.asset('assets/images/dive-icon.png')),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          game.toBossWorldSelection();
-                        },
-                        child: Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.blue,
-                                boxShadow: const [
-                                  BoxShadow(color: Colors.black, blurRadius: 2)
-                                ]),
-                            child: Image.asset(
-                                'assets/images/earth-pixel-icon.png')),
-                      )
-                    ],
+          "ToMapSelection": (context, MyGame game) {
+            return Align(
+              alignment: Alignment.topCenter,
+              child: SizedBox(
+                width: 50,
+                height: 50,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      game.router.pushRoute(Route(() => MapLevelSelection()));
+                    },
+                    child: Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.blue,
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black, blurRadius: 2)
+                            ]),
+                        child:
+                            Image.asset('assets/images/earth-pixel-icon.png')),
                   ),
                 ),
               ),
             );
           },
-          "TopMenu2": (context, MyGame game) {
-            return Material(
-              color: Colors.transparent,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: InkWell(
-                          onTap: () {
-                            game.toFacility();
-                          },
-                          child: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.blue,
-                                  boxShadow: const [
-                                    BoxShadow(
-                                        color: Colors.black, blurRadius: 2)
-                                  ]),
-                              child:
-                                  Image.asset('assets/images/ui/recycle.png')),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          game.router.pushReplacementNamed(LevelSelection.id);
-                        },
-                        child: Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Colors.blue,
-                                boxShadow: const [
-                                  BoxShadow(color: Colors.black, blurRadius: 2)
-                                ]),
-                            child: Image.asset('assets/images/dive-icon.png')),
-                      )
-                    ],
+          "ToFacility": (context, MyGame game) {
+            return Align(
+              alignment: Alignment.topCenter,
+              child: SizedBox(
+                width: 50,
+                height: 50,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      game.toFacility();
+                    },
+                    child: Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.blue,
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black, blurRadius: 2)
+                            ]),
+                        child: Image.asset('assets/images/ui/recycle.png')),
                   ),
                 ),
               ),
@@ -276,14 +226,21 @@ class _MainMenuState extends State<MainMenu> {
           "Score": (context, MyGame game) {
             return Align(
               alignment: Alignment.topCenter,
-              child: ValueListenableBuilder<double>(
-                valueListenable: game.player.currentLoad,
-                builder: (BuildContext context, double value, Widget? child) {
+              child: ListenableBuilder(
+                listenable: game.playerData,
+                builder: (BuildContext context, Widget? child) {
                   return Material(
-                      color: Colors.transparent, child: Text('$value'));
+                      color: Colors.transparent,
+                      child: Text('${game.playerData.currentScore}'));
                 },
               ),
             );
+          },
+          "WasteScores": (context, MyGame game) {
+            return ScoreWidget(game: game);
+          },
+          "TotalScores": (context, MyGame game) {
+            return TotalScoreWidget(game: game);
           }
         },
         initialActiveOverlays: [],

@@ -6,8 +6,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/services/keyboard_key.g.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
-
+import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/tools/tools.dart';
 
 class ItemToolBox extends SpriteComponent
@@ -68,9 +67,11 @@ class ItemToolBox extends SpriteComponent
     super.update(dt);
   }
 
-@override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-     if (keybind != null) {
+  @override
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    // TODO: implement onKeyEvent
+
+    if (keybind != null) {
       itemSelection(keysPressed: keysPressed, detectTap: detectTap);
     }
     return super.onKeyEvent(event, keysPressed);

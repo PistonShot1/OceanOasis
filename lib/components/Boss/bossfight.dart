@@ -10,6 +10,7 @@ import 'package:flame/palette.dart';
 
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/src/services/hardware_keyboard.dart';
 import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:flutter/src/services/raw_keyboard.dart';
 import 'package:oceanoasis/components/Boss/crabBoss.dart';
@@ -18,7 +19,7 @@ import 'package:oceanoasis/components/Boss/overworldplayer.dart';
 import 'package:oceanoasis/components/projectiles/bullet.dart';
 import 'package:oceanoasis/components/projectiles/powerUp.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/tools/slashEffect.dart';
 import 'package:oceanoasis/tools/toolbox.dart';
 
@@ -31,7 +32,7 @@ class PacificOceanBossFight extends Component
   late final crabBoss boss;
 
   //DEFINE YOUR CONSTRUCTOR HERE
-  PacificOceanBossFight() {}
+  PacificOceanBossFight();
 
   @override
   FutureOr<void> onLoad() async {
@@ -142,11 +143,14 @@ class PacificOceanBossFight extends Component
         final toolbox = ItemToolBox(() {},
             position: Vector2(
                 tiledMap.size.x / 2 - 100 + 32 * 3 * i, tiledMap.size.y * 0.9),
+            position: Vector2(
+                tiledMap.size.x / 2 - 100 + 32 * 3 * i, tiledMap.size.y * 0.9),
             iconItem: WeaponProperty.weapons[i]['iconweapon']!,
             item: WeaponProperty.weapons[i]['weapon'],
             detectTap: true,
             player: player)
           ..scale = Vector2.all(3);
+        await game.camera.viewport.add(toolbox);
         await game.camera.viewport.add(toolbox);
 
         // 16*2(the size of the tile image)* 3 (the set scale) * i (y positioning)

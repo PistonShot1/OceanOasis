@@ -7,24 +7,28 @@ import 'package:flame/effects.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:oceanoasis/components/Boss/crabBoss.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
-import 'package:oceanoasis/wasteComponents/newspaper.dart';
+import 'package:oceanoasis/property/defaultgameProperty.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
+import 'package:oceanoasis/wasteComponents/waste.dart';
 
 class SlashEffect extends SpriteAnimationComponent
     with CollisionCallbacks, HasGameReference<MyGame> {
-  final String id;
-
   final int? damage; //(used for boss fight scenario)
 
   final Image spriteSheetImage;
   final double stepTime;
   final Vector2 frameSize;
   final int frameAmount;
-  SlashEffect(this.spriteSheetImage, this.id,
+  final List<WasteType> slashType;
+  final String toolType;
+  Effect? effects;
+  SlashEffect(this.spriteSheetImage, this.slashType,
       {required this.frameAmount,
       required this.stepTime,
       required this.frameSize,
-      this.damage})
+      required this.toolType,
+      this.damage,
+      this.effects})
       : super.fromFrameData(
             spriteSheetImage,
             SpriteAnimationData.sequenced(
@@ -33,11 +37,12 @@ class SlashEffect extends SpriteAnimationComponent
               textureSize: frameSize,
             ));
   SlashEffect.clone(SlashEffect slashEffect)
-      : this(slashEffect.spriteSheetImage, slashEffect.id,
+      : this(slashEffect.spriteSheetImage, slashEffect.slashType,
             damage: slashEffect.damage,
             frameAmount: slashEffect.frameAmount,
             frameSize: slashEffect.frameSize,
-            stepTime: slashEffect.stepTime);
+            stepTime: slashEffect.stepTime,
+            toolType: slashEffect.toolType);
   @override
   FutureOr<void> onLoad() {
     // TODO: implement onLoad
@@ -56,9 +61,10 @@ class SlashEffect extends SpriteAnimationComponent
   void onMount() {
     // TODO: implement onMount
 
-    Future.delayed(Duration(milliseconds: animation!.frames.length * 100), () {
-      removeFromParent();
-    });
+    // Future.delayed(Duration(milliseconds: animation!.frames.length * 100), () {
+    //   removeFromParent();
+    // });
+    hitEffect();
     super.onMount();
   }
 
@@ -78,6 +84,10 @@ class SlashEffect extends SpriteAnimationComponent
     } else if (other is ScreenHitbox) {
       print('Screenhitbox was hit');
     }
+
+    if (other is Waste) {
+      removeFromParent();
+    }
     super.onCollisionStart(intersectionPoints, other);
   }
 
@@ -85,5 +95,15 @@ class SlashEffect extends SpriteAnimationComponent
   void onRemove() {
     // TODO: implement onRemove
     super.onRemove();
+  }
+
+  void hitEffect() {
+    // effects = MoveEffect.by(Vector2(200, 0), EffectController(duration: 0.8),
+    //     onComplete: () {
+    //   removeFromParent();
+    // });
+    if (effects != null) {
+      add(effects!);
+    }
   }
 }

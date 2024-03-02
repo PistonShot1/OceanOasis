@@ -7,9 +7,11 @@ import 'package:flame/geometry.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
-// import 'package:oceanoasis/routes/gameplay.dart';
+import 'package:oceanoasis/components/events/longswordfish.dart';
+import 'package:oceanoasis/components/players/playerhealth.dart';
+import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
-import 'package:oceanoasis/routes/homescreen.dart';
+import 'package:oceanoasis/tools/slashEffect.dart';
 import 'package:oceanoasis/tools/tools.dart';
 import 'dart:math';
 
@@ -43,7 +45,8 @@ class JoystickPlayer extends SpriteAnimationComponent
   Vector2 velocity = Vector2.zero();
   double moveSpeed = 300; //this the speed
   final double pushAwaySpeed = 200.0;
-  bool isHitAnimationPlaying = false;
+  bool isHitAnimationPlaying =
+      false; //this variables acts as pause flag to stop spamming on hit action
   List<double> movementBoundary = [];
 
   //Facing direction
@@ -52,13 +55,14 @@ class JoystickPlayer extends SpriteAnimationComponent
     LogicalKeyboardKey.keyA: 'West',
     LogicalKeyboardKey.keyD: 'East'
   };
+  double facingDirectionnum = 1;
 
   //player properties
   ValueNotifier<double> currentLoad = ValueNotifier<double>(0);
   double? maxLoad;
   int breathingSeconds = 10;
   int maxbreathingDuration = 10;
-  double playerHealth = 3;
+  PlayerHealth playerHealth = PlayerHealth(health: 3);
   //Inventory & tools
 
   Tools currentTool = ToolSlashProperty.toolIcon[0]
@@ -71,6 +75,8 @@ class JoystickPlayer extends SpriteAnimationComponent
     1,
     1
   ]; //effect for each : left,right,up,down
+
+  bool playerVulnerability = true;
 
   JoystickPlayer({
     required this.joystick,
@@ -87,8 +93,8 @@ class JoystickPlayer extends SpriteAnimationComponent
   Future<void> onLoad() async {
     //FOR DEBUG
 
-    hitbox = RectangleHitbox();
-    add(hitbox);
+    hitbox = CircleHitbox(radius: 10, position: size * 0.5);
+    add(hitbox..debugMode = true);
 
     //Current Tool held
     if (playerScene == 0) {
@@ -132,33 +138,17 @@ class JoystickPlayer extends SpriteAnimationComponent
 
     if (horizontalDirection < 0 && scale.x > 0) {
       flipHorizontally();
+      facingDirectionnum = facingDirectionnum * -1;
     } else if (horizontalDirection > 0 && scale.x < 0) {
       flipHorizontally();
+      facingDirectionnum = facingDirectionnum * -1;
     }
 
     super.update(dt);
   }
 
   @override
-  void onCollisionStart(
-      Set<Vector2> intersectionPoints, PositionComponent other) {
-    super.onCollisionStart(intersectionPoints, other);
-
-    //DEBUG
-    hitbox.paint.color = _collisionStartColor;
-  }
-
-  @override
-  void onCollisionEnd(PositionComponent other) {
-    // TODO: implement onCollisionEnd
-    //DEBUG
-    hitbox.paint.color = _defaultColor;
-
-    super.onCollisionEnd(other);
-  }
-
-  @override
-  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     // TODO: implement onKeyEvent
     hitAction(keysPressed);
     if (!isHitAnimationPlaying) {
@@ -169,24 +159,34 @@ class JoystickPlayer extends SpriteAnimationComponent
   }
 
   void hitAction(Set<LogicalKeyboardKey> keysPressed) {
+    // print('Current facing direciton : $facingDirectionnum');
     if (keysPressed.contains(LogicalKeyboardKey.space) &&
         !isHitAnimationPlaying) {
-      //on hit animation , reset velocity, horizontal and vertical direction (to avoid movement while on hit animation)
+      //on hit animation , reset velocity, horizontal and vertical direction (to avoid update on position on long press)
       isHitAnimationPlaying = true;
       velocity = Vector2.zero();
       horizontalDirection = 0;
       verticalDirection = 0;
-      // animation = hitAnimation;
 
+      // animation = hitAnimation;
       currentToolOrigin.add(
-          RotateEffect.by(tau, EffectController(duration: 0.5), onComplete: () {
+          RotateEffect.by(tau, EffectController(duration: 0.1), onComplete: () {
         isHitAnimationPlaying = false;
+        currentTool.hitbox.collisionType = CollisionType.inactive;
       }));
 
-      add(currentTool.slashEffect!
-        ..anchor = Anchor.center
-        ..size = Vector2.all(64)
-        ..position = Vector2(100, 0));
+      if (currentTool.slashEffect != null) {
+        final component = SlashEffect.clone(currentTool.slashEffect!)
+          ..anchor = Anchor.center
+          ..size = Vector2(64, 32)
+          ..position = position;
+        (facingDirectionnum < 0) ? component.flipHorizontally() : '';
+        parent!.add(component
+          ..effects = MoveEffect.by(Vector2(400 * facingDirectionnum, 0),
+              EffectController(duration: 0.8), onComplete: () {
+            component.removeFromParent();
+          }));
+      }
 
       // Future.delayed(const Duration(milliseconds: 600), () {
       //   //reset back to original position after attack animation finish
@@ -243,7 +243,31 @@ class JoystickPlayer extends SpriteAnimationComponent
   }
 
   set setPlayerHealth(double value) {
-    playerHealth = value;
+    playerHealth.health = value;
+  }
+
+  void hit(double value) {
+    if (playerVulnerability) {
+      playerVulnerability = false;
+      game.camera.viewport.remove(playerHealth);
+      playerHealth = PlayerHealth(health: playerHealth.health - value);
+
+      Future.delayed(const Duration(seconds: 1), () {
+        playerVulnerability = true;
+      });
+      final effect = ColorEffect(
+        Colors.red,
+        EffectController(duration: 0.5, alternate: true, repeatCount: 1),
+      );
+
+      effect.onComplete = () {
+        effect.reset();
+      };
+
+      add(effect);
+      // effect.reset();
+      game.camera.viewport.add(playerHealth);
+    }
   }
 
   void setMovementBoundary(
