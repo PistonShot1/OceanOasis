@@ -137,7 +137,8 @@ class _MainMenuState extends State<MainMenu> {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () {
-                      game.router.pushRoute(Route(() => MapLevelSelection()));
+                      game.router
+                          .pushRoute(Route(() => MapLevelSelection()), replace: true);
                     },
                     child: Container(
                         height: 50,

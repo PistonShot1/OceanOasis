@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="120" height="52" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="23">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="120" height="52" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="34">
  <tileset firstgid="1" name="overworld-layout" tilewidth="16" tileheight="16" tilecount="6120" columns="120">
   <image source="tileset/overworld-layout.png" width="1920" height="830"/>
  </tileset>
@@ -64,13 +64,26 @@
    <point/>
   </object>
  </objectgroup>
+ <objectgroup id="10" name="Collision Boundary">
+  <object id="33" x="354.333" y="283.667" width="8.5" height="69.3333"/>
+  <object id="24" x="348" y="724.333" width="9.5" height="106.667"/>
+  <object id="25" x="855" y="378.25" width="9.5" height="85.5"/>
+  <object id="27" x="751.917" y="475.917" width="22.8333" height="226.167"/>
+  <object id="28" x="647.25" y="476.917" width="22.8333" height="240.834"/>
+  <object id="26" x="1372.58" y="327.25" width="9.5" height="149.5"/>
+  <object id="32" x="1697.25" y="718.083" width="13.5" height="111.334"/>
+  <object id="31" x="1730.92" y="296.25" width="12.1666" height="180.167"/>
+  <object id="23" x="354.333" y="394" width="8" height="69.3333"/>
+  <object id="30" x="1585.92" y="476.916" width="22.8333" height="240.834"/>
+  <object id="29" x="1513.92" y="476.917" width="22.8333" height="226.167"/>
+ </objectgroup>
  <objectgroup id="3" name="Glass Machine">
-  <object id="2" x="1712.13" y="464.542">
+  <object id="2" x="1712.13" y="431.875">
    <point/>
   </object>
  </objectgroup>
  <objectgroup id="4" name="Radioactive Machine">
-  <object id="3" x="1696.55" y="672.545">
+  <object id="3" x="1681.28" y="688.545">
    <point/>
   </object>
  </objectgroup>
@@ -80,7 +93,7 @@
   </object>
  </objectgroup>
  <objectgroup id="6" name="Metal Machine">
-  <object id="8" x="1232.18" y="720">
+  <object id="8" x="1231.68" y="703.5">
    <point/>
   </object>
  </objectgroup>
@@ -94,15 +107,15 @@
   <object id="12" name="0" x="352.333" y="462.5" width="333.242" height="13"/>
   <object id="13" name="0" x="713.379" y="462.25" width="215.909" height="12.5"/>
   <object id="14" name="0" x="1372.71" y="462.25" width="175.576" height="12.75"/>
-  <object id="15" name="0" x="1574.55" y="462.667" width="138.076" height="13"/>
-  <object id="16" name="0" x="347.212" y="814.833" width="1346.16" height="16.6667"/>
-  <object id="22" x="352.364" y="461.091">
-   <polygon points="0,0 -78.9091,77.8182 0,77.6032"/>
+  <object id="15" name="0" x="1574.55" y="462.667" width="185.076" height="13"/>
+  <object id="16" name="0" x="347.212" y="814.833" width="1379.66" height="16.6667"/>
+  <object id="22" x="354.727" y="457.636">
+   <polygon points="0,0 -78.1818,77.0909 0,76.878"/>
   </object>
  </objectgroup>
  <objectgroup id="9" name="Climbing Platform">
   <object id="19" x="432.5" y="345" width="27" height="125"/>
-  <object id="20" x="685.5" y="460.833" width="27" height="356.167"/>
+  <object id="20" x="685.5" y="462.833" width="27" height="354.167"/>
   <object id="21" x="1548" y="459.25" width="27" height="356.167"/>
  </objectgroup>
 </map>

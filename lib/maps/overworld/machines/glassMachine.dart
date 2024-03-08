@@ -8,11 +8,11 @@ import 'package:oceanoasis/maps/overworld/overworldplayer.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 
-class MetalMachine extends Machines
+class GlassMachine extends Machines
     with HasGameReference<MyGame>, CollisionCallbacks {
-  MetalMachine(Vector2 position) : super(position: position);
+  GlassMachine(Vector2 position) : super(position: position);
 
-  final WasteType machineType = WasteType.metal;
+  final WasteType machineType = WasteType.glass;
   late final SpriteAnimation idleAnimation;
   late final SpriteAnimation runAnimation;
   final animationStepTime = 0.15;
@@ -21,8 +21,7 @@ class MetalMachine extends Machines
   FutureOr<void> onLoad() {
     // TODO: implement onLoad
     _loadAllAnimations();
-    final hitbox = RectangleHitbox.relative(Vector2(1, 0.3), parentSize: size,);
-    add(hitbox..debugMode = true);
+    add(RectangleHitbox()..debugMode = true);
     depositComponent =
         DepositComponent(machine: this, machineType: machineType);
     return super.onLoad();
@@ -30,15 +29,15 @@ class MetalMachine extends Machines
 
   void _loadAllAnimations() {
     idleAnimation = SpriteAnimation.fromFrameData(
-        game.images.fromCache('machines/metal-machine-216x113.png'),
+        game.images.fromCache('machines/glass-machine-189x125.png'),
         SpriteAnimationData.sequenced(
-            amount: 1, stepTime: 0.5, textureSize: Vector2(216, 113)));
+            amount: 1, stepTime: 0.5, textureSize: Vector2(189, 125)));
     runAnimation = SpriteAnimation.fromFrameData(
-        game.images.fromCache('machines/metal-machine-216x113-20.png'),
+        game.images.fromCache('machines/glass-machine-189x125-35.png'),
         SpriteAnimationData.sequenced(
-            amount: 20,
+            amount: 35,
             stepTime: animationStepTime,
-            textureSize: Vector2(216, 113)));
+            textureSize: Vector2(189, 125)));
     animations = {
       MachineState.idle: idleAnimation,
       MachineState.run: runAnimation
