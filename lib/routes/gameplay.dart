@@ -7,10 +7,11 @@ import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
+import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/property/playerProperty.dart';
 import 'package:oceanoasis/tools/toolbox.dart';
 import 'package:oceanoasis/components/Boss/bossfight.dart';
-import 'package:oceanoasis/maps/pacific.dart';
+import 'package:oceanoasis/maps/overworld/pacific.dart';
 import 'package:oceanoasis/maps/pacificunderwater.dart';
 import 'package:oceanoasis/routes/gameOver.dart';
 import 'package:oceanoasis/routes/levelselection.dart';
@@ -34,7 +35,10 @@ class MyGame extends FlameGame
 
   int? currentLevel;
 
+  WasteType? currentMachine;
+
   AudioPlayer? mainBgm;
+
   MyGame(this.screeninfo, {required this.playerData});
   @override
   Future<void> onLoad() async {

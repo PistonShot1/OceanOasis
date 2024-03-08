@@ -9,6 +9,7 @@ import 'package:oceanoasis/components/players/joystickplayer.dart';
 class LongSwordFishEnemy extends SpriteAnimationComponent
     with CollisionCallbacks {
   final JoystickPlayer player;
+  final double speed = 200;
   LongSwordFishEnemy({required this.player})
       : super.fromFrameData(
             Flame.images.fromCache('events/longswordfish.png'),
@@ -49,5 +50,11 @@ class LongSwordFishEnemy extends SpriteAnimationComponent
       removeFromParent();
     }
     super.onCollisionStart(intersectionPoints, other);
+  }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    // TODO: implement onCollisionEnd
+    super.onCollisionEnd(other);
   }
 }

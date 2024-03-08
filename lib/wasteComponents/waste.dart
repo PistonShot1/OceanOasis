@@ -21,7 +21,10 @@ class Waste extends SpriteComponent
 
   //Optional characteristic
   double? density;
-
+  final moveEffect = MoveEffect.by(
+    Vector2(0, -25),
+    EffectController(duration: 1, reverseDuration: 1, infinite: true),
+  );
   Waste({
     required Sprite sprite,
     required this.wasteType,
@@ -39,6 +42,7 @@ class Waste extends SpriteComponent
             wastechildren: waste.wastechildren);
 
   bool startDecay = true;
+
   @override
   FutureOr<void> onLoad() {
     // TODO: implement onLoad
@@ -65,6 +69,7 @@ class Waste extends SpriteComponent
   @override
   void onMount() {
     // TODO: implement onMount
+    add(moveEffect);
     decay();
     super.onMount();
   }
@@ -121,7 +126,11 @@ class Waste extends SpriteComponent
         onComplete: () {
           removeFromParent();
           player.addScore();
-          player.addWasteScore(wasteType);
+          player.addplayerWasteScore(wasteType);
+          
+          player.addlevelScore();
+          player.addlevelWasteScore(wasteType);
+          
         },
       ),
     ]);
@@ -135,6 +144,17 @@ class Waste extends SpriteComponent
             removeFromParent();
           }
         });
+        // Future.doWhile(() async {
+        //   if (decayTime > 0) {
+        //     await Future.delayed(Duration(seconds: 1), () {
+        //       decayTime--;
+        //     });
+        //     return true;
+        //   } else {
+        //     removeFromParent();
+        //     return false;
+        //   }
+        // });
       }
       startDecay = false;
     }
@@ -145,5 +165,11 @@ class Waste extends SpriteComponent
   void onRemove() {
     // TODO: implement onRemove
     super.onRemove();
+  }
+
+  @override
+  void render(Canvas canvas) {
+    // TODO: implement render
+    super.render(canvas);
   }
 }

@@ -10,7 +10,7 @@ import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/tools/tools.dart';
 
-class OverworldPlayer extends SpriteAnimationComponent
+class BossFightPlayer extends SpriteAnimationComponent
     with HasGameReference<MyGame>, CollisionCallbacks, KeyboardHandler {
   final int playerScene;
   Image image;
@@ -72,7 +72,7 @@ class OverworldPlayer extends SpriteAnimationComponent
     ),
   ]);
 
-  OverworldPlayer({
+  BossFightPlayer({
     required this.currentWorld,
     required this.joystick,
     required Vector2 position,

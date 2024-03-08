@@ -36,7 +36,7 @@ class _TotalScoreWidgetState extends State<TotalScoreWidget> {
                         height: 50,
                       ),
                       Text(
-                          '${widget.game.playerData.levelwasteScores.value[WasteType.paper]!.toInt()}')
+                          '${widget.game.playerData.wasteScores[WasteType.paper]!.toInt()}')
                     ],
                   ),
                   Row(
@@ -47,7 +47,7 @@ class _TotalScoreWidgetState extends State<TotalScoreWidget> {
                         height: 50,
                       ),
                       Text(
-                          '${widget.game.playerData.levelwasteScores.value[WasteType.plastic]!.toInt()}')
+                          '${widget.game.playerData.wasteScores[WasteType.plastic]!.toInt()}')
                     ],
                   ),
                   Row(
@@ -58,7 +58,7 @@ class _TotalScoreWidgetState extends State<TotalScoreWidget> {
                         height: 50,
                       ),
                       Text(
-                          '${widget.game.playerData.levelwasteScores.value[WasteType.metal]!.toInt()}')
+                          '${widget.game.playerData.wasteScores[WasteType.metal]!.toInt()}')
                     ],
                   ),
                   Row(
@@ -69,7 +69,7 @@ class _TotalScoreWidgetState extends State<TotalScoreWidget> {
                         height: 50,
                       ),
                       Text(
-                          '${widget.game.playerData.levelwasteScores.value[WasteType.radioactive]!.toInt()}')
+                          '${widget.game.playerData.wasteScores[WasteType.radioactive]!.toInt()}')
                     ],
                   ),
                   Row(
@@ -80,7 +80,7 @@ class _TotalScoreWidgetState extends State<TotalScoreWidget> {
                         height: 50,
                       ),
                       Text(
-                          '${widget.game.playerData.levelwasteScores.value[WasteType.glass]!.toInt()} ')
+                          '${widget.game.playerData.wasteScores[WasteType.glass]!.toInt()} ')
                     ],
                   ),
                 ],

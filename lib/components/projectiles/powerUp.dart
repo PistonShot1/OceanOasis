@@ -5,7 +5,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
-import 'package:oceanoasis/components/Boss/overworldplayer.dart';
+import 'package:oceanoasis/components/Boss/bossfightplayer.dart';
 import 'package:oceanoasis/components/projectiles/bullet.dart';
 import 'package:oceanoasis/components/projectiles/mineExplosionEffect.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
@@ -63,7 +63,7 @@ class powerUp extends SpriteAnimationComponent with HasGameReference<MyGame>, Co
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
     // TODO: implement onCollisionStart
-    if (other is OverworldPlayer){
+    if (other is BossFightPlayer){
       other.chargeEnergy(energyRecharge);
       super.removeFromParent();
     }
