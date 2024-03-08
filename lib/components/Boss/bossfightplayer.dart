@@ -6,6 +6,7 @@ import 'package:flame/game.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
+import 'package:oceanoasis/components/Boss/playerBar.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/tools/tools.dart';
@@ -100,6 +101,12 @@ class BossFightPlayer extends SpriteAnimationComponent
   }
 
   @override
+  void onMount() {
+    add(PlayerBar(position: Vector2(0, -20), playerRef: this));
+    super.onMount();
+  }
+
+  @override
   void update(double dt) {
     if (currentHealth < 0) {
       gameOver();
@@ -140,15 +147,15 @@ class BossFightPlayer extends SpriteAnimationComponent
 
   @override
   void render(Canvas canvas) {
-    // TODO: implement render
-    double barWidth = (currentHealth / maxHealth) * size.x;
-    canvas.drawRect(
-        Rect.fromLTWH(0, 0, barWidth, 10), Paint()..color = Colors.red);
-    super.render(canvas);
+    // // TODO: implement render
+    // double barWidth = (currentHealth / maxHealth) * size.x;
+    // canvas.drawRect(
+    //     Rect.fromLTWH(0, -10, barWidth, 0), Paint()..color = Colors.red);
+    // super.render(canvas);
 
-    double energybarWidth = (currentEnergyLevel / MaxEnergyLevel) * size.x;
-    canvas.drawRect(
-        Rect.fromLTWH(0, 10, energybarWidth, 10), Paint()..color = Colors.blue);
+    // double energybarWidth = (currentEnergyLevel / MaxEnergyLevel) * size.x;
+    // canvas.drawRect(Rect.fromLTWH(0, 0, energybarWidth, 10),
+    //     Paint()..color = Colors.purple);
     super.render(canvas);
   }
 
