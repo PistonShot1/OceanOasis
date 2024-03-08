@@ -43,7 +43,8 @@ class OverworldPlayer extends SpriteAnimationGroupComponent
   final double _terminalVelocity = 300;
   double horizontalMovement = 0;
   double verticalMovement = 0;
-  double moveSpeed = 100;
+  double moveSpeed = 200;
+  double climbingSpeed = 100;
   Vector2 startingPosition = Vector2.zero();
   Vector2 velocity = Vector2.zero();
   bool isOnGround = false;
@@ -209,8 +210,13 @@ class OverworldPlayer extends SpriteAnimationGroupComponent
     velocity.x = horizontalMovement * moveSpeed;
     position.x += velocity.x * dt;
 
-    velocity.y = verticalMovement * moveSpeed;
-    position.y += velocity.y * dt;
+    if (isClimbing) {
+      velocity.y = verticalMovement * climbingSpeed;
+      position.y += velocity.y * dt;
+    } else {
+      velocity.y = verticalMovement * moveSpeed;
+      position.y += velocity.y * dt;
+    }
   }
 
   void _checkHorizontalCollisions() {

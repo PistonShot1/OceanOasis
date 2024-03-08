@@ -5,10 +5,14 @@ import 'package:flame/experimental.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide Image;
+import 'package:oceanoasis/maps/overworld/boundary_block.dart';
 import 'package:oceanoasis/maps/overworld/collision_block.dart';
 import 'package:oceanoasis/maps/overworld/ladder.dart';
+import 'package:oceanoasis/maps/overworld/machines/glassMachine.dart';
+import 'package:oceanoasis/maps/overworld/machines/metalMachine.dart';
 import 'package:oceanoasis/maps/overworld/machines/paperMachine.dart';
 import 'package:oceanoasis/maps/overworld/machines/plasticMachine.dart';
+import 'package:oceanoasis/maps/overworld/machines/radioactiveMachine.dart';
 import 'package:oceanoasis/maps/overworld/overworldplayer.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'dart:io' show Platform;
@@ -110,6 +114,15 @@ class PacificOcean extends Component
               ..debugMode = true);
       }
     }
+
+    final boundaryblocks =
+        tiledMap.tileMap.getLayer<ObjectGroup>('Collision Boundary');
+    for (final object in boundaryblocks!.objects) {
+      if (object.isRectangle) {
+        myWorld
+            .add(BoundaryBlock(position: object.position, size: object.size));
+      }
+    }
   }
 
   void loadMachines() {
@@ -130,12 +143,13 @@ class PacificOcean extends Component
 
     myWorld.add(PaperMachine(paperMachine.position));
     myWorld.add(PlasticMachine(plasticMachine.position));
+    myWorld.add(GlassMachine(glassMachine.position));
+    myWorld.add(MetalMachine(metalMachine.position));
+    myWorld.add(RadioactiveMachine(radioactiveMachine.position));
   }
 
   @override
   void onRemove() {
-    cameraComponent.removeFromParent();
-    myWorld.removeFromParent();
     super.onRemove();
   }
 
