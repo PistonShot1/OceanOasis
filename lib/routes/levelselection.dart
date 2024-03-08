@@ -3,7 +3,7 @@ import 'package:flutter/material.dart' hide Route;
 import 'package:oceanoasis/property/levelProperty.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
-import 'package:oceanoasis/maps/pacificunderwater.dart';
+import 'package:oceanoasis/maps/underwater/pacificunderwater.dart';
 
 // ignore: must_be_immutable
 class LevelSelection extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
 import 'package:oceanoasis/components/Boss/bossfight.dart';
-import 'package:oceanoasis/maps/pacificunderwater.dart';
+import 'package:oceanoasis/maps/underwater/pacificunderwater.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 
 class LevelProperty {

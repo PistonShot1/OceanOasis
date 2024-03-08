@@ -5,7 +5,7 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:oceanoasis/components/Boss/bossfight.dart';
-import 'package:oceanoasis/maps/pacificunderwater.dart';
+import 'package:oceanoasis/maps/underwater/pacificunderwater.dart';
 import 'package:oceanoasis/tools/tools.dart';
 import 'package:oceanoasis/tools/slashEffect.dart';
 import 'package:oceanoasis/wasteComponents/waste.dart';

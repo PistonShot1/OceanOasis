@@ -9,7 +9,7 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide Route, Image;
 import 'package:oceanoasis/components/Boss/bossfight.dart';
 import 'package:oceanoasis/components/mapmarker.dart';
-import 'package:oceanoasis/maps/pacificunderwater.dart';
+import 'package:oceanoasis/maps/underwater/pacificunderwater.dart';
 import 'package:oceanoasis/property/levelProperty.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/maps/overworld/pacific.dart';

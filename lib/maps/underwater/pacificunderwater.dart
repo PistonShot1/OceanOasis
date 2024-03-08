@@ -81,35 +81,6 @@ class PacificOceanUnderwater extends Component
     tiledMap =
         await TiledComponent.load('pacific-ocean-final.tmx', Vector2.all(16));
     await underwaterWorld.add(tiledMap);
-    // tiledMap.tileMap.setLayerVisibility(1, visible: false);
-
-    // final startLayer =
-    //     WaveLayer(Flame.images.fromCache('events/dark-water-wave.png'))
-    //       ..position = Vector2(-800, 16 * 15);
-    // underwaterWorld.add(MoveEffect.by(
-    //   Vector2(2882, 0),
-    //   EffectController(duration: 15),
-    //   onComplete: () => startLayer.removeFromParent(),
-    // ));
-
-    underwaterWorld.add(TimerComponent(
-      period: 15,
-      onTick: () {
-        final layer =
-            WaveLayer(Flame.images.fromCache('events/dark-water-wave.png'))
-              ..position = Vector2(-2882, 16 * 15)
-              ..debugMode = true;
-        underwaterWorld.add(layer
-          ..add(MoveEffect.by(
-            Vector2(2882 * 2, 0),
-            EffectController(duration: 15 * 2),
-            onComplete: () {
-              layer.removeFromParent();
-            },
-          )));
-      },
-      repeat: true,
-    ));
 
     cameraSettings();
     underwaterWorld.add(ScreenHitbox());
@@ -217,10 +188,6 @@ class PacificOceanUnderwater extends Component
     game.camera.viewport.anchor = Anchor.center;
     game.camera.viewfinder.zoom = 1;
     game.camera.moveBy(Vector2(1920 * 0.5, 1184 * 0.5));
-
-    // game.add(CameraComponent.withFixedResolution(
-    //     width: 200, height: 300, world: underwaterWorld));
-
     if (Platform.isAndroid || Platform.isIOS) {
       game.camera.viewport.add(game.joystick);
     }
@@ -260,7 +227,7 @@ class PacificOceanUnderwater extends Component
         Vector2(spawnPoint!.objects.first.x, spawnPoint.objects.first.y);
     player.setSpeed = 500;
     underwaterWorld.add(player);
-    
+
     game.camera.viewport.add(player.playerHealth);
 
     breathingBar =

@@ -12,7 +12,7 @@ import 'package:oceanoasis/property/playerProperty.dart';
 import 'package:oceanoasis/tools/toolbox.dart';
 import 'package:oceanoasis/components/Boss/bossfight.dart';
 import 'package:oceanoasis/maps/overworld/pacific.dart';
-import 'package:oceanoasis/maps/pacificunderwater.dart';
+import 'package:oceanoasis/maps/underwater/pacificunderwater.dart';
 import 'package:oceanoasis/routes/gameOver.dart';
 import 'package:oceanoasis/routes/levelselection.dart';
 import 'package:oceanoasis/routes/maplevelselection.dart';

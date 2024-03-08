@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
@@ -9,6 +11,7 @@ import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
 import 'package:oceanoasis/components/events/longswordfish.dart';
 import 'package:oceanoasis/components/players/playerhealth.dart';
+import 'package:oceanoasis/maps/underwater/inputAttack.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/tools/slashEffect.dart';
@@ -103,6 +106,11 @@ class JoystickPlayer extends SpriteAnimationComponent
             size.x / sqrt(pow(scale.x, 2)), size.y / sqrt(pow(scale.y, 2))));
       updateCurrentTool(currentTool);
     }
+
+    if (Platform.isAndroid || Platform.isIOS) {
+      game.camera.viewport.add(AttackInput(playerRef: this)
+        ..position = game.camera.viewport.size);
+    }
   }
 
   @override
@@ -158,10 +166,18 @@ class JoystickPlayer extends SpriteAnimationComponent
     return super.onKeyEvent(event, keysPressed);
   }
 
-  void hitAction(Set<LogicalKeyboardKey> keysPressed) {
+  void hitAction(Set<LogicalKeyboardKey>? keysPressed) {
     // print('Current facing direciton : $facingDirectionnum');
-    if (keysPressed.contains(LogicalKeyboardKey.space) &&
-        !isHitAnimationPlaying) {
+    bool condition = false;
+    if (Platform.isWindows || Platform.isMacOS) {
+      (keysPressed!.contains(LogicalKeyboardKey.space) &&
+              !isHitAnimationPlaying)
+          ? condition = true
+          : condition = false;
+    } else if (Platform.isAndroid || Platform.isIOS) {
+      (!isHitAnimationPlaying) ? condition = true : condition = false;
+    }
+    if (condition) {
       //on hit animation , reset velocity, horizontal and vertical direction (to avoid update on position on long press)
       isHitAnimationPlaying = true;
       velocity = Vector2.zero();
