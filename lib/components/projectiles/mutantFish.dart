@@ -5,7 +5,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:oceanoasis/components/Boss/freezeEffect.dart';
-import 'package:oceanoasis/components/Boss/overworldplayer.dart';
+import 'package:oceanoasis/components/Boss/bossfightplayer.dart';
 import 'package:oceanoasis/components/Boss/screenFreezeEffect.dart';
 import 'package:oceanoasis/components/projectiles/mutantFishDeath.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
@@ -59,7 +59,7 @@ class mutantFish extends SpriteAnimationComponent with HasGameReference<MyGame>,
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
     // TODO: implement onCollisionStart
-    if (other is OverworldPlayer){
+    if (other is BossFightPlayer){
       other.takeDamage(damageToOverWorldPlayer);
       removeComponent();
     }

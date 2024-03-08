@@ -41,11 +41,11 @@ class ToolSlashProperty {
           position: Vector2(-16, 24),
           size: Vector2(64 * 0.5, 64 * 0.5),
           slashEffect: SlashEffect(
-              Flame.images.fromCache('tools/water-hit-effect.png'),
+              Flame.images.fromCache('tools/magnet-bullet.png'),
               [WasteType.metal],
-              frameAmount: 21,
-              stepTime: 0.05,
-              frameSize: Vector2(256, 137),
+              frameAmount: 4,
+              stepTime: 0.1,
+              frameSize: Vector2(16, 16),
               toolType: _toolType),
           slashType: [WasteType.metal])
         ..anchor = Anchor.center,
@@ -63,11 +63,11 @@ class ToolSlashProperty {
         position: Vector2(-16, 24),
         size: Vector2(32, 64),
         slashEffect: SlashEffect(
-          Flame.images.fromCache('tools/water-hit-effect.png'),
+          Flame.images.fromCache('tools/radioactive-bullet.png'),
           [WasteType.radioactive],
-          frameAmount: 21,
-          stepTime: 0.05,
-          frameSize: Vector2(256, 137),
+          frameAmount: 4,
+          stepTime: 0.1,
+          frameSize: Vector2(16, 16),
           toolType: _toolType,
         ),
         slashType: [WasteType.radioactive],
@@ -194,4 +194,27 @@ class WeaponProperty {
       )
     }
   ];
+}
+
+class GameCurrency {
+  GameCurrency();
+
+  int calculateCurrencyExchange(int amount, WasteType type) {
+    return amount * _mapPerWasteExchangeRate(type);
+  }
+
+  int _mapPerWasteExchangeRate(WasteType type) {
+    switch (type) {
+      case WasteType.paper:
+        return 10;
+      case WasteType.plastic:
+        return 15;
+      case WasteType.glass:
+        return 20;
+      case WasteType.metal:
+        return 25;
+      case WasteType.radioactive:
+        return 30;
+    }
+  }
 }

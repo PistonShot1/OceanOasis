@@ -15,7 +15,7 @@ import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:flutter/src/services/raw_keyboard.dart';
 import 'package:oceanoasis/components/Boss/crabBoss.dart';
 import 'package:oceanoasis/components/Boss/freezeEffect.dart';
-import 'package:oceanoasis/components/Boss/overworldplayer.dart';
+import 'package:oceanoasis/components/Boss/bossfightplayer.dart';
 import 'package:oceanoasis/components/projectiles/bullet.dart';
 import 'package:oceanoasis/components/projectiles/powerUp.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
@@ -27,7 +27,7 @@ class PacificOceanBossFight extends Component
   late final TiledComponent tiledMap;
   static const id = 'PacificOceanBoss';
   late final World bossWorld;
-  late final OverworldPlayer player;
+  late final BossFightPlayer player;
   late final crabBoss boss;
 
   //DEFINE YOUR CONSTRUCTOR HERE
@@ -84,7 +84,7 @@ class PacificOceanBossFight extends Component
       margin: const EdgeInsets.only(left: 40, bottom: 40),
     );
     final spawnPoint = tiledMap.tileMap.getLayer<ObjectGroup>('Spawn Point');
-    player = OverworldPlayer(
+    player = BossFightPlayer(
       currentWorld: bossWorld,
       joystick: joystick,
       position:

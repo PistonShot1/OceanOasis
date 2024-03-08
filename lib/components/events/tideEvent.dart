@@ -1,13 +1,15 @@
 import 'dart:async';
-import 'dart:math';
+import 'dart:math' hide Rectangle;
 import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/experimental.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/particles.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
+import 'package:oceanoasis/components/events/thunderstorm.dart';
 import 'package:oceanoasis/components/events/whirlpool.dart';
 import 'package:oceanoasis/components/players/joystickplayer.dart';
 
@@ -51,6 +53,14 @@ class TideEvent extends PositionComponent {
       removeFromParent();
     });
 
+    final component = RectangleComponent(
+        size: size, paint: Paint()..color = Colors.black.withOpacity(0.3));
+    add(component
+      ..add(ColorEffect(
+          Color.fromARGB(255, 35, 8, 109),
+          EffectController(
+              duration: 0.2, reverseDuration: 0.2, repeatCount: 5))));
+
     super.onMount();
   }
 
@@ -58,17 +68,16 @@ class TideEvent extends PositionComponent {
     TextPaint regular = TextPaint(
       style: const TextStyle(
         fontFamily: 'Retro Gaming',
-        fontSize: 48.0,
+        fontSize: 30,
         color: Colors.white,
       ),
     );
     final text = TextComponent(
-        text: 'Current tide is from : ${tideDirection[eventNum]}',
+        text: 'Incoming tide from : \n${tideDirection[eventNum]}',
         textRenderer: regular,
         position: Vector2(size.x / 2, 100),
         priority: 2);
-    add(text
-      ..position = Vector2(text.position.x - text.size.x, text.position.y));
+    add(text..position = Vector2((size.x - text.size.x) / 2, text.position.y));
     await Future.delayed(Duration(seconds: 3), () {
       remove(text);
     });
@@ -77,21 +86,22 @@ class TideEvent extends PositionComponent {
 
   void addClouds() {
     final cloud = _getCloud();
-    add(cloud..position = Vector2(-cloud.size.x, size.y * 0.05));
-    Future.delayed(Duration(seconds: 10), () {
-      final cloud = _getCloud();
-      add(cloud..position = Vector2(-cloud.size.x, size.y * 0.04));
-    });
-    Future.delayed(Duration(seconds: 20), () {
-      final cloud = _getCloud();
-      add(cloud..position = Vector2(-cloud.size.x, size.y * 0.02));
-    });
+    add(cloud
+      ..position = Vector2(cloud.size.x, -cloud.size.y * 0.5)
+      ..debugMode = true
+      ..debugColor = Colors.green);
+    // Future.delayed(Duration(seconds: 10), () {
+    //   final cloud = _getCloud();
+    //   add(cloud..position = Vector2(-cloud.size.x, size.y * 0.03));
+    // });
+    // Future.delayed(Duration(seconds: 15), () {
+    //   final cloud = _getCloud();
+    //   add(cloud..position = Vector2(2 * cloud.size.x, size.y * 0.02));
+    // });
   }
 
-  SpriteComponent _getCloud() {
-    final clouds = SpriteComponent(sprite: cloud);
-    clouds.add(MoveEffect.by(Vector2(size.x + clouds.size.x, 0),
-        EffectController(duration: 30, infinite: true)));
+  ThunderStorm _getCloud() {
+    final clouds = ThunderStorm();
     return clouds;
   }
 
@@ -110,17 +120,17 @@ class TideEvent extends PositionComponent {
         case 0:
           eventTidemovePlayer = false;
           player.add(
-              MoveEffect.by(Vector2(1200 * 1, 0), EffectController(duration: 5))
+              MoveEffect.by(Vector2(800 * 1, 0), EffectController(duration: 5))
                 ..onComplete = () {
                   eventTidemovePlayer = true;
                 });
         case 1:
           eventTidemovePlayer = false;
-          player.add(MoveEffect.by(
-              Vector2(1200 * -1, 0), EffectController(duration: 5))
-            ..onComplete = () {
-              eventTidemovePlayer = true;
-            });
+          player.add(
+              MoveEffect.by(Vector2(800 * -1, 0), EffectController(duration: 5))
+                ..onComplete = () {
+                  eventTidemovePlayer = true;
+                });
       }
     }
   }
@@ -147,7 +157,7 @@ class TideEvent extends PositionComponent {
     _linkPortals(Whirlpool(), Whirlpool(), Vector2(100, size.y / 2),
         Vector2(size.x - 150, size.y / 2));
     _linkPortals(Whirlpool(), Whirlpool(), Vector2(100, size.y * 2 / 3),
-        Vector2(size.x - 150, size.y * 2 / 3 ));
+        Vector2(size.x - 150, size.y * 2 / 3));
   }
 
   void _linkPortals(Whirlpool portal1, Whirlpool portal2, Vector2 position1,

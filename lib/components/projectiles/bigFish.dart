@@ -6,7 +6,7 @@ import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 
 import 'package:oceanoasis/components/Boss/freezeEffect.dart';
-import 'package:oceanoasis/components/Boss/overworldplayer.dart';
+import 'package:oceanoasis/components/Boss/bossfightplayer.dart';
 
 import 'package:oceanoasis/components/projectiles/mine.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
@@ -60,7 +60,7 @@ class bigFish extends SpriteAnimationComponent
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
     super.onCollisionStart(intersectionPoints, other);
-    if (other is OverworldPlayer) {
+    if (other is BossFightPlayer) {
       other.takeDamage(damageToPlayer);
     }
     if (other is freezeEffect && frozen == false) {

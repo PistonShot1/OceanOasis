@@ -8,7 +8,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
 import 'package:oceanoasis/routes/challengeBossSelection.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
-import 'package:oceanoasis/maps/pacific.dart';
+import 'package:oceanoasis/maps/overworld/pacific.dart';
 
 class MapMarker extends SpriteComponent
     with TapCallbacks, HasGameReference<MyGame> {

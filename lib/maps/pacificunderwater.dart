@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math' hide Rectangle;
-import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/experimental.dart';
@@ -13,13 +12,12 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
 import 'package:oceanoasis/components/events/bubbles.dart';
-import 'package:oceanoasis/components/events/circularMaskComponent.dart';
 import 'package:oceanoasis/components/events/glacierformation.dart';
 import 'package:oceanoasis/components/events/longswordfish.dart';
 import 'package:oceanoasis/components/events/tideEvent.dart';
+import 'package:oceanoasis/components/events/wave.dart';
 import 'package:oceanoasis/components/players/joystickplayer.dart';
 import 'package:oceanoasis/components/players/playerbreathingbar.dart';
-import 'package:oceanoasis/components/players/playerhealth.dart';
 import 'package:oceanoasis/property/levelProperty.dart';
 import 'package:oceanoasis/tools/toolbox.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
@@ -76,13 +74,45 @@ class PacificOceanUnderwater extends Component
     game.overlays.remove('ToFacility');
     game.overlays.add('WasteScores');
 
+    game.playerData.resetwasteScore();
+    game.playerData.resetcurrentScore();
+
     underwaterWorld = World();
     tiledMap =
         await TiledComponent.load('pacific-ocean-final.tmx', Vector2.all(16));
     await underwaterWorld.add(tiledMap);
+    // tiledMap.tileMap.setLayerVisibility(1, visible: false);
+
+    // final startLayer =
+    //     WaveLayer(Flame.images.fromCache('events/dark-water-wave.png'))
+    //       ..position = Vector2(-800, 16 * 15);
+    // underwaterWorld.add(MoveEffect.by(
+    //   Vector2(2882, 0),
+    //   EffectController(duration: 15),
+    //   onComplete: () => startLayer.removeFromParent(),
+    // ));
+
+    underwaterWorld.add(TimerComponent(
+      period: 15,
+      onTick: () {
+        final layer =
+            WaveLayer(Flame.images.fromCache('events/dark-water-wave.png'))
+              ..position = Vector2(-2882, 16 * 15)
+              ..debugMode = true;
+        underwaterWorld.add(layer
+          ..add(MoveEffect.by(
+            Vector2(2882 * 2, 0),
+            EffectController(duration: 15 * 2),
+            onComplete: () {
+              layer.removeFromParent();
+            },
+          )));
+      },
+      repeat: true,
+    ));
 
     cameraSettings();
-
+    underwaterWorld.add(ScreenHitbox());
     await add(underwaterWorld);
 
     return super.onLoad();
@@ -93,7 +123,6 @@ class PacificOceanUnderwater extends Component
     // TODO: implement onMount
     if (gameState.compareTo('Loading') == 0) {
       startGame();
-      game.playerData.resetScore();
     }
 
     super.onMount();
@@ -114,7 +143,7 @@ class PacificOceanUnderwater extends Component
         // highTideEvent(5);
         // eventNum = random.nextInt(2);
         tideEvent = false;
-        const eventDuration = 10;
+        const eventDuration = 100;
         int interval = eventDuration + 5 + random.nextInt(10); //(5 is for gap)
 
         final event = TideEvent(
@@ -178,7 +207,7 @@ class PacificOceanUnderwater extends Component
     }
 
     spawnBubbles();
-    spawnEnemies(LevelProperty.levelProperty[levelNumber]['swordFishInterval']);
+    // spawnEnemies(LevelProperty.levelProperty[levelNumber]['swordFishInterval']);
   }
 
   //check pacific.dart for camera movement
@@ -195,7 +224,7 @@ class PacificOceanUnderwater extends Component
     if (Platform.isAndroid || Platform.isIOS) {
       game.camera.viewport.add(game.joystick);
     }
-    
+
     // final circularViewport = CircularViewport(500);
     // game.camera.viewport = circularViewport;
     // game.camera.viewport.add(CircularMaskComponent(radius: 100));
@@ -231,7 +260,7 @@ class PacificOceanUnderwater extends Component
         Vector2(spawnPoint!.objects.first.x, spawnPoint.objects.first.y);
     player.setSpeed = 500;
     underwaterWorld.add(player);
-
+    
     game.camera.viewport.add(player.playerHealth);
 
     breathingBar =
@@ -450,7 +479,7 @@ class PacificOceanUnderwater extends Component
   void gameOver() {
     if ((wasteList >= LevelProperty.levelProperty[levelNumber]['maxSpawn'] &&
             underwaterWorld.children.query<Waste>().isEmpty) ||
-        player.playerHealth.health == 0) {
+        player.playerHealth.health <= 0) {
       gameState = 'Game Over';
       game.pauseEngine();
       game.router.pushNamed(GameOver.id);

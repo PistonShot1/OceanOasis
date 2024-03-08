@@ -12,7 +12,7 @@ import 'package:oceanoasis/components/mapmarker.dart';
 import 'package:oceanoasis/maps/pacificunderwater.dart';
 import 'package:oceanoasis/property/levelProperty.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
-import 'package:oceanoasis/maps/pacific.dart';
+import 'package:oceanoasis/maps/overworld/pacific.dart';
 import 'package:oceanoasis/routes/tiledMapLevelSelection.dart';
 
 class MapLevelSelection extends Component with HasGameReference<MyGame> {

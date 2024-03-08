@@ -2,9 +2,10 @@ import 'dart:async';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:oceanoasis/property/playerProperty.dart';
+import 'package:oceanoasis/routes/playerBalance.dart';
 import 'package:oceanoasis/routes/playerScores.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
-import 'package:oceanoasis/maps/pacific.dart';
+import 'package:oceanoasis/maps/overworld/pacific.dart';
 import 'package:oceanoasis/routes/achievementdashboard.dart';
 import 'package:oceanoasis/routes/levelselection.dart';
 import 'package:oceanoasis/routes/maplevelselection.dart';
@@ -23,140 +24,98 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
-  late Timer _timer;
-  double _opacity = 0.0;
   double iconButtonSize = 35;
   double text1 = 50;
   double text2 = 30;
   PlayerProperty playerData = PlayerProperty(tools: [], weapons: []);
-  @override
-  void initState() {
-    super.initState();
-    // Start the fade in/out animation
-    _startAnimation();
-  }
-
-  void _startAnimation() {
-    _timer = Timer.periodic(const Duration(milliseconds: 600), (timer) {
-      setState(() {
-        _opacity = _opacity == 0.0 ? 1.0 : 0.0;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    _timer.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     _rescaleFont([iconButtonSize, text1, text2]);
     return Scaffold(
       backgroundColor: Colors.black,
-      body: InkWell(
-        onTap: () {
-          oldWidget(context);
-        },
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Image.asset(
-                'assets/images/main-menu/background.png',
-                fit: BoxFit.cover,
-              ),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/main-menu/background.png',
+              fit: BoxFit.cover,
             ),
-            Align(
-              alignment: Alignment.center,
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.6,
-                width: MediaQuery.of(context).size.width * 0.6,
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                        child: Text(
-                      'OCEAN OASIS',
-                      style: TextStyle(fontSize: text1),
-                    )),
-                    Expanded(
-                      child: AnimatedOpacity(
-                        opacity: _opacity,
-                        duration: const Duration(seconds: 1),
-                        child: Text(
-                          'Tap Anywhere to Play !',
-                          style: TextStyle(fontSize: text2, color: Colors.blue),
+          ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Container(
+              // color: Colors.black,
+              padding: const EdgeInsets.all(20),
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      initGameWidget(context);
+                    },
+                    child: Image.asset(
+                      'assets/images/ui/play-button.png',
+                      width: 300,
+                      height: 100,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          _showOverlay(AchievementDashboard.id);
+                        },
+                        child: Image.asset(
+                          'assets/images/ui/shop-button.png',
+                          width: 150,
+                          height: 50,
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: IconButton(
-                              iconSize: iconButtonSize,
-                              onPressed: () {
-                                _showOverlay(UserProfile.id);
-                              },
-                              icon: const Icon(Icons.person),
-                              style: ButtonStyle(
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.all(10),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: IconButton(
-                              iconSize: iconButtonSize,
-                              onPressed: () =>
-                                  _showOverlay(AchievementDashboard.id),
-                              icon: const Icon(Icons.shopping_cart),
-                              color: Colors.grey[800],
-                              style: ButtonStyle(
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.all(10),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: IconButton(
-                              iconSize: iconButtonSize,
-                              onPressed: () => _showOverlay(Settings.id),
-                              icon: const Icon(Icons.settings),
-                              color: Colors.grey,
-                              style: ButtonStyle(
-                                padding: MaterialStateProperty.all(
-                                  EdgeInsets.all(10),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
+                      InkWell(
+                        onTap: () {
+                          _showOverlay(Settings.id);
+                        },
+                        child: Image.asset(
+                          'assets/images/ui/settings-button.png',
+                          height: 50,
+                        ),
                       ),
-                    )
-                  ],
-                ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      InkWell(
+                        onTap: () {},
+                        child: Image.asset(
+                          'assets/images/ui/user-button.png',
+                          height: 50,
+                        ),
+                      ),
+                    ],
+                  )
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  void oldWidget(BuildContext context) {
+  void initGameWidget(BuildContext context) {
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
       return GameWidget(
         game: MyGame(MediaQuery.of(context), playerData: playerData),
         loadingBuilder: (p0) {
           return Stack(
             children: [
-              Image.asset('assets/images/main-menu-background.jpg'),
+              Positioned.fill(
+                  child: Image.asset(
+                'assets/images/main-menu/background.png',
+                fit: BoxFit.fill,
+              )),
               const Align(
                 alignment: Alignment.center,
                 child: Material(
@@ -213,11 +172,23 @@ class _MainMenuState extends State<MainMenu> {
                         width: 50,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: Colors.blue,
+                            color: Colors.transparent,
                             boxShadow: const [
                               BoxShadow(color: Colors.black, blurRadius: 2)
                             ]),
-                        child: Image.asset('assets/images/ui/recycle.png')),
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                                child: Image.asset(
+                              'assets/images/ui/button-ui.png',
+                              fit: BoxFit.fill,
+                            )),
+                            Center(
+                                child: Image.asset(
+                                    'assets/images/ui/recycle.png',
+                                    fit: BoxFit.cover))
+                          ],
+                        )),
                   ),
                 ),
               ),
@@ -241,7 +212,10 @@ class _MainMenuState extends State<MainMenu> {
           },
           "TotalScores": (context, MyGame game) {
             return TotalScoreWidget(game: game);
-          }
+          },
+          "GameBalance": (context, MyGame game) {
+            return BalanceWidget(game: game);
+          },
         },
         initialActiveOverlays: [],
         // to add game overlay
@@ -264,12 +238,6 @@ class _MainMenuState extends State<MainMenu> {
         text2 = 30;
       });
     }
-  }
-
-  void newWidget(BuildContext context) {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-      return Container();
-    }));
   }
 
   void _showOverlay(String routeName) {

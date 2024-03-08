@@ -12,21 +12,21 @@ class LevelProperty {
       'levelNumber': 1,
       'locationName': 'North Pacific Ocean',
       'maxSpawn': 30,
-      'tideEvent': false,
+      'tideEvent': true,
       'breathingEvent': true,
       'iceEvent': false,
       'listOfWastes': [WasteType.paper, WasteType.plastic],
-      'swordFishInterval':4.0,
+      'swordFishInterval': 4.0,
     },
     2: {
       'levelNumber': 2,
       'locationName': 'Mississippi River',
-      'maxSpawn': 15,
+      'maxSpawn': 30,
       'tideEvent': false,
       'breathingEvent': true,
       'iceEvent': false,
-      'listOfWastes': [WasteType.metal],
-      'swordFishInterval':3.0,
+      'listOfWastes': [WasteType.paper, WasteType.plastic, WasteType.metal],
+      'swordFishInterval': 3.0,
     },
     3: {
       'levelNumber': 3,
@@ -35,8 +35,13 @@ class LevelProperty {
       'tideEvent': true,
       'breathingEvent': true,
       'iceEvent': false,
-      'listOfWastes': [WasteType.paper],
-      'swordFishInterval':2.0,
+      'listOfWastes': [
+        WasteType.paper,
+        WasteType.plastic,
+        WasteType.metal,
+        WasteType.glass
+      ],
+      'swordFishInterval': 2.0,
     },
     4: {
       'levelNumber': 4,
@@ -45,8 +50,14 @@ class LevelProperty {
       'tideEvent': true,
       'breathingEvent': true,
       'iceEvent': true,
-      'listOfWastes': [WasteType.radioactive],
-      'swordFishInterval':2.0,
+      'listOfWastes': [
+        WasteType.paper,
+        WasteType.plastic,
+        WasteType.metal,
+        WasteType.glass,
+        WasteType.radioactive
+      ],
+      'swordFishInterval': 2.0,
     },
     5: {
       'levelNumber': 5,
@@ -55,8 +66,14 @@ class LevelProperty {
       'tideEvent': true,
       'breathingEvent': true,
       'iceEvent': true,
-      'listOfWastes': [WasteType.glass],
-      'swordFishInterval':2.0,
+      'listOfWastes': [
+        WasteType.paper,
+        WasteType.plastic,
+        WasteType.metal,
+        WasteType.glass,
+        WasteType.glass
+      ],
+      'swordFishInterval': 2.0,
     },
   };
 

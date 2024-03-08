@@ -78,13 +78,7 @@ class SlashEffect extends SpriteAnimationComponent
   @override
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
-    // TODO: implement onCollisionStart
-    if (other is crabBoss) {
-      print('Crabboss was hit');
-    } else if (other is ScreenHitbox) {
-      print('Screenhitbox was hit');
-    }
-
+    //remove the bullet when it hit ANY waste
     if (other is Waste) {
       removeFromParent();
     }
@@ -98,10 +92,6 @@ class SlashEffect extends SpriteAnimationComponent
   }
 
   void hitEffect() {
-    // effects = MoveEffect.by(Vector2(200, 0), EffectController(duration: 0.8),
-    //     onComplete: () {
-    //   removeFromParent();
-    // });
     if (effects != null) {
       add(effects!);
     }
