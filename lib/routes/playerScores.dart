@@ -1,6 +1,3 @@
-import 'dart:ffi';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
@@ -39,7 +36,7 @@ class _ScoreWidgetState extends State<ScoreWidget> {
                         height: 50,
                       ),
                       Text(
-                          '${widget.game.playerData.wasteScores.value[WasteType.paper]!.toInt()}')
+                          '${widget.game.playerData.levelwasteScores[WasteType.paper]!.toInt()}')
                     ],
                   ),
                   Row(
@@ -50,7 +47,7 @@ class _ScoreWidgetState extends State<ScoreWidget> {
                         height: 50,
                       ),
                       Text(
-                          '${widget.game.playerData.wasteScores.value[WasteType.plastic]!.toInt()}')
+                          '${widget.game.playerData.levelwasteScores[WasteType.plastic]!.toInt()}')
                     ],
                   ),
                   Row(
@@ -61,7 +58,7 @@ class _ScoreWidgetState extends State<ScoreWidget> {
                         height: 50,
                       ),
                       Text(
-                          '${widget.game.playerData.wasteScores.value[WasteType.metal]!.toInt()}')
+                          '${widget.game.playerData.levelwasteScores[WasteType.metal]!.toInt()}')
                     ],
                   ),
                   Row(
@@ -72,7 +69,7 @@ class _ScoreWidgetState extends State<ScoreWidget> {
                         height: 50,
                       ),
                       Text(
-                          '${widget.game.playerData.wasteScores.value[WasteType.radioactive]!.toInt()}')
+                          '${widget.game.playerData.levelwasteScores[WasteType.radioactive]!.toInt()}')
                     ],
                   ),
                   Row(
@@ -83,13 +80,13 @@ class _ScoreWidgetState extends State<ScoreWidget> {
                         height: 50,
                       ),
                       Text(
-                          '${widget.game.playerData.wasteScores.value[WasteType.glass]!.toInt()} ')
+                          '${widget.game.playerData.levelwasteScores[WasteType.glass]!.toInt()} ')
                     ],
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0),
                     child: Text(
-                        '${widget.game.playerData.currentScore.value.toInt()} / ${LevelProperty.levelProperty[widget.game.currentLevel]['maxSpawn']}'),
+                        '${widget.game.playerData.levelcurrentScore.toInt()} / ${LevelProperty.levelProperty[widget.game.currentLevel]['maxSpawn']}'),
                   )
                 ],
               );

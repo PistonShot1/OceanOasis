@@ -8,7 +8,7 @@ import 'package:flame/flame.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide Image;
 
-import 'package:oceanoasis/components/Boss/overworldplayer.dart';
+import 'package:oceanoasis/components/Boss/bossfightplayer.dart';
 import 'package:oceanoasis/components/Boss/screenFreezeEffect.dart';
 import 'package:oceanoasis/components/projectiles/bigFish.dart';
 import 'package:oceanoasis/components/projectiles/bossDamagedEffect.dart';
@@ -37,7 +37,7 @@ class crabBoss extends SpriteAnimationComponent
 
   final double leftDirection = -1;
   final double rightDirection = 1;
-  late final OverworldPlayer player;
+  late final BossFightPlayer player;
   int randomNumber = 0;
   bool freezing = false;
   World bossWorld = World();
@@ -61,7 +61,7 @@ class crabBoss extends SpriteAnimationComponent
 
   String state = 'Loading';
 
-  crabBoss(World w, OverworldPlayer p, this.tiledMap) {
+  crabBoss(World w, BossFightPlayer p, this.tiledMap) {
     player = p;
     super.position = initialPosition;
     super.size = initialSize;

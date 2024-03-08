@@ -6,7 +6,7 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
 import 'package:oceanoasis/components/Boss/crabBoss.dart';
-import 'package:oceanoasis/components/Boss/overworldplayer.dart';
+import 'package:oceanoasis/components/Boss/bossfightplayer.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 
 class mineExplosionEffect extends SpriteAnimationComponent with HasGameReference<MyGame>, CollisionCallbacks{
@@ -59,7 +59,7 @@ class mineExplosionEffect extends SpriteAnimationComponent with HasGameReference
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
     // TODO: implement onCollisionStart
-    if (other is OverworldPlayer){
+    if (other is BossFightPlayer){
       other.takeDamage(damageToOverWorldPlayer);
     }
     if (other is crabBoss){

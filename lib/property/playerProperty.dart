@@ -6,42 +6,62 @@ class PlayerProperty extends ChangeNotifier {
   List<Tools> tools;
   List<Tools> weapons;
 
-  late ValueNotifier<Map<WasteType, double>> wasteScores;
+  Map<WasteType, double> wasteScores = {};
+  double currentScore = 0;
 
-  late ValueNotifier<Map<WasteType, double>> levelwasteScores;
-  ValueNotifier<double> currentScore = ValueNotifier(0);
+  Map<WasteType, double> levelwasteScores = {};
+
+  double levelcurrentScore = 0;
+
+  int gameBalance = 0;
 
   PlayerProperty({required this.tools, required this.weapons}) {
     Map<WasteType, double> wasteType = {};
     for (WasteType element in WasteType.values) {
       wasteType[element] = 0;
     }
-    levelwasteScores = ValueNotifier(wasteType);
-    wasteScores = ValueNotifier(wasteType);
+
+    levelwasteScores = Map.from(wasteType);
+    wasteScores = Map.from(wasteType);
   }
 
   void addScore() {
-    currentScore.value++;
+    currentScore++;
     notifyListeners();
   }
 
-  void addWasteScore(WasteType wasteType) {
-    levelwasteScores.value[wasteType] = levelwasteScores.value[wasteType]! + 1;
-    wasteScores.value[wasteType] = wasteScores.value[wasteType]! + 1;
-    //DEBUG
-    levelwasteScores.value.forEach((key, value) {
-      print('$key:$value');
-    });
-
+  void addlevelScore() {
+    levelcurrentScore++;
     notifyListeners();
   }
 
-  void resetScore() {
-    levelwasteScores.value.forEach(
+  void addlevelWasteScore(WasteType wasteType) {
+    levelwasteScores[wasteType] = levelwasteScores[wasteType]! + 1;
+    notifyListeners();
+  }
+
+  void addplayerWasteScore(WasteType wasteType) {
+    wasteScores[wasteType] = wasteScores[wasteType]! + 1;
+    notifyListeners();
+  }
+
+  void resetwasteScore() {
+    levelwasteScores.forEach(
       (key, value) {
-        levelwasteScores.value[key] = 0;
+        levelwasteScores[key] = 0;
       },
     );
+    notifyListeners();
+  }
+
+  void resetcurrentScore() {
+    levelcurrentScore = 0;
+    notifyListeners();
+  }
+
+  void addgameBalance(int value, WasteType wasteType) {
+    wasteScores[wasteType] = 0;
+    gameBalance += value;
     notifyListeners();
   }
 }
