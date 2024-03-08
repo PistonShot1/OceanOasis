@@ -156,17 +156,18 @@ class WeaponProperty {
     },
     {
       'weapon': Tools(
-          sprite: Sprite(Flame.images.fromCache('weapons/staff2.png')),
-          position: Vector2(-16, 24),
-          size: Vector2.all(32),
-          slashEffect: SlashEffect(
-              Flame.images.fromCache('weapons/explosion-blue.png'), [],
-              frameAmount: 10,
-              stepTime: 0.1,
-              frameSize: Vector2.all(128),
-              toolType: _toolType)
-            ..size = Vector2.all(64))
-        ..anchor = Anchor.center,
+        id: 'freezeDevice',
+        sprite: Sprite(Flame.images.fromCache('weapons/staff2.png')),
+        position: Vector2(-16, 24),
+        size: Vector2.all(32),
+        slashEffect: SlashEffect(
+            Flame.images.fromCache('weapons/explosion-blue.png'), [],
+            frameAmount: 10,
+            stepTime: 0.1,
+            frameSize: Vector2.all(128),
+            toolType: _toolType)
+          ..size = Vector2.all(64),
+      )..anchor = Anchor.center,
       'iconweapon': Tools(
         sprite: Sprite(Flame.images.fromCache('weapons/staff2.png')),
         position: Vector2.all(16),
