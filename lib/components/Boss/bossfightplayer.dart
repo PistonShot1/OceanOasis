@@ -48,13 +48,13 @@ class BossFightPlayer extends SpriteAnimationComponent
   final takeDamageEffect = SequenceEffect([
     ColorEffect(
       const Color(0x00FF0000),
-      EffectController(duration: 1),
+      EffectController(duration: 0.5),
       opacityFrom: 0,
       opacityTo: 0.8,
     ),
     ColorEffect(
       const Color(0x00FF0000),
-      EffectController(duration: 1),
+      EffectController(duration: 0.5),
       opacityTo: 0,
     ),
   ]);
@@ -62,13 +62,13 @@ class BossFightPlayer extends SpriteAnimationComponent
   final chargeEnergyEffect = SequenceEffect([
     ColorEffect(
       Color.fromARGB(255, 2, 27, 255),
-      EffectController(duration: 1),
+      EffectController(duration: 0.5),
       opacityFrom: 0,
       opacityTo: 0.8,
     ),
     ColorEffect(
       Color.fromARGB(255, 0, 60, 255),
-      EffectController(duration: 1),
+      EffectController(duration: 0.5),
       opacityTo: 0,
     ),
   ]);

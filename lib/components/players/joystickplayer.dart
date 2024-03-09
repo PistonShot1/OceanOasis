@@ -147,6 +147,7 @@ class JoystickPlayer extends SpriteAnimationComponent
     super.update(dt);
   }
 
+
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     // TODO: implement onKeyEvent

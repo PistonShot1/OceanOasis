@@ -308,14 +308,16 @@ class PacificOceanBossFight extends Component
   }
 
   void playerFreeze() {
-    if (player.currentEnergyLevel >= 0) {
+    if (player.currentEnergyLevel >= 100) {
       //energy to use the device
       player.currentEnergyLevel =
-          player.currentEnergyLevel - 0; //subtract accordingly
+          player.currentEnergyLevel - 100; //subtract accordingly
       bossWorld.add(freezeEffect(player.position));
       Future.delayed(const Duration(seconds: 1), () {
         boss.freezeEvent();
       });
+    } else {
+      print("Not Enough Energy");
     }
   }
 

@@ -181,7 +181,7 @@ class crabBoss extends SpriteAnimationComponent
     if (canSpawntoxicBubble == true) {
       toxicBubbleCooldown = true;
       bossWorld.add(toxicBubble(super.position, player.getPlayerPosition(), bossWorld));
-      await attackCooldown(1);
+      await attackCooldown(3);
       toxicBubbleCooldown = false;
     }
 
