@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
@@ -9,9 +11,11 @@ import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
 import 'package:oceanoasis/components/events/longswordfish.dart';
 import 'package:oceanoasis/components/players/playerhealth.dart';
+import 'package:oceanoasis/maps/underwater/inputAttack.dart';
+import 'package:oceanoasis/maps/underwater/pacificunderwater.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
-import 'package:oceanoasis/tools/slashEffect.dart';
+import 'package:oceanoasis/tools/slash_effect.dart';
 import 'package:oceanoasis/tools/tools.dart';
 import 'dart:math';
 
@@ -58,7 +62,6 @@ class JoystickPlayer extends SpriteAnimationComponent
   double facingDirectionnum = 1;
 
   //player properties
-  ValueNotifier<double> currentLoad = ValueNotifier<double>(0);
   double? maxLoad;
   int breathingSeconds = 10;
   int maxbreathingDuration = 10;
@@ -78,12 +81,14 @@ class JoystickPlayer extends SpriteAnimationComponent
 
   bool playerVulnerability = true;
 
+  PacificOceanUnderwater sceneRef;
   JoystickPlayer({
     required this.joystick,
     required Vector2 position,
     required this.playerScene,
     required this.swimimage,
     required this.swimanimationData,
+    required this.sceneRef,
     this.hitAnimation,
     this.breathingAnimation,
   }) : super.fromFrameData(swimimage, swimanimationData,
@@ -103,6 +108,11 @@ class JoystickPlayer extends SpriteAnimationComponent
             size.x / sqrt(pow(scale.x, 2)), size.y / sqrt(pow(scale.y, 2))));
       updateCurrentTool(currentTool);
     }
+
+    if (Platform.isAndroid || Platform.isIOS) {
+      game.camera.viewport.add(AttackInput(playerRef: this)
+        ..position = sceneRef.tiledMap.size - Vector2.all(200));
+    }
   }
 
   @override
@@ -115,22 +125,11 @@ class JoystickPlayer extends SpriteAnimationComponent
   @override
   void update(double dt) {
     super.update(dt);
-    //Movement for joystick
+
     if (movementBoundary.isNotEmpty) {
       position.x = position.x.clamp(movementBoundary[0], movementBoundary[1]);
       position.y = position.y.clamp(movementBoundary[2], movementBoundary[3]);
     }
-
-    if (!joystick.delta.isZero() && activeCollisions.isEmpty) {
-      // print(joystick.delta);
-      // print(joystick.delta.screenAngle());
-      print('Angle ${joystick.delta.screenAngle() * 180 / pi}');
-      _lastSize.setFrom(size);
-      _lastTransform.setFrom(transform);
-      position.add(joystick.relativeDelta * moveSpeed * dt);
-      // angle = joystick.delta.screenAngle();
-    }
-
     //Movement for WASD
     velocity.x = horizontalDirection * moveSpeed;
     velocity.y = verticalDirection * moveSpeed;
@@ -142,6 +141,30 @@ class JoystickPlayer extends SpriteAnimationComponent
     } else if (horizontalDirection > 0 && scale.x < 0) {
       flipHorizontally();
       facingDirectionnum = facingDirectionnum * -1;
+    }
+
+    //Movement for Joystick
+    if (!joystick.delta.isZero()) {
+      // print(joystick.delta);
+      // print(joystick.delta.screenAngle());
+      if ((joystick.direction == JoystickDirection.left ||
+              joystick.direction == JoystickDirection.upLeft ||
+              joystick.direction == JoystickDirection.downLeft) &&
+          scale.x > 0) {
+        flipHorizontally();
+        facingDirectionnum = facingDirectionnum * -1;
+      } else if ((joystick.direction == JoystickDirection.right ||
+              joystick.direction == JoystickDirection.upRight ||
+              joystick.direction == JoystickDirection.downRight) &&
+          scale.x < 0) {
+        flipHorizontally();
+        facingDirectionnum = facingDirectionnum * -1;
+      }
+      print('Angle ${joystick.delta.screenAngle() * 180 / pi}');
+      _lastSize.setFrom(size);
+      _lastTransform.setFrom(transform);
+      position.add(joystick.relativeDelta * moveSpeed * dt);
+      // angle = joystick.delta.screenAngle();
     }
 
     super.update(dt);
@@ -158,17 +181,23 @@ class JoystickPlayer extends SpriteAnimationComponent
     return super.onKeyEvent(event, keysPressed);
   }
 
-  void hitAction(Set<LogicalKeyboardKey> keysPressed) {
+  void hitAction(Set<LogicalKeyboardKey>? keysPressed) {
     // print('Current facing direciton : $facingDirectionnum');
-    if (keysPressed.contains(LogicalKeyboardKey.space) &&
-        !isHitAnimationPlaying) {
+    bool condition = false;
+    if (Platform.isWindows || Platform.isMacOS) {
+      (keysPressed!.contains(LogicalKeyboardKey.space) &&
+              !isHitAnimationPlaying)
+          ? condition = true
+          : condition = false;
+    } else if (Platform.isAndroid || Platform.isIOS) {
+      (!isHitAnimationPlaying) ? condition = true : condition = false;
+    }
+    if (condition) {
       //on hit animation , reset velocity, horizontal and vertical direction (to avoid update on position on long press)
       isHitAnimationPlaying = true;
       velocity = Vector2.zero();
       horizontalDirection = 0;
       verticalDirection = 0;
-
-      // animation = hitAnimation;
       currentToolOrigin.add(
           RotateEffect.by(tau, EffectController(duration: 0.1), onComplete: () {
         isHitAnimationPlaying = false;
@@ -176,24 +205,13 @@ class JoystickPlayer extends SpriteAnimationComponent
       }));
 
       if (currentTool.slashEffect != null) {
-        final component = SlashEffect.clone(currentTool.slashEffect!)
+        final component = SlashEffect.createInstance(
+            slashEffect: currentTool.slashEffect!, playerRef: this)
           ..anchor = Anchor.center
-          ..size = Vector2(64, 32)
           ..position = position;
         (facingDirectionnum < 0) ? component.flipHorizontally() : '';
-        parent!.add(component
-          ..effects = MoveEffect.by(Vector2(400 * facingDirectionnum, 0),
-              EffectController(duration: 0.8), onComplete: () {
-            component.removeFromParent();
-          }));
+        parent!.add(component); //Parent is component with underwaterworld
       }
-
-      // Future.delayed(const Duration(milliseconds: 600), () {
-      //   //reset back to original position after attack animation finish
-      //   animation = SpriteAnimation.fromFrameData(swimimage, swimanimationData);
-
-      //   isHitAnimationPlaying = false;
-      // });
     }
   }
 
@@ -216,10 +234,6 @@ class JoystickPlayer extends SpriteAnimationComponent
             keysPressed.contains(LogicalKeyboardKey.arrowDown))
         ? (1 * highTideSlower[3])
         : 0;
-  }
-
-  void addLoad(double value) {
-    currentLoad.value += value;
   }
 
   set setPosition(Vector2 value) {

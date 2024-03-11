@@ -7,19 +7,24 @@ import 'package:flame/input.dart';
 import 'package:flame/palette.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
+import 'package:oceanoasis/maps/underwater/joystickplayer.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/property/playerProperty.dart';
+import 'package:oceanoasis/routes/shop.dart';
 import 'package:oceanoasis/tools/toolbox.dart';
 import 'package:oceanoasis/components/Boss/bossfight.dart';
 import 'package:oceanoasis/maps/overworld/pacific.dart';
-import 'package:oceanoasis/maps/pacificunderwater.dart';
+import 'package:oceanoasis/maps/underwater/pacificunderwater.dart';
 import 'package:oceanoasis/routes/gameOver.dart';
 import 'package:oceanoasis/routes/levelselection.dart';
 import 'package:oceanoasis/routes/maplevelselection.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 class MyGame extends FlameGame
-    with HasCollisionDetection, HasKeyboardHandlerComponents {
+    with
+        HasCollisionDetection,
+        HasKeyboardHandlerComponents,
+        LongPressDetector {
   late SpriteComponent backgroundImage;
   List<Component> mainComponents = [];
   List<Component> gameComponents = [];
@@ -33,6 +38,8 @@ class MyGame extends FlameGame
 
   List<ItemToolBox>? toolboxItems;
 
+  JoystickPlayer? playerRef;
+
   int? currentLevel;
 
   WasteType? currentMachine;
@@ -42,9 +49,11 @@ class MyGame extends FlameGame
   MyGame(this.screeninfo, {required this.playerData});
   @override
   Future<void> onLoad() async {
+    Flame.device.fullScreen();
     await loadAssets();
     //SET camera bound
     // await loadAudio();
+
     routes = {
       MapLevelSelection.id: Route(
         () => MapLevelSelection(key: ComponentKey.named('MapLevelSelection')),
@@ -72,17 +81,29 @@ class MyGame extends FlameGame
           game: game as MyGame,
         ),
       ),
+      ShopUI.id: OverlayRoute(
+        (context, game) => ShopUI(game: game as MyGame),
+      )
     };
     router =
         RouterComponent(initialRoute: MapLevelSelection.id, routes: routes);
+    Color greyColor =
+        Colors.grey.withOpacity(0.5); // Grey color with transparency
+    Color transparentColor = Colors.transparent;
+    Paint knobPaint = Paint()
+      ..color = transparentColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 10; // Thickness of the border
 
-    final knobPaint = BasicPalette.blue.withAlpha(200).paint();
-    final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
+    Paint backgroundPaint = Paint()
+      ..color = greyColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 10;
 
     joystick = JoystickComponent(
       key: ComponentKey.named('JoystickHUD'),
-      knob: CircleComponent(radius: 30, paint: knobPaint),
-      background: CircleComponent(radius: 100, paint: backgroundPaint),
+      knob: CircleComponent(radius: 50, paint: backgroundPaint),
+      background: CircleComponent(radius: 150, paint: backgroundPaint),
       margin: const EdgeInsets.only(left: 40, bottom: 40),
     );
 
@@ -122,8 +143,8 @@ class MyGame extends FlameGame
     router.pushReplacement(Route(() => MapLevelSelection()));
   }
 
-  // Future<void> loadAudio() async {
-  //   await FlameAudio.audioCache.load('underwater/forestwalk-bgm.mp3');
-  //   mainBgm = await FlameAudio.loop('underwater/forestwalk-bgm.mp3');
-  // }
+  Future<void> loadAudio() async {
+    await FlameAudio.audioCache.load('underwater/forestwalk-bgm.mp3');
+    FlameAudio.bgm.play('underwater/forestwalk-bgm.mp3');
+  }
 }

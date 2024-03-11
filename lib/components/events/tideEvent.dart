@@ -11,7 +11,7 @@ import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:oceanoasis/components/events/thunderstorm.dart';
 import 'package:oceanoasis/components/events/whirlpool.dart';
-import 'package:oceanoasis/components/players/joystickplayer.dart';
+import 'package:oceanoasis/maps/underwater/joystickplayer.dart';
 
 class TideEvent extends PositionComponent {
   final bool tideEvent;
@@ -147,6 +147,8 @@ class TideEvent extends PositionComponent {
   @override
   void onRemove() {
     // TODO: implement onRemove
+    player.highTideSlower[0] = 1;
+    player.highTideSlower[1] = 1;
     print('exited');
     super.onRemove();
   }

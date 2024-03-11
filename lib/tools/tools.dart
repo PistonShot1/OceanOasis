@@ -6,7 +6,7 @@ import 'package:flame/image_composition.dart';
 import 'package:flame_noise/flame_noise.dart';
 import 'package:flutter/material.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
-import 'package:oceanoasis/tools/slashEffect.dart';
+import 'package:oceanoasis/tools/slash_effect.dart';
 
 class Tools extends SpriteComponent with CollisionCallbacks {
   String? id;

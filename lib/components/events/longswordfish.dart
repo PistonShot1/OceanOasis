@@ -4,7 +4,7 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
-import 'package:oceanoasis/components/players/joystickplayer.dart';
+import 'package:oceanoasis/maps/underwater/joystickplayer.dart';
 
 class LongSwordFishEnemy extends SpriteAnimationComponent
     with CollisionCallbacks {

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'package:oceanoasis/routes/mainmenu.dart';
 import 'package:window_manager/window_manager.dart';
@@ -9,7 +12,9 @@ void main() async {
   //   await windowManager.ensureInitialized();
   //   await windowsConfig();
   // }
-  runApp( MaterialApp(
+
+  runApp(
+    MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(fontFamily: 'Retro Gaming'),
         home: const MainMenu()),

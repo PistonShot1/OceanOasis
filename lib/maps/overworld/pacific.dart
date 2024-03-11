@@ -21,7 +21,6 @@ class PacificOcean extends Component
     with HasCollisionDetection, HasGameReference<MyGame>, TapCallbacks {
   late final TiledComponent tiledMap;
   static const id = 'PacificOcean';
-  late final CameraComponent cameraComponent;
   late final World myWorld;
   late final OverworldPlayer player;
 
@@ -39,9 +38,10 @@ class PacificOcean extends Component
     await myWorld.add(tiledMap);
 
     loadMachines();
+    cameraSettings();
     loadPlayerJoystick();
     loadCollision();
-    cameraSettings();
+
     await add(myWorld);
 
     // add(MyScreenHitbox());
@@ -54,23 +54,15 @@ class PacificOcean extends Component
         Vector2(tiledMap.size.x / 3, tiledMap.size.y / 2);
 
     // game.camera.moveBy(Vector2(1920 / 2, 1080 / 2));
-    game.camera.follow(player);
     game.camera.setBounds(Rectangle.fromCenter(
         center: Vector2(tiledMap.size.x / 2, tiledMap.size.y / 2),
         size: Vector2(tiledMap.size.x / 2 + 170, tiledMap.size.y / 2)));
   }
 
   void loadPlayerJoystick() {
-    final knobPaint = BasicPalette.blue.withAlpha(200).paint();
-    final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
-    final joystick = JoystickComponent(
-      key: ComponentKey.named('JoystickHUD'),
-      knob: CircleComponent(radius: 30, paint: knobPaint),
-      background: CircleComponent(radius: 100, paint: backgroundPaint),
-      margin: const EdgeInsets.only(left: 40, bottom: 40),
-    );
     final spawnPoint = tiledMap.tileMap.getLayer<ObjectGroup>('Spawn Point');
     player = OverworldPlayer(
+      joystick: game.joystick,
       position:
           Vector2(spawnPoint!.objects.first.x, spawnPoint.objects.first.y - 32),
     )
@@ -80,8 +72,10 @@ class PacificOcean extends Component
 
     tiledMap.add(player);
     (Platform.isAndroid || Platform.isIOS)
-        ? game.camera.viewport.add(joystick)
+        ? game.camera.viewport.add(game.joystick)
         : '';
+
+    game.camera.follow(player);
   }
 
   void loadCollision() {
