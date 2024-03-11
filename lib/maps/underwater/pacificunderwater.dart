@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math' hide Rectangle;
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/palette.dart';
@@ -15,9 +14,10 @@ import 'package:oceanoasis/components/events/bubbles.dart';
 import 'package:oceanoasis/components/events/glacierformation.dart';
 import 'package:oceanoasis/components/events/longswordfish.dart';
 import 'package:oceanoasis/components/events/tideEvent.dart';
-import 'package:oceanoasis/components/events/wave.dart';
-import 'package:oceanoasis/components/players/joystickplayer.dart';
+import 'package:oceanoasis/maps/underwater/joystickplayer.dart';
 import 'package:oceanoasis/components/players/playerbreathingbar.dart';
+import 'package:oceanoasis/maps/underwater/pHBar.dart';
+import 'package:oceanoasis/maps/underwater/timer.dart';
 import 'package:oceanoasis/property/levelProperty.dart';
 import 'package:oceanoasis/tools/toolbox.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
@@ -62,6 +62,13 @@ class PacificOceanUnderwater extends Component
 
   String gameState = 'Loading';
 
+  CountdownTimerComponent timer = CountdownTimerComponent(60);
+  int wasteSpawnInterval = 3000;
+
+  Duration bubbleLifespan = const Duration(seconds: 3);
+  double currentacidityLevel = 0;
+  double maxacidityLevel = 100;
+  late PHBar acidityBar;
   PacificOceanUnderwater(
       {required this.levelNumber, required this.playeritems});
   @override
@@ -114,7 +121,7 @@ class PacificOceanUnderwater extends Component
         // highTideEvent(5);
         // eventNum = random.nextInt(2);
         tideEvent = false;
-        const eventDuration = 100;
+        const eventDuration = 20;
         int interval = eventDuration + 5 + random.nextInt(10); //(5 is for gap)
 
         final event = TideEvent(
@@ -135,6 +142,8 @@ class PacificOceanUnderwater extends Component
         breathingEventEffect();
         switchPlayerAnimation();
       }
+
+      updateBubbleLifespan();
     }
     super.update(dt);
   }
@@ -164,7 +173,7 @@ class PacificOceanUnderwater extends Component
     loadToolbar(playeritems);
     initspawnWaste();
     initChallenges();
-
+    initAcidityBar();
     //Events
     //Tide
 
@@ -178,7 +187,7 @@ class PacificOceanUnderwater extends Component
     }
 
     spawnBubbles();
-    // spawnEnemies(LevelProperty.levelProperty[levelNumber]['swordFishInterval']);
+    spawnEnemies(LevelProperty.levelProperty[levelNumber]['swordFishInterval']);
   }
 
   //check pacific.dart for camera movement
@@ -220,7 +229,8 @@ class PacificOceanUnderwater extends Component
             SpriteAnimationData.sequenced(
                 amount: 6, // Number of frames in your animation
                 stepTime: 0.15, // Duration of each frame
-                textureSize: Vector2(35, 39))));
+                textureSize: Vector2(35, 39))),
+        sceneRef: this);
     player.size = Vector2.all(64);
     player.scale = Vector2.all(2.5);
     player.setPosition =
@@ -247,9 +257,9 @@ class PacificOceanUnderwater extends Component
     final objects = movementLayer!.objects;
     for (TiledObject object in objects) {
       player.setMovementBoundary(
-          maxX: object.x + object.width,
-          minX: object.x,
-          maxY: object.y + object.height,
+          maxX: object.x + object.width - 50,
+          minX: object.x + 50,
+          maxY: object.y + object.height - 50,
           minY: object.y);
     }
     print('Player boundary ${player.movementBoundary}');
@@ -321,6 +331,9 @@ class PacificOceanUnderwater extends Component
           object.y + object.height);
     }
 
+    game.camera.viewport.add(
+        timer..position = Vector2(tiledMap.size.x / 2 - timer.size.x / 2, 0));
+
     startSpawn = true;
   }
 
@@ -328,21 +341,21 @@ class PacificOceanUnderwater extends Component
     final List<WasteType> listOfWastes =
         LevelProperty.levelProperty[levelNumber]['listOfWastes'];
     Random random = Random();
-    if (startSpawn &&
-        wasteList < LevelProperty.levelProperty[levelNumber]['maxSpawn']) {
+    if (startSpawn) {
       //it will end at -1
       startSpawn = false;
-      ;
+
       Waste wasteProperty =
           WasteProperty(type: listOfWastes[random.nextInt(listOfWastes.length)])
               .mapWasteComponent;
 
-      Waste oceanWaste = Waste.clone(wasteProperty, null)
-        ..size = Vector2(128, 128)
+      Waste oceanWaste = Waste.clone(wasteProperty, null, this)
+        ..size = Vector2(128 * 1.5, 128 * 1.5)
+        ..scale = Vector2.all(2)
         ..paint.filterQuality = FilterQuality.none
         ..position = spawnLogic();
 
-      Future.delayed(const Duration(seconds: 3), () async {
+      Future.delayed(Duration(milliseconds: wasteSpawnInterval), () async {
         if (gameState.compareTo('Start') == 0) {
           await underwaterWorld.add(oceanWaste);
           startSpawn = true;
@@ -382,7 +395,7 @@ class PacificOceanUnderwater extends Component
         player.breathingSeconds > 0 &&
         player.position.y > landwaterlevel.y) {
       breathingEffect = false;
-      Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(bubbleLifespan, () {
         player.breathingSeconds -= 1;
         _updateBreathingBar();
         breathingEffect = true;
@@ -444,9 +457,7 @@ class PacificOceanUnderwater extends Component
   }
 
   void gameOver() {
-    if ((wasteList >= LevelProperty.levelProperty[levelNumber]['maxSpawn'] &&
-            underwaterWorld.children.query<Waste>().isEmpty) ||
-        player.playerHealth.health <= 0) {
+    if ((timer.remainingTime == 0) || player.playerHealth.health <= 0) {
       gameState = 'Game Over';
       game.pauseEngine();
       game.router.pushNamed(GameOver.id);
@@ -463,11 +474,32 @@ class PacificOceanUnderwater extends Component
   }
 
   void spawnEnemies(double interval) {
-    underwaterWorld.add(SpawnComponent(
+    underwaterWorld.add(SpawnComponent.periodRange(
         factory: (i) => LongSwordFishEnemy(player: player)
           ..position = Vector2(0, player.position.y),
-        period: 2,
+        minPeriod: interval,
+        maxPeriod: interval + interval / 2,
         selfPositioning: true));
+  }
+
+  void initAcidityBar() {
+    acidityBar = PHBar(sceneRef: this)..scale = Vector2.all(2);
+    game.camera.viewport
+        .add(acidityBar..position = Vector2(tiledMap.size.x - 100, 20));
+  }
+
+  void updateBubbleLifespan() {
+    switch (acidityBar.currentAcidityLevel) {
+      case Acidity.low:
+        bubbleLifespan = Duration(seconds: 3);
+        break;
+      case Acidity.medium:
+        bubbleLifespan = Duration(seconds: 2);
+        break;
+      case Acidity.high:
+        bubbleLifespan = Duration(seconds: 1);
+        break;
+    }
   }
 
   @override

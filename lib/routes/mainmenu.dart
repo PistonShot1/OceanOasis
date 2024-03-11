@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:oceanoasis/property/playerProperty.dart';
+import 'package:oceanoasis/routes/level_selection_ui.dart';
 import 'package:oceanoasis/routes/playerBalance.dart';
 import 'package:oceanoasis/routes/playerScores.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
@@ -137,8 +138,8 @@ class _MainMenuState extends State<MainMenu> {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: () {
-                      game.router
-                          .pushRoute(Route(() => MapLevelSelection()), replace: true);
+                      game.router.pushRoute(Route(() => MapLevelSelection()),
+                          replace: true);
                     },
                     child: Container(
                         height: 50,
@@ -157,43 +158,7 @@ class _MainMenuState extends State<MainMenu> {
             );
           },
           "ToFacility": (context, MyGame game) {
-            return Align(
-              alignment: Alignment.topCenter,
-              child: SizedBox(
-                width: 50,
-                height: 50,
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () {
-                      game.toFacility();
-                    },
-                    child: Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.transparent,
-                            boxShadow: const [
-                              BoxShadow(color: Colors.black, blurRadius: 2)
-                            ]),
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                                child: Image.asset(
-                              'assets/images/ui/button-ui.png',
-                              fit: BoxFit.fill,
-                            )),
-                            Center(
-                                child: Image.asset(
-                                    'assets/images/ui/recycle.png',
-                                    fit: BoxFit.cover))
-                          ],
-                        )),
-                  ),
-                ),
-              ),
-            );
+            return LevelSelectionUI(game: game);
           },
           "Score": (context, MyGame game) {
             return Align(

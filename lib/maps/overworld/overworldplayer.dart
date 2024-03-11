@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -28,7 +30,11 @@ enum PlayerState {
 
 class OverworldPlayer extends SpriteAnimationGroupComponent
     with HasGameReference<MyGame>, KeyboardHandler, CollisionCallbacks {
+  late JoystickComponent joystick;
+  late final Vector2 _lastSize = size.clone();
+  late final Transform2D _lastTransform = transform.clone();
   OverworldPlayer({
+    required this.joystick,
     position,
   }) : super(position: position);
 
@@ -127,11 +133,9 @@ class OverworldPlayer extends SpriteAnimationGroupComponent
           keysPressed.contains(LogicalKeyboardKey.arrowDown);
       climbMovement(isUpKeyPressed, isDownKeyPressed);
     }
-
-    hasJumped = keysPressed.contains(LogicalKeyboardKey.space);
-
     return super.onKeyEvent(event, keysPressed); // TODO: implement onKeyEvent
   }
+
 
   @override
   void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
@@ -192,14 +196,29 @@ class OverworldPlayer extends SpriteAnimationGroupComponent
       flipHorizontallyAroundCenter();
     }
 
-    // Check if moving, set running
-    if (velocity.x > 0 || velocity.x < 0) playerState = PlayerState.running;
+    if (Platform.isWindows) {
+      // Check if moving, set running
+      if (velocity.x > 0 || velocity.x < 0) playerState = PlayerState.running;
 
-    // check if Falling set to falling
-    if (velocity.y > 0) playerState = PlayerState.idle;
+      // check if Falling set to falling
+      if (velocity.y > 0) playerState = PlayerState.idle;
 
-    // Checks if jumping, set to jumping
-    if (velocity.y < 0) playerState = PlayerState.idle;
+      // Checks if jumping, set to jumping
+      if (velocity.y < 0) playerState = PlayerState.idle;
+    } else if (Platform.isAndroid) {
+      if (!joystick.delta.isZero() &&
+          (joystick.direction == JoystickDirection.left ||
+              joystick.direction == JoystickDirection.upLeft ||
+              joystick.direction == JoystickDirection.downLeft ||
+              joystick.direction == JoystickDirection.right ||
+              joystick.direction == JoystickDirection.upRight ||
+              joystick.direction == JoystickDirection.downRight)) {
+        playerState = PlayerState.running;
+      } else if (joystick.direction == JoystickDirection.up ||
+          joystick.direction == JoystickDirection.down && isClimbing) {
+        playerState = PlayerState.climbing;
+      }
+    }
 
     if (isClimbing && !isOnGround) playerState = PlayerState.climbing;
     current = playerState;
@@ -216,6 +235,32 @@ class OverworldPlayer extends SpriteAnimationGroupComponent
     } else {
       velocity.y = verticalMovement * moveSpeed;
       position.y += velocity.y * dt;
+    }
+
+    //Movement for Joystick
+    if (!joystick.delta.isZero() &&
+            joystick.direction != JoystickDirection.upLeft ||
+        joystick.direction != JoystickDirection.upRight ||
+        joystick.direction != JoystickDirection.downLeft ||
+        joystick.direction != JoystickDirection.downRight) {
+      // print(joystick.delta);
+      // print(joystick.delta.screenAngle());
+      if ((joystick.direction == JoystickDirection.left ||
+              joystick.direction == JoystickDirection.upLeft ||
+              joystick.direction == JoystickDirection.downLeft) &&
+          scale.x > 0) {
+        flipHorizontally();
+      } else if ((joystick.direction == JoystickDirection.right ||
+              joystick.direction == JoystickDirection.upRight ||
+              joystick.direction == JoystickDirection.downRight) &&
+          scale.x < 0) {
+        flipHorizontally();
+      }
+
+      _lastSize.setFrom(size);
+      _lastTransform.setFrom(transform);
+      position.add(joystick.relativeDelta * moveSpeed * dt);
+      // angle = joystick.delta.screenAngle();
     }
   }
 

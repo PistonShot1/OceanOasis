@@ -50,7 +50,7 @@ class GameOver extends StatelessWidget {
                 listenable: game.playerData,
                 builder: (BuildContext context, Widget? child) {
                   return Text(
-                    'Score: ${game.playerData.currentScore}',
+                    'Score: ${game.playerData.levelcurrentScore}',
                     style: TextStyle(
                       color: Colors.grey[400],
                       fontSize: 18,

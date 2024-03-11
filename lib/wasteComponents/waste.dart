@@ -3,10 +3,11 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/material.dart' hide Image;
+import 'package:oceanoasis/maps/underwater/pacificunderwater.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/property/playerProperty.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
-import 'package:oceanoasis/tools/slashEffect.dart';
+import 'package:oceanoasis/tools/slash_effect.dart';
 import 'package:oceanoasis/tools/tools.dart';
 
 class Waste extends SpriteComponent
@@ -16,6 +17,9 @@ class Waste extends SpriteComponent
   final _defaultColor = Colors.green;
   int decayTime;
   final WasteType wasteType;
+
+  final PacificOceanUnderwater? sceneRef;
+
   double points;
   Map<String, Component> wastechildren;
 
@@ -31,15 +35,17 @@ class Waste extends SpriteComponent
     required this.points,
     required this.decayTime,
     required this.wastechildren,
+    this.sceneRef,
   }) : super(sprite: sprite);
 
-  Waste.clone(Waste waste, ComponentKey? key)
+  Waste.clone(Waste waste, ComponentKey? key, PacificOceanUnderwater sceneRef)
       : this(
             sprite: waste.sprite!,
             wasteType: waste.wasteType,
             points: waste.points,
             decayTime: waste.decayTime,
-            wastechildren: waste.wastechildren);
+            wastechildren: waste.wastechildren,
+            sceneRef: sceneRef);
 
   bool startDecay = true;
 
@@ -90,6 +96,7 @@ class Waste extends SpriteComponent
     if (other is SlashEffect) {
       for (WasteType element in other.slashType) {
         if (wasteType == element) {
+          hitbox.collisionType = CollisionType.inactive;
           collect(game.playerData);
         }
       }
@@ -127,10 +134,9 @@ class Waste extends SpriteComponent
           removeFromParent();
           player.addScore();
           player.addplayerWasteScore(wasteType);
-          
+
           player.addlevelScore();
           player.addlevelWasteScore(wasteType);
-          
         },
       ),
     ]);
@@ -141,6 +147,11 @@ class Waste extends SpriteComponent
       if (startDecay) {
         Future.delayed(Duration(seconds: decayTime), () async {
           if (isMounted) {
+            if (sceneRef != null) {
+              (sceneRef!.currentacidityLevel < sceneRef!.maxacidityLevel)
+                  ? sceneRef?.currentacidityLevel += 5
+                  : '';
+            }
             removeFromParent();
           }
         });

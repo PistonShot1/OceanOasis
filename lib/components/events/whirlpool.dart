@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
-import 'package:oceanoasis/components/players/joystickplayer.dart';
+import 'package:oceanoasis/maps/underwater/joystickplayer.dart';
 
 class Whirlpool extends SpriteAnimationComponent with CollisionCallbacks {
   Whirlpool? linkPortal;

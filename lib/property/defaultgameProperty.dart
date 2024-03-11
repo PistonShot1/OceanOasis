@@ -6,8 +6,10 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:oceanoasis/components/Boss/bossfight.dart';
 import 'package:oceanoasis/maps/underwater/pacificunderwater.dart';
+import 'package:oceanoasis/tools/magnet_effect.dart';
+import 'package:oceanoasis/tools/rubbish_picker_effect.dart';
 import 'package:oceanoasis/tools/tools.dart';
-import 'package:oceanoasis/tools/slashEffect.dart';
+import 'package:oceanoasis/tools/slash_effect.dart';
 import 'package:oceanoasis/wasteComponents/waste.dart';
 
 class ToolSlashProperty {
@@ -18,13 +20,14 @@ class ToolSlashProperty {
           sprite: Sprite(Flame.images.fromCache('tools/rubbish-picker.png')),
           size: Vector2(32, 64),
           position: Vector2(-16, 24),
-          slashEffect: SlashEffect(
-              Flame.images.fromCache('tools/water-hit-effect.png'),
-              [WasteType.paper, WasteType.plastic, WasteType.glass],
-              frameAmount: 21,
-              stepTime: 0.05,
-              frameSize: Vector2(256, 137),
-              toolType: _toolType),
+          slashEffect: RubbishPickerEffect(
+            Flame.images.fromCache('tools/water-hit-effect.png'),
+            [WasteType.paper, WasteType.plastic, WasteType.glass],
+            frameAmount: 21,
+            stepTime: 0.05,
+            frameSize: Vector2(256, 137),
+            toolType: _toolType,
+          ),
           slashType: [WasteType.paper, WasteType.plastic, WasteType.glass])
         ..anchor = Anchor.center,
       'icontool': Tools(
@@ -40,7 +43,7 @@ class ToolSlashProperty {
           sprite: Sprite(Flame.images.fromCache('tools/magnet.png')),
           position: Vector2(-16, 24),
           size: Vector2(64 * 0.5, 64 * 0.5),
-          slashEffect: SlashEffect(
+          slashEffect: MagnetEffect(
               Flame.images.fromCache('tools/magnet-bullet.png'),
               [WasteType.metal],
               frameAmount: 4,
