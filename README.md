@@ -16,4 +16,4 @@ At the shop, players can use their Google Wallet to exchange some of the goods i
 
 This project is a game made with Flutter and Flutter's Flame game engine. 
 
-Platform supported : Android and Windows
+Platform supported : Android
