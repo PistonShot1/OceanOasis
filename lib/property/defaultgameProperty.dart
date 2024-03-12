@@ -154,7 +154,7 @@ class WeaponProperty {
         id: '',
         sprite: Sprite(Flame.images.fromCache('weapons/gun.png')),
         size: Vector2.all(16),
-        position: Vector2.all(16),
+        position: Vector2.all(-16),
       )
     },
     {

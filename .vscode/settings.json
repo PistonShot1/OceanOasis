@@ -1,4 +1,5 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
-    "cmake.sourceDirectory": "C:/nanda_original/work/Flutter Project/oceanoasis/build/windows/x64/_deps/nuget-subbuild"
+    "cmake.sourceDirectory": "C:/nanda_original/work/Flutter Project/oceanoasis/linux",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

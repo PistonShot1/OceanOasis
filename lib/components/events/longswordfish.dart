@@ -21,7 +21,7 @@ class LongSwordFishEnemy extends SpriteAnimationComponent
     // TODO: implement onMount
     add(CircleHitbox()
       ..collisionType = CollisionType.passive
-      ..debugMode = true);
+      );
     final moveEffect = MoveEffect.by(
         Vector2(1920, 0), EffectController(duration: 5), onComplete: () {
       removeFromParent();

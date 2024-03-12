@@ -94,9 +94,8 @@ class BossFightPlayer extends SpriteAnimationComponent
       ..color = _defaultColor
       ..style = PaintingStyle.stroke;
     //-----
-    hitbox = RectangleHitbox()
-      ..paint = defaultPaint //FOR DEBUG
-      ..renderShape = true;
+
+    hitbox = CircleHitbox.relative(0.8, parentSize: size);
     add(hitbox);
   }
 
@@ -116,11 +115,10 @@ class BossFightPlayer extends SpriteAnimationComponent
       position.y = position.y.clamp(playerBoundary[2], playerBoundary[3]);
     }
 
-    if (!joystick.delta.isZero() && activeCollisions.isEmpty) {
+    if (!joystick.delta.isZero()) {
       _lastSize.setFrom(size);
       _lastTransform.setFrom(transform);
       position.add(joystick.relativeDelta * moveSpeed * dt);
-      angle = joystick.delta.screenAngle();
     }
 
     velocity.x = horizontalDirection * moveSpeed;
@@ -143,20 +141,6 @@ class BossFightPlayer extends SpriteAnimationComponent
     // TODO: implement onCollisionStart
     super.onCollisionStart(intersectionPoints, other);
     hitbox.paint.color = _collisionStartColor;
-  }
-
-  @override
-  void render(Canvas canvas) {
-    // // TODO: implement render
-    // double barWidth = (currentHealth / maxHealth) * size.x;
-    // canvas.drawRect(
-    //     Rect.fromLTWH(0, -10, barWidth, 0), Paint()..color = Colors.red);
-    // super.render(canvas);
-
-    // double energybarWidth = (currentEnergyLevel / MaxEnergyLevel) * size.x;
-    // canvas.drawRect(Rect.fromLTWH(0, 0, energybarWidth, 10),
-    //     Paint()..color = Colors.purple);
-    super.render(canvas);
   }
 
   void movementKey(Set<LogicalKeyboardKey> keysPressed) {
@@ -212,7 +196,7 @@ class BossFightPlayer extends SpriteAnimationComponent
 
   void gameOver() {
     // ignore: avoid_print
-    print("RIP BOZO");
+    print("game end");
     super.removeFromParent();
   }
 

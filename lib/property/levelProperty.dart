@@ -4,6 +4,14 @@ import 'package:oceanoasis/components/Boss/bossfight.dart';
 import 'package:oceanoasis/maps/underwater/pacificunderwater.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 
+enum Levels {
+  level1,
+  level2,
+  level3,
+  level4,
+  level5,
+}
+
 class LevelProperty {
   final int levelNum;
   LevelProperty({required this.levelNum});
@@ -87,25 +95,25 @@ class LevelProperty {
     2: {
       'history':
           'Mississippi is one of the longest rivers in the world. As such, it serves millions of US residents. The river is brown in color, owing to the constant release of waste into the river. The aquatic life in the river has reduced alarmingly due to various oil spillages in the past. More waste comes from industries and farmers who use harmful chemicals and release them into the river.',
-      'image': Image.asset('assets/images/sample-data/sample1.jpg',
+      'image': Image.asset('assets/images/sample-data/mississippi-river.png',
           fit: BoxFit.cover)
     },
     3: {
       'history':
           'Ganges River is the third largest river in the world with a consumption base of over two billion people. While the river is sacred, it\'s a victim of massive water pollution due to the dumping of raw sewage and chemicals, and higher incidences of waterborne diseases have been reported in communities frequently exposed to this holy river, now covered with a layer of floating plastics and other wastes.',
-      'image': Image.asset('assets/images/sample-data/sample1.jpg',
+      'image': Image.asset('assets/images/sample-data/ganges-river.jpg',
           fit: BoxFit.cover)
     },
     4: {
       'history':
           'For thousands of years, the Yellow River has been one of the most famous rivers in China due to its unique colour. However, this river has become a dumping ground for chemical factories, making the water too toxic even for agriculture. More specifically, the coal mining industry releases a lot of waste back to the river after using water from it to run its operations',
-      'image': Image.asset('assets/images/sample-data/sample1.jpg',
+      'image': Image.asset('assets/images/sample-data/yellow-river.jpg',
           fit: BoxFit.cover)
     },
     5: {
       'history':
           'The Citarum River is considered one of the most polluted rivers in the world. The river is covered in waste, trash, and dead animals, and the water is colored by toxic substances. The river\'s pollution spreads 100 meters wide in-land and 60 meters deep, containing E. coli bacteria, heavy metals and organic waste',
-      'image': Image.asset('assets/images/sample-data/sample1.jpg',
+      'image': Image.asset('assets/images/sample-data/citarum-river.jpg',
           fit: BoxFit.cover)
     }
   };

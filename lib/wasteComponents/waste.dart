@@ -52,12 +52,7 @@ class Waste extends SpriteComponent
   @override
   FutureOr<void> onLoad() {
     // TODO: implement onLoad
-    final defaultPaint = Paint()
-      ..color = _defaultColor
-      ..style = PaintingStyle.stroke;
     hitbox = CircleHitbox()
-      ..paint = defaultPaint
-      ..renderShape = true
       ..collisionType = CollisionType.passive;
     scale = Vector2.all(0.6);
     add(hitbox);

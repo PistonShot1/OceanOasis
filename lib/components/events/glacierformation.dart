@@ -19,7 +19,7 @@ class GlacierFormation extends SpriteAnimationComponent
   @override
   FutureOr<void> onLoad() {
     // TODO: implement onLoad
-    add(RectangleHitbox()..debugMode = true);
+    add(RectangleHitbox());
     return super.onLoad();
   }
 

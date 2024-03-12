@@ -36,7 +36,7 @@ class toxicSmoke extends SpriteAnimationComponent with HasGameReference<MyGame>,
       textureSize: Vector2.all(512),
       ));
       add(RectangleHitbox());
-      debugMode = true;
+    
     return super.onLoad();
   }
   @override

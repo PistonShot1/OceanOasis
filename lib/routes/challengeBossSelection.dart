@@ -40,22 +40,43 @@ class _ChallengeBossSelectionState extends State<ChallengeBossSelection> {
         child: Container(
           width: MediaQuery.of(context).size.width * 0.4,
           height: MediaQuery.of(context).size.height * 0.5,
-          decoration: BoxDecoration(color: Colors.grey.withOpacity(0.5)),
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.5),
+              blurRadius: 5,
+              offset: Offset(0, 10),
+            )
+          ]),
           child: Stack(
             children: [
+              Positioned.fill(
+                  child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  'assets/images/ui/shop-background.png',
+                  fit: BoxFit.fill,
+                ),
+              )),
               Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
                     onPressed: () {
                       widget.game.router.pop();
                     },
-                    icon: Icon(Icons.cancel_outlined)),
+                    icon: Icon(
+                      Icons.cancel_outlined,
+                      size: 35,
+                      color: Colors.white,
+                    )),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('Level ${widget.levelNumber}: ${widget.locationName}'),
+                  Text(
+                    'Level ${widget.levelNumber}: ${widget.locationName}',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
                   Expanded(
                     flex: 2,
                     child: Padding(
@@ -77,8 +98,11 @@ class _ChallengeBossSelectionState extends State<ChallengeBossSelection> {
                     child: SingleChildScrollView(
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
-                        child: Text(LevelProperty
-                            .locationInfo[widget.levelNumber]['history']),
+                        child: Text(
+                          LevelProperty.locationInfo[widget.levelNumber]
+                              ['history'],
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
                       ),
                     ),
                   ),

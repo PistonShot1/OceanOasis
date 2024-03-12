@@ -45,7 +45,7 @@ class mine extends SpriteAnimationComponent with HasGameReference<MyGame>, Colli
       textureSize: Vector2.all(45),
       ));
       add(CircleHitbox());
-      debugMode = true;
+      
     return super.onLoad();
   }
 

@@ -1,32 +1,50 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
+import 'package:oceanoasis/firebase_options.dart';
+import 'package:oceanoasis/property/userprofile.dart';
 import 'package:oceanoasis/routes/mainmenu.dart';
+import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 void main() async {
-  // final game = MyGame();
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized(); //For Flame purpose
+
+  //Android
+  //Initialize firebase and ask for sign in request
+  if (!Platform.isWindows) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
+
+  //Windows
   // if (Platform.isWindows) {
   //   await windowManager.ensureInitialized();
   //   await windowsConfig();
   // }
 
   runApp(
-    MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(fontFamily: 'Retro Gaming'),
-        home: const MainMenu()),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => UserProfile(),
+        )
+      ],
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(fontFamily: 'Retro Gaming'),
+          home: const MainMenu()),
+    ),
   );
+  
 }
 
 //Windows setup
 Future windowsConfig() async {
-  // await DesktopWindow.setWindowSize(Size(500, 500));
-  // await DesktopWindow.setMinWindowSize(Size(400, 400));
-  // await DesktopWindow.setMaxWindowSize(Size(800, 800));
-  // await DesktopWindow.setFullScreen(true);
-  // await DesktopWindow.setFullScreen(false);
   await WindowManager.instance.setFullScreen(true);
 }

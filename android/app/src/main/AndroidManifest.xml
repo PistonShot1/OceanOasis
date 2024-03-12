@@ -1,8 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Android permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    
     <application
-        android:label="oceanoasis"
+        android:label="Ocean Oasis"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/oceanoasis_logo_192">
         <activity
             android:name=".MainActivity"
             android:exported="true"

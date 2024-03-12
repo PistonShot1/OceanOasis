@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 import 'package:oceanoasis/tools/tools.dart';
 
 class PlayerProperty extends ChangeNotifier {
+  late User userIdentity;
   List<Tools> tools;
   List<Tools> weapons;
 

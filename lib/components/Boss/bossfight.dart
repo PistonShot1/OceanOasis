@@ -13,6 +13,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/src/services/hardware_keyboard.dart';
 import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:flutter/src/services/raw_keyboard.dart';
+import 'package:oceanoasis/components/Boss/bossfightattackinput.dart';
 import 'package:oceanoasis/components/Boss/crabBoss.dart';
 import 'package:oceanoasis/components/Boss/freezeEffect.dart';
 import 'package:oceanoasis/components/Boss/bossfightplayer.dart';
@@ -53,13 +54,14 @@ class PacificOceanBossFight extends Component
 
     //finally add world
     await add(bossWorld);
-    bossWorld.add(ScreenHitbox()..debugMode = true);
-    
+    bossWorld.add(ScreenHitbox());
+
     cameraSettings();
 
     addPlayer();
     spawnBoss();
     loadToolbar(WeaponProperty.weapons.length);
+    loadAttackInput();
     return super.onLoad();
   }
 
@@ -75,14 +77,26 @@ class PacificOceanBossFight extends Component
   }
 
   void addPlayer() {
-    final knobPaint = BasicPalette.blue.withAlpha(200).paint();
-    final backgroundPaint = BasicPalette.blue.withAlpha(100).paint();
+    Color greyColor = Colors.grey.withOpacity(0.5);
+    Paint innerPaint = Paint()
+      ..color = greyColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 5;
+    Paint outterpaint = Paint()
+      ..color = greyColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 10;
     final joystick = JoystickComponent(
-      key: ComponentKey.named('JoystickHUD'),
-      knob: CircleComponent(radius: 30, paint: knobPaint),
-      background: CircleComponent(radius: 100, paint: backgroundPaint),
-      margin: const EdgeInsets.only(left: 40, bottom: 40),
-    );
+        key: ComponentKey.named('JoystickHUD'),
+        knob: CircleComponent(
+            radius: MediaQuery.of(game.buildContext!).size.width / 64,
+            paint: innerPaint),
+        background: CircleComponent(
+            radius: MediaQuery.of(game.buildContext!).size.width / 16,
+            paint: outterpaint),
+        margin: const EdgeInsets.only(left: 40, bottom: 40),
+        size: 50);
+
     final spawnPoint = tiledMap.tileMap.getLayer<ObjectGroup>('Spawn Point');
     player = BossFightPlayer(
       currentWorld: bossWorld,
@@ -96,14 +110,13 @@ class PacificOceanBossFight extends Component
           stepTime: 0.15, // Duration of each frame
           textureSize: Vector2(35, 39)),
     );
-    player.scale = Vector2.all(2);
+    player.scale = Vector2.all(3.5);
 
     bossWorld.add(player);
 
     bossWorld.add(PositionComponent()
       ..size = Vector2(tiledMap.size.x - 50, tiledMap.size.y - 50)
-      ..position = Vector2.all(25)
-      ..debugMode = true); //just for debug
+      ..position = Vector2.all(25)); //just for debug
     player.setPlayerBoundary = [
       25,
       tiledMap.size.x - 50,
@@ -139,19 +152,23 @@ class PacificOceanBossFight extends Component
     } else {
       for (int i = 0; i < itemNum; i++) {
         final toolbox = ItemToolBox(() {},
-            position: Vector2(
-                tiledMap.size.x / 2 - 100 + 32 * 3 * i, tiledMap.size.y * 0.9),
-            iconItem: WeaponProperty.weapons[i]['iconweapon']!,
+            position: Vector2(game.camera.viewport.size.x / 2 - 32 * 2 * i,
+                game.camera.viewport.size.y * 0.9),
+            iconItem: WeaponProperty.weapons[i]['iconweapon']!
+              ..position = Vector2(8, 8),
             item: WeaponProperty.weapons[i]['weapon'],
             detectTap: true,
             player: player)
-          ..scale = Vector2.all(3);
+          ..scale = Vector2.all(2);
         await game.camera.viewport.add(toolbox);
-        await game.camera.viewport.add(toolbox);
-
         // 16*2(the size of the tile image)* 3 (the set scale) * i (y positioning)
       }
     }
+  }
+
+  void loadAttackInput() {
+    final attackInput = BossAttackInput(sceneRef: this);
+    game.camera.viewport.add(attackInput..position = game.camera.viewport.size-Vector2.all(200));
   }
 
   LogicalKeyboardKey? _mapKeyBind(int i) {

@@ -99,7 +99,7 @@ class JoystickPlayer extends SpriteAnimationComponent
     //FOR DEBUG
 
     hitbox = CircleHitbox(radius: 10, position: size * 0.5);
-    add(hitbox..debugMode = true);
+    add(hitbox);
 
     //Current Tool held
     if (playerScene == 0) {

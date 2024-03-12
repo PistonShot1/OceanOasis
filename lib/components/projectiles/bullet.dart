@@ -16,7 +16,7 @@ class bullet extends SpriteAnimationComponent
   late double projectileDirection;
   final Vector2 initialSize = Vector2(128, 128);
   late int thisfacingDirection = 0;
-  final double bulletDamage = 50;
+  final double bulletDamage = 5;
   final double fireRate = 0.5;
   bool inCollide = false;
 
@@ -43,7 +43,7 @@ class bullet extends SpriteAnimationComponent
         position: Vector2(hitboxOffsetX, hitboxOffsetY));
 
     add(c);
-    debugMode = true;
+    
     return super.onLoad();
   }
 
