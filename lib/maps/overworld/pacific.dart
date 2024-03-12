@@ -75,16 +75,16 @@ class PacificOcean extends Component
         knob: CircleComponent(
             radius: MediaQuery.of(game.buildContext!).size.width / 64,
             paint: innerPaint),
-        background: CircleComponent(radius: MediaQuery.of(game.buildContext!).size.width / 16, paint: outterpaint),
+        background: CircleComponent(
+            radius: MediaQuery.of(game.buildContext!).size.width / 16,
+            paint: outterpaint),
         margin: const EdgeInsets.only(left: 40, bottom: 40),
         size: 50);
     player = OverworldPlayer(
       joystick: joystick,
       position:
           Vector2(spawnPoint!.objects.first.x, spawnPoint.objects.first.y - 32),
-    )
-      ..anchor = Anchor.center
-      ..debugMode = true;
+    )..anchor = Anchor.center;
     player.anchor = Anchor.center;
 
     tiledMap.add(player);
@@ -104,7 +104,7 @@ class PacificOcean extends Component
           position: object.position,
           size: object.size,
           isPlatform: true,
-        )..debugMode = true;
+        );
 
         collisionBlocks.add(platform);
         myWorld.add(platform);
@@ -122,7 +122,7 @@ class PacificOcean extends Component
       if (object.isRectangle) {
         myWorld.add(
             LadderComponent(size: object.size, position: object.position)
-              ..debugMode = true);
+              );
       }
     }
 

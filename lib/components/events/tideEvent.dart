@@ -43,7 +43,6 @@ class TideEvent extends PositionComponent {
   @override
   void onMount() async {
     // TODO: implement onMount
-    debugMode = true;
     onWarningComplete = await warning();
 
     addClouds();
@@ -87,9 +86,7 @@ class TideEvent extends PositionComponent {
   void addClouds() {
     final cloud = _getCloud();
     add(cloud
-      ..position = Vector2(cloud.size.x, -cloud.size.y * 0.5)
-      ..debugMode = true
-      ..debugColor = Colors.green);
+      ..position = Vector2(cloud.size.x, -cloud.size.y * 0.5));
     // Future.delayed(Duration(seconds: 10), () {
     //   final cloud = _getCloud();
     //   add(cloud..position = Vector2(-cloud.size.x, size.y * 0.03));

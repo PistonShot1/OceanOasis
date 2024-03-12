@@ -53,7 +53,6 @@ class freezeEffect extends SpriteAnimationComponent with HasGameReference<MyGame
             amount: 10, stepTime: 0.1, textureSize: Vector2(128, 128)));
         CircleHitbox c = CircleHitbox();
       add(c);
-      debugMode = true;
     return super.onLoad();
   }
 

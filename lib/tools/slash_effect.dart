@@ -59,8 +59,6 @@ class SlashEffect extends SpriteAnimationComponent
       ..color = Colors.black
       ..style = PaintingStyle.stroke;
     add(RectangleHitbox()
-      ..paint = paint
-      ..renderShape = true
       ..collisionType = CollisionType.active);
     return super.onLoad();
   }

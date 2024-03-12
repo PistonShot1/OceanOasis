@@ -44,7 +44,7 @@ class mineExplosionEffect extends SpriteAnimationComponent with HasGameReference
       ));
 
        add(CircleHitbox());
-      debugMode = true;
+     
 
     return super.onLoad();
   }

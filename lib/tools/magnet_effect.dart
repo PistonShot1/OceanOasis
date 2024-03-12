@@ -16,6 +16,7 @@ class MagnetEffect extends SlashEffect {
   @override
   void onMount() {
     // TODO: implement onMount
+    size = Vector2(64, 32);
     scale = Vector2.all(2);
     hitEffect();
     super.onMount();

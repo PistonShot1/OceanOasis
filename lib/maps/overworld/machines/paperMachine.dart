@@ -21,7 +21,7 @@ class PaperMachine extends Machines
   FutureOr<void> onLoad() {
     // TODO: implement onLoad
     _loadAllAnimations();
-    add(RectangleHitbox()..debugMode = true);
+    add(RectangleHitbox());
     depositComponent =
         DepositComponent(machine: this, machineType: machineType);
     return super.onLoad();

@@ -46,7 +46,7 @@ class bigFish extends SpriteAnimationComponent
         position: Vector2(hitboxOffsetX, hitboxOffsetY));
 
     add(c);
-    debugMode = true;
+    
     return super.onLoad();
   }
 

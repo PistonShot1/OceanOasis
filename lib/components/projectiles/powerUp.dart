@@ -45,7 +45,7 @@ class powerUp extends SpriteAnimationComponent with HasGameReference<MyGame>, Co
       textureSize: Vector2.all(45),
       ));
       add(CircleHitbox());
-      debugMode = true;
+      
 
        removeComponent();
 

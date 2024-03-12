@@ -24,7 +24,7 @@ class crabBoss extends SpriteAnimationComponent
     with HasGameReference<MyGame>, CollisionCallbacks {
   final Vector2 initialPosition = Vector2(1600, 700);
   final Vector2 initialSize = Vector2(256, 256);
-   double speed = 300;
+  double speed = 300;
   late double moveDirection = 1;
   final double leftBoundaries = 0;
   final double rightBoundaries = 1700;
@@ -45,7 +45,6 @@ class crabBoss extends SpriteAnimationComponent
   bool switchingDirection = false;
   bool toxicBubbleCooldown = false;
   bool canDamage = true;
-
 
   final double hitboxOffsetX = 60;
   final double hitboxOffsetY = 60;
@@ -93,11 +92,8 @@ class crabBoss extends SpriteAnimationComponent
         position: Vector2(hitboxOffsetX, hitboxOffsetY));
 
     add(c);
-    debugMode = true;
 
-    add(PositionComponent()
-      ..size = Vector2.all(50)
-      ..debugMode = true);
+    add(PositionComponent()..size = Vector2.all(50));
     return super.onLoad();
   }
 
@@ -180,11 +176,11 @@ class crabBoss extends SpriteAnimationComponent
   void spawntoxicBubble() async {
     if (canSpawntoxicBubble == true) {
       toxicBubbleCooldown = true;
-      bossWorld.add(toxicBubble(super.position, player.getPlayerPosition(), bossWorld));
+      bossWorld.add(
+          toxicBubble(super.position, player.getPlayerPosition(), bossWorld));
       await attackCooldown(1);
       toxicBubbleCooldown = false;
     }
-
   }
 
   void spawnMutantFish() async {
@@ -302,38 +298,31 @@ class crabBoss extends SpriteAnimationComponent
     cutscene();
     super.onMount();
   }
-  void freezeEvent(){
+
+  void freezeEvent() {
     canSpawntoxicBubble = false;
     speed = 0;
-    screenFreezeEffect b = screenFreezeEffect(Vector2(0,0));
+    screenFreezeEffect b = screenFreezeEffect(Vector2(0, 0));
     bossWorld.add(b);
     Future.delayed(const Duration(seconds: 7), () {
-        speed = 300;
-         canSpawntoxicBubble = true;
-      });
+      speed = 300;
+      canSpawntoxicBubble = true;
+    });
   }
 
   void cutscene() {
     position = tiledMap.size / 2 - size / 2;
     // game.camera.viewfinder.visibleGameSize = size;
     // game.camera.follow(this);
-    final dialog = TextComponent(text: 'nanda gey')..position = Vector2.zero();
+    final dialog = TextComponent(text: '')..position = Vector2.zero();
     add(dialog);
     game.camera.viewfinder.add(ScaleEffect.by(
         Vector2.all(2), EffectController(duration: 2), onComplete: () async {
-      await Future.delayed(Duration(seconds: 1), () async {
-        dialog.text = 'Face your fears';
-        await Future.delayed(Duration(seconds: 1), () {
-          remove(dialog);
-        });
-      });
       game.camera.viewfinder.add(ScaleEffect.by(
           Vector2.all(0.5), EffectController(duration: 2), onComplete: () {
         position = initialPosition;
         state = 'Start';
       }));
     }));
-
-    
   }
 }

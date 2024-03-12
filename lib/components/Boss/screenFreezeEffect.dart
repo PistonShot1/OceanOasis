@@ -49,8 +49,7 @@ class screenFreezeEffect extends SpriteAnimationComponent with HasGameReference<
         SpriteAnimationData.sequenced(
             amount: 1, stepTime: 1, textureSize: Vector2(1100, 540)));
            
-      
-      debugMode = true;
+
     return super.onLoad();
   }
 

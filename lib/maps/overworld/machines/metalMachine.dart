@@ -22,7 +22,7 @@ class MetalMachine extends Machines
     // TODO: implement onLoad
     _loadAllAnimations();
     final hitbox = RectangleHitbox.relative(Vector2(1, 0.3), parentSize: size,);
-    add(hitbox..debugMode = true);
+    add(hitbox);
     depositComponent =
         DepositComponent(machine: this, machineType: machineType);
     return super.onLoad();

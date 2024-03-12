@@ -50,7 +50,6 @@ class cautiousEffect extends SpriteAnimationComponent with HasGameReference<MyGa
         SpriteAnimationData.sequenced(
             amount: 1, stepTime: 1, textureSize: Vector2(54, 54)));
        
-      debugMode = true;
     return super.onLoad();
   }
 

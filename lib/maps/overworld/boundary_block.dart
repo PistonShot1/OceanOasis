@@ -11,11 +11,9 @@ class BoundaryBlock extends PositionComponent with CollisionCallbacks {
   @override
   FutureOr<void> onLoad() {
     debugColor = Colors.black;
-    debugMode = true;
+
     final hitbox = RectangleHitbox.relative(Vector2(1, 1), parentSize: size);
-    add(hitbox
-      ..debugColor = Colors.green
-      ..debugMode = true);
+    add(hitbox..debugColor = Colors.green);
     return super.onLoad();
   }
 
@@ -24,9 +22,11 @@ class BoundaryBlock extends PositionComponent with CollisionCallbacks {
     // TODO: implement onCollision
     if (other is OverworldPlayer) {
       if (other.scale.x > 0) {
-        other.position.x = other.position.x.clamp(0, position.x-other.size.x/2);
+        other.position.x =
+            other.position.x.clamp(0, position.x - other.size.x / 2);
       } else if (other.scale.x < 0) {
-        other.position.x = other.position.x.clamp(position.x+size.x + other.size.x/2, 1920);
+        other.position.x = other.position.x
+            .clamp(position.x + size.x + other.size.x / 2, 1920);
       }
     }
     super.onCollision(intersectionPoints, other);

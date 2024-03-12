@@ -44,7 +44,7 @@ class mutantFish extends SpriteAnimationComponent with HasGameReference<MyGame>,
       CircleHitbox c = CircleHitbox.relative(0.5, parentSize: initialSize, position: Vector2(hitboxOffsetX, hitboxOffsetY));
 
       add(c);
-      debugMode = true;
+     
     return super.onLoad();
   }
 
