@@ -105,6 +105,7 @@ class MyGame extends FlameGame
       knob: CircleComponent(radius: 50, paint: backgroundPaint),
       background: CircleComponent(radius: 150, paint: backgroundPaint),
       margin: const EdgeInsets.only(left: 40, bottom: 40),
+      size: 50
     );
 
     //GLOBAL Component

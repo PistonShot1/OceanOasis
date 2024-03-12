@@ -4,7 +4,10 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   audioplayers_windows
+  cloud_firestore
   desktop_window
+  firebase_auth
+  firebase_core
   permission_handler_windows
   screen_retriever
   window_manager

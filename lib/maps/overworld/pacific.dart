@@ -61,8 +61,25 @@ class PacificOcean extends Component
 
   void loadPlayerJoystick() {
     final spawnPoint = tiledMap.tileMap.getLayer<ObjectGroup>('Spawn Point');
+    Color greyColor = Colors.grey.withOpacity(0.5);
+    Paint innerPaint = Paint()
+      ..color = greyColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 5;
+    Paint outterpaint = Paint()
+      ..color = greyColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 10;
+    final joystick = JoystickComponent(
+        key: ComponentKey.named('JoystickHUD'),
+        knob: CircleComponent(
+            radius: MediaQuery.of(game.buildContext!).size.width / 64,
+            paint: innerPaint),
+        background: CircleComponent(radius: MediaQuery.of(game.buildContext!).size.width / 16, paint: outterpaint),
+        margin: const EdgeInsets.only(left: 40, bottom: 40),
+        size: 50);
     player = OverworldPlayer(
-      joystick: game.joystick,
+      joystick: joystick,
       position:
           Vector2(spawnPoint!.objects.first.x, spawnPoint.objects.first.y - 32),
     )
@@ -72,7 +89,7 @@ class PacificOcean extends Component
 
     tiledMap.add(player);
     (Platform.isAndroid || Platform.isIOS)
-        ? game.camera.viewport.add(game.joystick)
+        ? game.camera.viewport.add(joystick)
         : '';
 
     game.camera.follow(player);
@@ -150,7 +167,6 @@ class PacificOcean extends Component
   @override
   void onTapUp(TapUpEvent event) {
     // TODO: implement onTapUp
-    print('tapping');
     super.onTapUp(event);
   }
 
@@ -162,29 +178,4 @@ class PacificOcean extends Component
     game.overlays.add('TotalScores');
     game.overlays.add('GameBalance');
   }
-  //SOME LEGIT CODE I COOK : MIGHT NEED IT LATER
-  // for (final object in objectGroup!.objects) {
-  //   if (object.isPolygon) {
-  //     List<Vector2> polygonPoints = [];
-  //     for (var element in object.polygon) {
-  //       polygonPoints.add(Vector2(
-  //           element.x / 2 + object.x / 2, element.y / 2 + object.y / 2));
-  //     }
-  //     game.gameComponents.add(
-  //       PolygonComponent(
-  //         polygonPoints,
-  //       ),
-  //     );
-  //   } else if (object.isRectangle) {
-  //     game.gameComponents.add(RectangleComponent(
-  //         size: Vector2(object.width, object.height),
-  //         position: Vector2(object.x, object.y),
-  //         children: [RectangleHitbox()]));
-  //   } else if (object.isEllipse) {
-  //     game.gameComponents.add(CircleComponent(
-  //         radius: 80,
-  //         position: Vector2(object.x, object.y),
-  //         paint: BasicPalette.green.paint()));
-  //   }
-  // }
 }

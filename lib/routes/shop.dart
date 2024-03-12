@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flame/components.dart';
 import 'package:flame/widgets.dart';
 import 'package:flutter/material.dart';
@@ -148,14 +150,17 @@ class _ShopUIState extends State<ShopUI> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SpriteWidget(sprite: itemImg),
-            Text(itemName, style: TextStyle(color: Colors.white, fontSize: 18),),
+            SizedBox(child: SpriteWidget(sprite: itemImg),height: MediaQuery.of(context).size.height * 0.2,),
+            Text(
+              itemName,
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
             SpriteButton(
                 sprite: buybuttonImg,
                 pressedSprite: buybuttonImg,
                 onPressed: () {},
                 width: 150,
-                height: 80,
+                height: (Platform.isAndroid || Platform.isIOS) ? 40 : 80,
                 label: Padding(
                   padding: const EdgeInsets.only(right: 20.0, bottom: 5),
                   child: Text(

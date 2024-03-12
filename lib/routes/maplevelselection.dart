@@ -56,6 +56,10 @@ class MapLevelSelection extends Component with HasGameReference<MyGame> {
     if (game.overlays.isActive('TotalScores')) {
       game.overlays.remove('TotalScores');
     }
+
+    if (game.overlays.isActive('GameBalance')) {
+      game.overlays.remove('GameBalance');
+    }
     game.overlays.add('ToFacility');
   }
 

@@ -1,18 +1,18 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:oceanoasis/property/playerProperty.dart';
+import 'package:oceanoasis/property/userprofile.dart';
 import 'package:oceanoasis/routes/level_selection_ui.dart';
 import 'package:oceanoasis/routes/playerBalance.dart';
 import 'package:oceanoasis/routes/playerScores.dart';
 import 'package:oceanoasis/routes/gameplay.dart';
-import 'package:oceanoasis/maps/overworld/pacific.dart';
-import 'package:oceanoasis/routes/achievementdashboard.dart';
-import 'package:oceanoasis/routes/levelselection.dart';
 import 'package:oceanoasis/routes/maplevelselection.dart';
-import 'package:oceanoasis/routes/settings.dart';
 import 'package:oceanoasis/routes/totalScoreWidget.dart';
-import 'package:oceanoasis/routes/userprofile.dart';
 import 'package:provider/provider.dart';
 
 class MainMenu extends StatefulWidget {
@@ -29,6 +29,54 @@ class _MainMenuState extends State<MainMenu> {
   double text1 = 50;
   double text2 = 30;
   PlayerProperty playerData = PlayerProperty(tools: [], weapons: []);
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  Map<String, dynamic> _data = {};
+
+  //handle sign in for user
+  Future<User?> _handleSignIn() async {
+    try {
+      final GoogleSignInAccount? googleSignInAccount =
+          await googleSignIn.signIn();
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuthentication =
+            await googleSignInAccount.authentication;
+
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+
+        final UserCredential authResult =
+            await _auth.signInWithCredential(credential);
+        final User? user = authResult.user;
+        return user;
+      }
+    } catch (error) {
+      print(error);
+      return null;
+    }
+  }
+
+  //Signout current and prompt user to sign in again
+  Future<User?> _handleSignOut() async {
+    try {
+      await _auth.signOut();
+      await googleSignIn.signOut();
+      print("Sign out successful");
+      await _handleSignIn();
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _handleSignIn();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +102,29 @@ class _MainMenuState extends State<MainMenu> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   InkWell(
-                    onTap: () {
-                      initGameWidget(context);
+                    onTap: () async {
+                      if (!Platform.isWindows &&
+                          FirebaseAuth.instance.currentUser != null) {
+                        await _loadUserData(context);
+                        (context.mounted) ? initGameWidget(context) : '';
+                      } else if (Platform.isWindows) {
+                        initGameWidget(context);
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                                  title: const Text('Alert !'),
+                                  content: const Text(
+                                      'Please makesure you are signed in!'),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text('OK'))
+                                  ],
+                                ));
+                      }
                     },
                     child: Image.asset(
                       'assets/images/ui/play-button.png',
@@ -63,38 +132,17 @@ class _MainMenuState extends State<MainMenu> {
                       height: 100,
                     ),
                   ),
-                  Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          _showOverlay(AchievementDashboard.id);
-                        },
-                        child: Image.asset(
-                          'assets/images/ui/shop-button.png',
-                          width: 150,
-                          height: 50,
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          _showOverlay(Settings.id);
-                        },
-                        child: Image.asset(
-                          'assets/images/ui/settings-button.png',
-                          height: 50,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      InkWell(
-                        onTap: () {},
-                        child: Image.asset(
-                          'assets/images/ui/user-button.png',
-                          height: 50,
-                        ),
-                      ),
-                    ],
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      _handleSignOut();
+                    },
+                    child: Image.asset(
+                      'assets/images/ui/user-button.png',
+                      height: 50,
+                    ),
                   )
                 ],
               ),
@@ -206,42 +254,37 @@ class _MainMenuState extends State<MainMenu> {
     }
   }
 
-  void _showOverlay(String routeName) {
-    final musicValueNotifier = ValueNotifier(true);
-    final sfxValueNotifier = ValueNotifier(true);
-
-    switch (routeName) {
-      case AchievementDashboard.id:
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return AchievementDashboard(
-            musicValueListenable: musicValueNotifier,
-            sfxValueListenable: sfxValueNotifier,
-            onBackPressed: _popRoute,
-          );
-        }));
-        break;
-      case Settings.id:
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return Settings(
-            musicValueListenable: musicValueNotifier,
-            sfxValueListenable: sfxValueNotifier,
-            onBackPressed: _popRoute,
-          );
-        }));
-        break;
-      case UserProfile.id:
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return UserProfile(
-            musicValueListenable: musicValueNotifier,
-            sfxValueListenable: sfxValueNotifier,
-            onBackPressed: _popRoute,
-          );
-        }));
-        break;
+  Future<void> _loadUserData(BuildContext context) async {
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+      String uid = currentUser.uid;
+      QuerySnapshot querySnapshot = await firestore
+          .collection('Users')
+          .where('uid', isEqualTo: uid)
+          .get();
+      if (querySnapshot.docs.isNotEmpty) {
+        _data = querySnapshot.docs.first.data() as Map<String, dynamic>;
+        print(_data);
+        if (context.mounted) {
+          Provider.of<UserProfile>(context, listen: false).setData(_data);
+        }
+      } else {
+        //Write and store defaults
+        firestore
+            .collection('Users')
+            .doc(uid)
+            .set(UserProfile.getuserInstance(uid, currentUser.email!));
+        querySnapshot = await firestore
+            .collection('Users')
+            .where('uid', isEqualTo: uid)
+            .get();
+        _data = querySnapshot.docs.first.data() as Map<String, dynamic>;
+        print(_data);
+        if (context.mounted) {
+          Provider.of<UserProfile>(context, listen: false).setData(_data);
+        }
+      }
     }
-  }
-
-  void _popRoute() {
-    Navigator.of(context).pop();
   }
 }

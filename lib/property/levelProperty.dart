@@ -4,6 +4,14 @@ import 'package:oceanoasis/components/Boss/bossfight.dart';
 import 'package:oceanoasis/maps/underwater/pacificunderwater.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 
+enum Levels {
+  level1,
+  level2,
+  level3,
+  level4,
+  level5,
+}
+
 class LevelProperty {
   final int levelNum;
   LevelProperty({required this.levelNum});
