@@ -1,7 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
-import 'package:oceanoasis/components/Boss/bossfight.dart';
-import 'package:oceanoasis/maps/underwater/pacificunderwater.dart';
+import 'package:oceanoasis/components/maps/BossFight/bossfight.dart';
+import 'package:oceanoasis/components/maps/underwater/underwater_scene.dart';
 import 'package:oceanoasis/property/defaultgameProperty.dart';
 
 enum Levels {
@@ -122,32 +122,27 @@ class LevelProperty {
     switch (levelNum) {
       case 1:
         return [
-          Route(() =>
-              PacificOceanUnderwater(levelNumber: levelNum, playeritems: 2)),
+          Route(() => UnderwaterScene(levelNumber: levelNum, playeritems: 2)),
           Route(() => PacificOceanBossFight())
         ];
       case 2:
         return [
-          Route(() =>
-              PacificOceanUnderwater(levelNumber: levelNum, playeritems: 3)),
+          Route(() => UnderwaterScene(levelNumber: levelNum, playeritems: 3)),
           Route(() => PacificOceanBossFight())
         ];
       case 3:
         return [
-          Route(() =>
-              PacificOceanUnderwater(levelNumber: levelNum, playeritems: 3)),
+          Route(() => UnderwaterScene(levelNumber: levelNum, playeritems: 3)),
           Route(() => PacificOceanBossFight())
         ];
       case 4:
         return [
-          Route(() =>
-              PacificOceanUnderwater(levelNumber: levelNum, playeritems: 3)),
+          Route(() => UnderwaterScene(levelNumber: levelNum, playeritems: 3)),
           Route(() => PacificOceanBossFight())
         ];
       case 5:
         return [
-          Route(() =>
-              PacificOceanUnderwater(levelNumber: levelNum, playeritems: 3)),
+          Route(() => UnderwaterScene(levelNumber: levelNum, playeritems: 3)),
           Route(() => PacificOceanBossFight())
         ];
       default:
