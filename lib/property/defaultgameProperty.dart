@@ -4,13 +4,12 @@ import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
-import 'package:oceanoasis/components/Boss/bossfight.dart';
-import 'package:oceanoasis/maps/underwater/pacificunderwater.dart';
-import 'package:oceanoasis/tools/magnet_effect.dart';
-import 'package:oceanoasis/tools/rubbish_picker_effect.dart';
-import 'package:oceanoasis/tools/tools.dart';
-import 'package:oceanoasis/tools/slash_effect.dart';
-import 'package:oceanoasis/wasteComponents/waste.dart';
+import 'package:oceanoasis/components/maps/underwater/underwater_scene.dart';
+import 'package:oceanoasis/components/shoptools/magnet_effect.dart';
+import 'package:oceanoasis/components/shoptools/rubbish_picker_effect.dart';
+import 'package:oceanoasis/components/shoptools/tools.dart';
+import 'package:oceanoasis/components/shoptools/slash_effect.dart';
+import 'package:oceanoasis/components/maps/underwater/wasteComponents/waste.dart';
 
 class ToolSlashProperty {
   static const String _toolType = 'WasteCollector';
