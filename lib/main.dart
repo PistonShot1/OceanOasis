@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:oceanoasis/firebase_options.dart';
-import 'package:oceanoasis/property/userprofile.dart';
+import 'package:oceanoasis/property/user_profile.dart';
 import 'package:oceanoasis/main_menu.dart';
 import 'package:provider/provider.dart';
 

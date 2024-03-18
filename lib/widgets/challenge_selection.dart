@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:oceanoasis/property/levelProperty.dart';
+import 'package:oceanoasis/property/level_property.dart';
 import 'package:oceanoasis/my_game.dart';
 
 class ChallengeSelection extends StatefulWidget {
@@ -44,7 +42,7 @@ class _ChallengeSelectionState extends State<ChallengeSelection> {
             BoxShadow(
               color: Colors.black.withOpacity(0.5),
               blurRadius: 5,
-              offset: Offset(0, 10),
+              offset: const Offset(0, 10),
             )
           ]),
           child: Stack(
@@ -63,7 +61,7 @@ class _ChallengeSelectionState extends State<ChallengeSelection> {
                     onPressed: () {
                       widget.game.router.pop();
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.cancel_outlined,
                       size: 35,
                       color: Colors.white,
@@ -75,7 +73,7 @@ class _ChallengeSelectionState extends State<ChallengeSelection> {
                 children: [
                   Text(
                     'Level ${widget.levelNumber}: ${widget.locationName}',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
                   ),
                   Expanded(
                     flex: 2,
@@ -101,7 +99,7 @@ class _ChallengeSelectionState extends State<ChallengeSelection> {
                         child: Text(
                           LevelProperty.locationInfo[widget.levelNumber]
                               ['history'],
-                          style: TextStyle(color: Colors.white, fontSize: 16),
+                          style: const TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),

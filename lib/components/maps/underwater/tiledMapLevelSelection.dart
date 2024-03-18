@@ -1,4 +1,3 @@
-import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 

@@ -7,7 +7,7 @@ import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
 import 'package:oceanoasis/components/maps/BossFight/playerBar.dart';
-import 'package:oceanoasis/property/defaultgameProperty.dart';
+import 'package:oceanoasis/property/game_properties.dart';
 import 'package:oceanoasis/my_game.dart';
 import 'package:oceanoasis/components/shoptools/tools.dart';
 
@@ -61,13 +61,13 @@ class BossFightPlayer extends SpriteAnimationComponent
 
   final chargeEnergyEffect = SequenceEffect([
     ColorEffect(
-      Color.fromARGB(255, 2, 27, 255),
+      const Color.fromARGB(255, 2, 27, 255),
       EffectController(duration: 1),
       opacityFrom: 0,
       opacityTo: 0.8,
     ),
     ColorEffect(
-      Color.fromARGB(255, 0, 60, 255),
+      const Color.fromARGB(255, 0, 60, 255),
       EffectController(duration: 1),
       opacityTo: 0,
     ),

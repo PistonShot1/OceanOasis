@@ -5,7 +5,6 @@ import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/palette.dart';
-import 'package:flame/particles.dart';
 import 'package:flame/text.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart' hide Image;
@@ -18,10 +17,10 @@ import 'package:oceanoasis/components/maps/underwater/joystickplayer.dart';
 import 'package:oceanoasis/components/maps/underwater/playerbreathingbar.dart';
 import 'package:oceanoasis/components/maps/underwater/pHBar.dart';
 import 'package:oceanoasis/components/maps/underwater/timer.dart';
-import 'package:oceanoasis/property/levelProperty.dart';
+import 'package:oceanoasis/property/level_property.dart';
 import 'package:oceanoasis/components/shoptools/toolbox.dart';
 import 'package:oceanoasis/my_game.dart';
-import 'package:oceanoasis/property/defaultgameProperty.dart';
+import 'package:oceanoasis/property/game_properties.dart';
 import 'package:oceanoasis/widgets/game_over.dart';
 import 'package:oceanoasis/components/maps/underwater/wasteComponents/waste.dart';
 
@@ -491,13 +490,13 @@ class UnderwaterScene extends Component
   void updateBubbleLifespan() {
     switch (acidityBar.currentAcidityLevel) {
       case Acidity.low:
-        bubbleLifespan = Duration(seconds: 3);
+        bubbleLifespan = const Duration(seconds: 3);
         break;
       case Acidity.medium:
-        bubbleLifespan = Duration(seconds: 2);
+        bubbleLifespan = const Duration(seconds: 2);
         break;
       case Acidity.high:
-        bubbleLifespan = Duration(seconds: 1);
+        bubbleLifespan = const Duration(seconds: 1);
         break;
     }
   }

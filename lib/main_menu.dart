@@ -5,8 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:oceanoasis/property/playerProperty.dart';
-import 'package:oceanoasis/property/userprofile.dart';
+import 'package:oceanoasis/property/player_inventory_bloc/player_inventory_bloc.dart';
+import 'package:oceanoasis/property/player_property.dart';
+import 'package:oceanoasis/property/user_profile.dart';
 import 'package:oceanoasis/widgets/level_selection_ui.dart';
 import 'package:oceanoasis/widgets/player_balance.dart';
 import 'package:oceanoasis/widgets/score.dart';
@@ -15,7 +16,7 @@ import 'package:oceanoasis/components/maps/levelSelection/maplevelselection.dart
 import 'package:oceanoasis/widgets/total_score_widget.dart';
 import 'package:provider/provider.dart';
 
-/// The first screen widget that will be shown, upon launch of the game 
+/// The first screen widget that will be shown, upon launch of the game
 /// Game will be loaded by [MyGame], which will be redirected by this widget upon play pressed)
 class MainMenu extends StatefulWidget {
   static const id = 'MainMenu';
@@ -23,10 +24,10 @@ class MainMenu extends StatefulWidget {
   const MainMenu({Key? key}) : super(key: key);
 
   @override
-  _MainMenuState createState() => _MainMenuState();
+  MainMenuState createState() => MainMenuState();
 }
 
-class _MainMenuState extends State<MainMenu> {
+class MainMenuState extends State<MainMenu> {
   double iconButtonSize = 35;
   double text1 = 50;
   double text2 = 30;
@@ -56,9 +57,9 @@ class _MainMenuState extends State<MainMenu> {
         return user;
       }
     } catch (error) {
-      print(error);
       return null;
     }
+    return null;
   }
 
   //Signout current and prompt user to sign in again
@@ -68,8 +69,9 @@ class _MainMenuState extends State<MainMenu> {
       await googleSignIn.signOut();
       await _handleSignIn();
     } catch (error) {
-      print(error);
+      debugPrint(error.toString());
     }
+    return null;
   }
 
   @override
@@ -121,7 +123,7 @@ class _MainMenuState extends State<MainMenu> {
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
-                                        child: Text('OK'))
+                                        child: const Text('OK'))
                                   ],
                                 ));
                       }
@@ -156,7 +158,9 @@ class _MainMenuState extends State<MainMenu> {
   void initGameWidget(BuildContext context) {
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
       return GameWidget(
-        game: MyGame(MediaQuery.of(context), playerData: playerData),
+        game: MyGame(MediaQuery.of(context),
+            playerData: playerData,
+            inventoryblocprovider: PlayerInventoryBloc()),
         loadingBuilder: (p0) {
           return Stack(
             children: [
@@ -231,7 +235,7 @@ class _MainMenuState extends State<MainMenu> {
             return BalanceWidget(game: game);
           },
         },
-        initialActiveOverlays: [],
+        initialActiveOverlays: const [],
         // to add game overlay
       );
     }));
@@ -265,7 +269,6 @@ class _MainMenuState extends State<MainMenu> {
           .get();
       if (querySnapshot.docs.isNotEmpty) {
         _data = querySnapshot.docs.first.data() as Map<String, dynamic>;
-        print(_data);
         if (context.mounted) {
           Provider.of<UserProfile>(context, listen: false).setData(_data);
         }
@@ -280,7 +283,7 @@ class _MainMenuState extends State<MainMenu> {
             .where('uid', isEqualTo: uid)
             .get();
         _data = querySnapshot.docs.first.data() as Map<String, dynamic>;
-        print(_data);
+        debugPrint(_data.toString());
         if (context.mounted) {
           Provider.of<UserProfile>(context, listen: false).setData(_data);
         }

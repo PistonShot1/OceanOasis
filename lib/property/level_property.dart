@@ -2,7 +2,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
 import 'package:oceanoasis/components/maps/BossFight/bossfight.dart';
 import 'package:oceanoasis/components/maps/underwater/underwater_scene.dart';
-import 'package:oceanoasis/property/defaultgameProperty.dart';
+import 'package:oceanoasis/property/game_properties.dart';
 
 enum Levels {
   level1,

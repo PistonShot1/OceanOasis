@@ -1,6 +1,5 @@
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:oceanoasis/components/maps/underwater/joystickplayer.dart';
 import 'package:oceanoasis/components/shoptools/slash_effect.dart';
 
 class MagnetEffect extends SlashEffect {

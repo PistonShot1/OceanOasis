@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oceanoasis/property/defaultgameProperty.dart';
-import 'package:oceanoasis/property/levelProperty.dart';
+import 'package:oceanoasis/property/game_properties.dart';
 import 'package:oceanoasis/my_game.dart';
 
 // ignore: must_be_immutable

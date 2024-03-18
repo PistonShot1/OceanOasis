@@ -1,14 +1,11 @@
 import 'dart:async';
 
-import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
-import 'package:flutter/material.dart' hide Route, OverlayRoute;
 import 'package:oceanoasis/widgets/challenge_selection.dart';
 import 'package:oceanoasis/my_game.dart';
-import 'package:oceanoasis/components/maps/overworld/pacific.dart';
 
 class MapMarker extends SpriteComponent
     with TapCallbacks, HasGameReference<MyGame> {

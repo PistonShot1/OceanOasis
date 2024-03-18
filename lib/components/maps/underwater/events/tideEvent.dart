@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'dart:math' hide Rectangle;
-import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/experimental.dart';
 import 'package:flame/flame.dart';
-import 'package:flame/particles.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
 import 'package:oceanoasis/components/maps/underwater/events/thunderstorm.dart';
@@ -56,7 +53,7 @@ class TideEvent extends PositionComponent {
         size: size, paint: Paint()..color = Colors.black.withOpacity(0.3));
     add(component
       ..add(ColorEffect(
-          Color.fromARGB(255, 35, 8, 109),
+          const Color.fromARGB(255, 35, 8, 109),
           EffectController(
               duration: 0.2, reverseDuration: 0.2, repeatCount: 5))));
 
@@ -77,7 +74,7 @@ class TideEvent extends PositionComponent {
         position: Vector2(size.x / 2, 100),
         priority: 2);
     add(text..position = Vector2((size.x - text.size.x) / 2, text.position.y));
-    await Future.delayed(Duration(seconds: 3), () {
+    await Future.delayed(const Duration(seconds: 3), () {
       remove(text);
     });
     return true;

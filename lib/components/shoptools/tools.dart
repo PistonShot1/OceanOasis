@@ -2,10 +2,7 @@ import 'dart:async';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
-import 'package:flame/image_composition.dart';
-import 'package:flame_noise/flame_noise.dart';
-import 'package:flutter/material.dart';
-import 'package:oceanoasis/property/defaultgameProperty.dart';
+import 'package:oceanoasis/property/game_properties.dart';
 import 'package:oceanoasis/components/shoptools/slash_effect.dart';
 
 class Tools extends SpriteComponent with CollisionCallbacks {

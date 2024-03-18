@@ -1,18 +1,14 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
-import 'package:flame/events.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:flutter/material.dart' hide Route, Image;
 
 import 'package:oceanoasis/components/maps/levelSelection/mapmarker.dart';
-import 'package:oceanoasis/components/maps/underwater/underwater_scene.dart';
-import 'package:oceanoasis/property/levelProperty.dart';
+import 'package:oceanoasis/property/level_property.dart';
 import 'package:oceanoasis/my_game.dart';
-import 'package:oceanoasis/components/maps/overworld/pacific.dart';
 import 'package:oceanoasis/components/maps/underwater/tiledMapLevelSelection.dart';
 
 class MapLevelSelection extends Component with HasGameReference<MyGame> {

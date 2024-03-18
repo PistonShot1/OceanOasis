@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:oceanoasis/property/defaultgameProperty.dart';
-import 'package:oceanoasis/property/levelProperty.dart';
 import 'package:oceanoasis/my_game.dart';
 
 class ScoreWidget extends StatefulWidget {
@@ -32,7 +29,7 @@ class _ScoreWidgetState extends State<ScoreWidget> {
                     padding: const EdgeInsets.only(top: 50, left: 20.0),
                     child: Text(
                       'Score : ${widget.game.playerData.levelcurrentScore.toInt()}',
-                      style: TextStyle(fontSize: 30),
+                      style: const TextStyle(fontSize: 30),
                     ),
                   )
                 ],

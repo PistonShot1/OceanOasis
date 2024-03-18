@@ -1,6 +1,5 @@
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/flame.dart';
 
 class Creature extends Component {
   final SpriteAnimationComponent animationComponent;

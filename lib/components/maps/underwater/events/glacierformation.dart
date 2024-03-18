@@ -4,7 +4,6 @@ import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
-import 'package:flame/image_composition.dart';
 import 'package:oceanoasis/components/maps/underwater/joystickplayer.dart';
 import 'package:oceanoasis/my_game.dart';
 
@@ -36,10 +35,6 @@ class GlacierFormation extends SpriteAnimationComponent
     super.onMount();
   }
 
-  @override
-  void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
-    super.onCollision(intersectionPoints, other);
-  }
 
   @override
   void onCollisionStart(

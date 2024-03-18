@@ -115,14 +115,14 @@ class _LevelSelectionUIState extends State<LevelSelectionUI> {
           },
           width: 4 * 16,
           height: 4 * 16,
-          label: Text('')),
+          label: const Text('')),
       SpriteButton(
           sprite: (isMuted) ? muteImg : unmuteImg,
           pressedSprite: (isMuted) ? muteImg : unmuteImg,
           onPressed: () {},
           width: 4 * 16,
           height: 4 * 16,
-          label: Text('')),
+          label: const Text('')),
     ];
     if (isPressed) {
       return spriteButtons;

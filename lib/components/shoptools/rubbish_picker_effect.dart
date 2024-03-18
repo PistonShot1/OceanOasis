@@ -3,8 +3,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
-import 'package:flame/geometry.dart';
-import 'package:oceanoasis/property/defaultgameProperty.dart';
+import 'package:oceanoasis/property/game_properties.dart';
 import 'package:oceanoasis/components/shoptools/slash_effect.dart';
 import 'package:oceanoasis/components/maps/underwater/wasteComponents/waste.dart';
 

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:oceanoasis/property/playerProperty.dart';
 import 'package:oceanoasis/my_game.dart';
-import 'package:provider/provider.dart';
 
 class GameOver extends StatelessWidget {
   static const String id = 'Game Over';
@@ -23,15 +20,15 @@ class GameOver extends StatelessWidget {
       child: Center(
         child: Container(
           width: 300,
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Color(0xFF1a1a1a),
+            color: const Color(0xFF1a1a1a),
             borderRadius: BorderRadius.circular(5),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.5),
                 blurRadius: 4,
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -45,7 +42,7 @@ class GameOver extends StatelessWidget {
                   fontSize: 28,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ListenableBuilder(
                 listenable: game.playerData,
                 builder: (BuildContext context, Widget? child) {
@@ -58,7 +55,7 @@ class GameOver extends StatelessWidget {
                   );
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -75,7 +72,7 @@ class GameOver extends StatelessWidget {
                           width: 50,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              color: Color(0xFF008cba),
+                              color: const Color(0xFF008cba),
                               boxShadow: const [
                                 BoxShadow(color: Colors.black, blurRadius: 2)
                               ]),

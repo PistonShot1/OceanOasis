@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
-import 'package:oceanoasis/components/maps/BossFight/crabBoss.dart';
 import 'package:oceanoasis/my_game.dart';
 
 class cautiousEffect extends SpriteAnimationComponent

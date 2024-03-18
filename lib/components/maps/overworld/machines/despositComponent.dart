@@ -4,7 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:oceanoasis/components/maps/overworld/machines/machines.dart';
-import 'package:oceanoasis/property/defaultgameProperty.dart';
+import 'package:oceanoasis/property/game_properties.dart';
 import 'package:oceanoasis/my_game.dart';
 
 class DepositComponent extends SpriteComponent

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flame/components.dart';
 import 'package:flame/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:oceanoasis/my_game.dart';
 
 // ignore: must_be_immutable
@@ -46,13 +45,13 @@ class _ShopUIState extends State<ShopUI> {
             child: Container(
               height: MediaQuery.of(context).size.height * 0.9,
               decoration: BoxDecoration(
-                color: Color(0Xf4d690).withOpacity(0.8),
+                color: const Color(0x00f4d690).withOpacity(0.8),
                 borderRadius: BorderRadius.circular(5),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.2),
                     blurRadius: 4,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
@@ -110,14 +109,14 @@ class _ShopUIState extends State<ShopUI> {
         Align(
           alignment: Alignment.topCenter,
           child: Padding(
-            padding: EdgeInsets.only(top: 5),
+            padding: const EdgeInsets.only(top: 5),
             child: SpriteButton(
                 sprite: shopLabelImg,
                 pressedSprite: shopLabelImg,
                 onPressed: () {},
                 width: 200,
                 height: 70,
-                label: Material(
+                label: const Material(
                     color: Colors.transparent,
                     child: Center(
                         child: Text(
@@ -133,13 +132,13 @@ class _ShopUIState extends State<ShopUI> {
   Widget _getDisplayItemBox(Sprite itemImg, String itemName, int itemPrice) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xFF1a1a1a).withOpacity(0.8),
+        color: const Color(0xFF1a1a1a).withOpacity(0.8),
         borderRadius: BorderRadius.circular(5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.5),
             blurRadius: 4,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -150,10 +149,10 @@ class _ShopUIState extends State<ShopUI> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(child: SpriteWidget(sprite: itemImg),height: MediaQuery.of(context).size.height * 0.2,),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.2,child: SpriteWidget(sprite: itemImg),),
             Text(
               itemName,
-              style: TextStyle(color: Colors.white, fontSize: 18),
+              style: const TextStyle(color: Colors.white, fontSize: 18),
             ),
             SpriteButton(
                 sprite: buybuttonImg,
@@ -165,7 +164,7 @@ class _ShopUIState extends State<ShopUI> {
                   padding: const EdgeInsets.only(right: 20.0, bottom: 5),
                   child: Text(
                     itemPrice.toString(),
-                    style: TextStyle(fontSize: 20),
+                    style: const TextStyle(fontSize: 20),
                   ),
                 ))
           ],

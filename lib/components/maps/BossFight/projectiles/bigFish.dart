@@ -68,10 +68,6 @@ class bigFish extends SpriteAnimationComponent
     }
   }
 
-  @override
-  void onCollisionEnd(PositionComponent other) {
-    super.onCollisionEnd(other);
-  }
 
   final double mineSpawnOffsetX = 50;
   final double mineSpawnOffsetY = 50;

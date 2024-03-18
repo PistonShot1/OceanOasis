@@ -1,8 +1,6 @@
 import 'package:flame/game.dart';
 import 'package:flame/widgets.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:oceanoasis/my_game.dart';
 
 class BalanceWidget extends StatefulWidget {
@@ -18,7 +16,7 @@ class _BalanceWidgetState extends State<BalanceWidget> {
   Widget build(BuildContext context) {
     return Align(
         alignment: Alignment.topRight,
-        child: Container(
+        child: SizedBox(
           width: 180,
           height: 60,
           child: Material(
@@ -63,7 +61,7 @@ class _BalanceWidgetState extends State<BalanceWidget> {
                                   child: Text(
                                     widget.game.playerData.gameBalance
                                         .toString(),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 20, color: Colors.white),
                                   ),
                                 )),

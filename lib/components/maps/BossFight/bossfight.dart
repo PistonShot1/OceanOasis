@@ -5,21 +5,17 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/experimental.dart';
 import 'package:flame/flame.dart';
-import 'package:flame/palette.dart';
 
 import 'package:flame_tiled/flame_tiled.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter/src/services/hardware_keyboard.dart';
-import 'package:flutter/src/services/keyboard_key.g.dart';
-import 'package:flutter/src/services/raw_keyboard.dart';
 import 'package:oceanoasis/components/maps/BossFight/bossfightattackinput.dart';
 import 'package:oceanoasis/components/maps/BossFight/bossfightplayer.dart';
 import 'package:oceanoasis/components/maps/BossFight/crabBoss.dart';
 import 'package:oceanoasis/components/maps/BossFight/projectiles/freezeEffect.dart';
 import 'package:oceanoasis/components/maps/BossFight/projectiles/bullet.dart';
 import 'package:oceanoasis/components/maps/BossFight/projectiles/powerUp.dart';
-import 'package:oceanoasis/property/defaultgameProperty.dart';
+import 'package:oceanoasis/property/game_properties.dart';
 import 'package:oceanoasis/my_game.dart';
 import 'package:oceanoasis/components/shoptools/toolbox.dart';
 
@@ -102,7 +98,7 @@ class PacificOceanBossFight extends Component
       currentWorld: bossWorld,
       joystick: joystick,
       position:
-          Vector2(spawnPoint!.objects.first.x, spawnPoint!.objects.first.y),
+          Vector2(spawnPoint!.objects.first.x, spawnPoint.objects.first.y),
       playerScene: 0,
       image: Flame.images.fromCache('main-character-1/Idle.png'),
       animationData: SpriteAnimationData.sequenced(

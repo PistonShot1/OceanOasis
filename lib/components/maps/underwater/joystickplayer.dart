@@ -7,20 +7,25 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/geometry.dart';
 import 'package:flame/image_composition.dart';
+import 'package:flame_bloc/flame_bloc.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
-import 'package:oceanoasis/components/maps/underwater/events/longswordfish.dart';
 import 'package:oceanoasis/components/maps/underwater/playerhealth.dart';
 import 'package:oceanoasis/components/maps/underwater/inputAttack.dart';
 import 'package:oceanoasis/components/maps/underwater/underwater_scene.dart';
 import 'package:oceanoasis/my_game.dart';
-import 'package:oceanoasis/property/defaultgameProperty.dart';
+import 'package:oceanoasis/property/game_properties.dart';
 import 'package:oceanoasis/components/shoptools/slash_effect.dart';
 import 'package:oceanoasis/components/shoptools/tools.dart';
 import 'dart:math';
 
+import 'package:oceanoasis/property/player_inventory_bloc/player_inventory_bloc.dart';
+
 class JoystickPlayer extends SpriteAnimationComponent
-    with HasGameReference<MyGame>, CollisionCallbacks, KeyboardHandler {
+    with
+        HasGameReference<MyGame>,
+        CollisionCallbacks,
+        KeyboardHandler {
   late final Vector2 _lastSize = size.clone();
   late final Transform2D _lastTransform = transform.clone();
   final int playerScene;
@@ -113,13 +118,6 @@ class JoystickPlayer extends SpriteAnimationComponent
       game.camera.viewport.add(AttackInput(playerRef: this)
         ..position = sceneRef.tiledMap.size - Vector2.all(200));
     }
-  }
-
-  @override
-  void onMount() {
-    // TODO: implement onMount
-
-    super.onMount();
   }
 
   @override
@@ -299,6 +297,8 @@ class JoystickPlayer extends SpriteAnimationComponent
     currentTool = component;
 
     currentToolOrigin.add(currentTool..angle = pi * 0.25);
+
+    game.inventoryblocprovider.add(const NextWeaponEquipped());
   }
 
   void trackFacingDirection(Set<LogicalKeyboardKey> keysPressed) {

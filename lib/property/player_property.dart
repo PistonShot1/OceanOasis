@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:oceanoasis/property/defaultgameProperty.dart';
+import 'package:oceanoasis/property/game_properties.dart';
 import 'package:oceanoasis/components/shoptools/tools.dart';
 
 class PlayerProperty extends ChangeNotifier {

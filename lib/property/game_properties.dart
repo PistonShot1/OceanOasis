@@ -2,9 +2,7 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
-import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route;
-import 'package:oceanoasis/components/maps/underwater/underwater_scene.dart';
 import 'package:oceanoasis/components/shoptools/magnet_effect.dart';
 import 'package:oceanoasis/components/shoptools/rubbish_picker_effect.dart';
 import 'package:oceanoasis/components/shoptools/tools.dart';

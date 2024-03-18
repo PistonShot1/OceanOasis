@@ -4,7 +4,6 @@ import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/input.dart';
 import 'package:oceanoasis/components/maps/BossFight/bossfight.dart';
-import 'package:oceanoasis/components/maps/underwater/joystickplayer.dart';
 
 class BossAttackInput extends SpriteButtonComponent {
   PacificOceanBossFight sceneRef;

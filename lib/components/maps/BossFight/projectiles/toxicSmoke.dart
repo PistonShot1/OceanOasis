@@ -39,8 +39,4 @@ class toxicSmoke extends SpriteAnimationComponent with HasGameReference<MyGame>,
     
     return super.onLoad();
   }
-  @override
-  void update(double dt){
-    super.update(dt);
-  }
 }

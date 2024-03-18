@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui' hide Image;
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
@@ -7,11 +6,10 @@ import 'package:flame/effects.dart';
 import 'package:flame/image_composition.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:oceanoasis/components/maps/underwater/joystickplayer.dart';
-import 'package:oceanoasis/property/defaultgameProperty.dart';
+import 'package:oceanoasis/property/game_properties.dart';
 import 'package:oceanoasis/my_game.dart';
 import 'package:oceanoasis/components/shoptools/magnet_effect.dart';
 import 'package:oceanoasis/components/shoptools/rubbish_picker_effect.dart';
-import 'package:oceanoasis/components/maps/underwater/wasteComponents/waste.dart';
 
 class SlashEffect extends SpriteAnimationComponent
     with CollisionCallbacks, HasGameReference<MyGame> {

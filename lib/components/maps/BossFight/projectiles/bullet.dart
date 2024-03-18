@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:ui';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:oceanoasis/components/maps/BossFight/crabBoss.dart';
-import 'package:oceanoasis/components/maps/BossFight/projectiles/bossDamagedEffect.dart';
 import 'package:oceanoasis/my_game.dart';
 import 'package:oceanoasis/components/maps/BossFight/projectiles/mine.dart';
 
@@ -67,10 +65,6 @@ class bullet extends SpriteAnimationComponent
     }
   }
 
-  @override
-  void onCollisionEnd(PositionComponent other) {
-    super.onCollisionEnd(other);
-  }
 
   @override
   void update(double dt) {

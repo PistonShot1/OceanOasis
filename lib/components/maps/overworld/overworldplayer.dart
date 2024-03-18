@@ -1,16 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
-import 'package:flame/image_composition.dart';
-import 'package:flame/particles.dart';
-import 'package:flame/sprite.dart';
 import 'package:flutter/src/services/hardware_keyboard.dart';
-import 'package:flutter/src/services/keyboard_key.g.dart';
 import 'package:oceanoasis/components/maps/overworld/collision_block.dart';
 import 'package:oceanoasis/components/maps/overworld/custom_hitbox.dart';
 import 'package:oceanoasis/components/maps/overworld/ladder.dart';

@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'package:flame/components.dart';
-import 'package:flame/debug.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
-import 'package:flame/palette.dart';
 import 'package:flame_audio/flame_audio.dart';
+import 'package:flame_bloc/flame_bloc.dart';
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
 import 'package:oceanoasis/components/maps/underwater/joystickplayer.dart';
-import 'package:oceanoasis/property/defaultgameProperty.dart';
-import 'package:oceanoasis/property/playerProperty.dart';
+import 'package:oceanoasis/property/game_properties.dart';
+import 'package:oceanoasis/property/player_inventory_bloc/player_inventory_bloc.dart';
+import 'package:oceanoasis/property/player_property.dart';
 import 'package:oceanoasis/widgets/shop.dart';
 import 'package:oceanoasis/components/shoptools/toolbox.dart';
 import 'package:oceanoasis/components/maps/overworld/pacific.dart';
@@ -19,7 +19,7 @@ import 'package:oceanoasis/components/maps/levelSelection/maplevelselection.dart
 import 'package:audioplayers/audioplayers.dart';
 import 'components/maps/BossFight/bossfight.dart';
 
-/// MyGame is an instance of the [FlameGame] that will be used for routing purposes 
+/// MyGame is an instance of the [FlameGame] that will be used for routing purposes
 /// and mainly to initialize the game component tree.
 
 class MyGame extends FlameGame
@@ -48,14 +48,20 @@ class MyGame extends FlameGame
 
   AudioPlayer? mainBgm;
 
-  MyGame(this.screeninfo, {required this.playerData});
+  PlayerInventoryBloc inventoryblocprovider;
+
+  MyGame(this.screeninfo,
+      {required this.playerData, required this.inventoryblocprovider});
   @override
   Future<void> onLoad() async {
     Flame.device.fullScreen();
     await loadAssets();
     //SET camera bound
     // await loadAudio();
-
+    await add(FlameMultiBlocProvider(providers: [
+      FlameBlocProvider<PlayerInventoryBloc, PlayerInventoryState>.value(
+          value: inventoryblocprovider)
+    ]));
     routes = {
       MapLevelSelection.id: Route(
         () => MapLevelSelection(key: ComponentKey.named('MapLevelSelection')),

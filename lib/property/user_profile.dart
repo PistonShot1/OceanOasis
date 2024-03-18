@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:oceanoasis/property/defaultgameProperty.dart';
-import 'package:oceanoasis/property/levelProperty.dart';
+import 'package:oceanoasis/property/game_properties.dart';
+import 'package:oceanoasis/property/level_property.dart';
 
 class UserProfile extends ChangeNotifier {
   String? uid;
@@ -16,11 +16,11 @@ class UserProfile extends ChangeNotifier {
       this.wastebalance});
 
   Future<void> setData(Map<String, dynamic> data) async {
-    uid = data['uid'];
-    email = data['email'];
-    gamebalance = data['gamebalance'];
+    uid = data['uid'] as String?;
+    email = data['email'] as String?;
+    gamebalance = data['gamebalance'] as int?;
     wastebalance = data['wastebalance'];
-    levelhighestScore = data['levelhighestScore'];
+    levelhighestScore = data['levelhighestScore'] as List<double>?;
     notifyListeners();
   }
 
