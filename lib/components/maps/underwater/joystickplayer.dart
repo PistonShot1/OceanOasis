@@ -22,10 +22,7 @@ import 'dart:math';
 import 'package:oceanoasis/property/player_inventory_bloc/player_inventory_bloc.dart';
 
 class JoystickPlayer extends SpriteAnimationComponent
-    with
-        HasGameReference<MyGame>,
-        CollisionCallbacks,
-        KeyboardHandler {
+    with HasGameReference<MyGame>, CollisionCallbacks, KeyboardHandler {
   late final Vector2 _lastSize = size.clone();
   late final Transform2D _lastTransform = transform.clone();
   final int playerScene;
